@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextUtils
+import android.view.GestureDetector
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -15,6 +16,8 @@ import com.germainkevin.library.R
 import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import timber.log.Timber
+import androidx.core.view.GestureDetectorCompat
+
 
 /**
  * A [View] that will be added to a UI by a DecorView to present a UI element
@@ -22,12 +25,6 @@ import timber.log.Timber
  * this [Presenter]
  * */
 open class Presenter constructor(context: Context) : View(context) {
-    init {
-        id = R.id.android_ui_presenter
-        accessibilityDelegate = AccessibilityDelegate()
-        isFocusableInTouchMode = true
-        requestFocus()
-    }
 
     /**
      * Mainly to access information to draw on the [Canvas]
@@ -169,6 +166,13 @@ open class Presenter constructor(context: Context) : View(context) {
         mPresentationBuilder.onPresenterStateChanged(mState)
     }
 
+    init {
+        id = R.id.android_ui_presenter
+        accessibilityDelegate = AccessibilityDelegate()
+        isFocusableInTouchMode = true
+        requestFocus()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         // Make this view take its parent's size.
         val parent = this.parent as View
@@ -190,7 +194,6 @@ open class Presenter constructor(context: Context) : View(context) {
         val presenterShape = mPresentationBuilder.getPresenterShape()
         val captureEventViewToPresentPressed = presenterShape.viewToPresentContains(x, y)
         val captureEventFocal = presenterShape.shapeContains(x, y)
-        Timber.d("x & y point: $x and $y")
         // !captureEventFocal means that a click event is detected outside the presenterShape
         // and the view to present
         val eventCaptured =

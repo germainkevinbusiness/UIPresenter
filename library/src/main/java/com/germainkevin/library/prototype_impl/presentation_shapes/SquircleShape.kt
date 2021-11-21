@@ -137,8 +137,7 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
             mDescriptionTextPaint.textSize = calculatedTextSize(mDisplayMetrics)
             buildSelfJob = async {
                 val rect = Rect()
-                val viewToPresentBounds =
-                    calculateVTPBounds(rect = rect, viewToPresent = viewToPresent)
+                val viewToPresentBounds = calculateVTPBounds(rect, viewToPresent)
                 mViewToPresentBounds.set(
                     viewToPresentBounds.first.x, // left
                     viewToPresentBounds.first.y, // top

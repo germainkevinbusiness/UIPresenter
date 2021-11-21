@@ -135,7 +135,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
      * */
     open fun removePresenterIfInView(): T {
         mPresenter?.let {
-            if (!it.isRemoved()) {
+            if (!it.isRemoving() || !it.isRemoved()) {
                 it.clearFocus() // removes the focus on the Presenter
                 it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
                 mDecorView?.removeView(it)
