@@ -16,7 +16,7 @@ import timber.log.Timber
 
 class SquircleShape(override var descriptionText: String?) : PresenterShape {
 
-//    private var calculateVTPBoundsJob: Deferred<Unit>? = null
+    private lateinit var buildSelfJob: Deferred<Unit>
 
     /**
      * The background to draw on the SquircleShape
@@ -130,46 +130,59 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
     }
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
-        val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
-        val viewToPresent: View = builder.mViewToPresent!!
-        val mDisplayMetrics = mDecorView.resources.displayMetrics
-        mDescriptionTextPaint.textSize = calculatedTextSize(mDisplayMetrics)
-        val rect = Rect()
-        val viewToPresentBounds = calculateVTPBounds(rect = rect, viewToPresent = viewToPresent)
-        mViewToPresentBounds.set(
-            viewToPresentBounds.first.x, // left
-            viewToPresentBounds.first.y, // top
-            viewToPresentBounds.second.x, // right
-            viewToPresentBounds.second.y // bottom
-        )
-        val desiredShapeWidthLeftToRight = mViewToPresentBounds.right + 110
-        val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
-        val finalLeftValue: Float
-        val finalRightValue: Float
-        val finalTopValue: Float
-        val finalBottomValue: Float
+        CoroutineScope(Dispatchers.Main).launch {
+            val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
+            val viewToPresent: View = builder.mViewToPresent!!
+            val mDisplayMetrics = mDecorView.resources.displayMetrics
+            mDescriptionTextPaint.textSize = calculatedTextSize(mDisplayMetrics)
+            buildSelfJob = async {
+                val rect = Rect()
+                val viewToPresentBounds =
+                    calculateVTPBounds(rect = rect, viewToPresent = viewToPresent)
+                mViewToPresentBounds.set(
+                    viewToPresentBounds.first.x, // left
+                    viewToPresentBounds.first.y, // top
+                    viewToPresentBounds.second.x, // right
+                    viewToPresentBounds.second.y // bottom
+                )
+                val desiredShapeWidthLeftToRight = mViewToPresentBounds.right + 110
+                val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
+                val finalLeftValue: Float
+                val finalRightValue: Float
+                val finalTopValue: Float
+                val finalBottomValue: Float
 
-        val rightMaxMarginDistance = 44f
-        // 56, the usual height of bottom bars *2 + rightMaxMarginDistance - 10
-        val bottomMaxMarginDistance = 154f
-        val rightSpaceAvailable = mDecorView.width - desiredShapeWidthLeftToRight
-        val bottomSpaceAvailable = mDecorView.height - desiredShapeHeightTopToBottom
+                val rightMaxMarginDistance = 44f
+                // 56, the usual height of bottom bars *2 + rightMaxMarginDistance - 10
+                val bottomMaxMarginDistance = 154f
+                val rightSpaceAvailable = mDecorView.width - desiredShapeWidthLeftToRight
+                val bottomSpaceAvailable = mDecorView.height - desiredShapeHeightTopToBottom
 
-        if (rightSpaceAvailable >= rightMaxMarginDistance) {
-            finalLeftValue = mViewToPresentBounds.left
-            finalRightValue = desiredShapeWidthLeftToRight
-        } else {
-            finalLeftValue = mViewToPresentBounds.left - 110
-            finalRightValue = mViewToPresentBounds.right
+                if (rightSpaceAvailable >= rightMaxMarginDistance) {
+                    finalLeftValue = mViewToPresentBounds.left
+                    finalRightValue = desiredShapeWidthLeftToRight
+                } else {
+                    finalLeftValue = mViewToPresentBounds.left - 110
+                    finalRightValue = mViewToPresentBounds.right
+                }
+                if (bottomSpaceAvailable >= bottomMaxMarginDistance) {
+                    finalTopValue = desiredShapeHeightTopToBottom
+                    finalBottomValue = mViewToPresentBounds.bottom
+                } else {
+                    finalTopValue = mViewToPresentBounds.top
+                    finalBottomValue = mViewToPresentBounds.top - 250
+                }
+                Timber.d("The rectF coordinates: Left $finalLeftValue, Top: $finalTopValue Right: $finalRightValue, Bottom: $finalBottomValue")
+                mSquircleShapeRectF.set(
+                    finalLeftValue,
+                    finalTopValue,
+                    finalRightValue,
+                    finalBottomValue
+                )
+            }
+            buildSelfJob.await()
+            buildSelfJob.join()
         }
-        if (bottomSpaceAvailable >= bottomMaxMarginDistance) {
-            finalTopValue = desiredShapeHeightTopToBottom
-            finalBottomValue = mViewToPresentBounds.bottom
-        } else {
-            finalTopValue = mViewToPresentBounds.top
-            finalBottomValue = mViewToPresentBounds.top - 250
-        }
-        mSquircleShapeRectF.set(finalLeftValue, finalTopValue, finalRightValue, finalBottomValue)
     }
 
     override fun bindCanvasToDraw(canvas: Canvas?) {
@@ -183,7 +196,14 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
         }
     }
 
-    override fun shapeContains(x: Float, y: Float): Boolean = mSquircleShapeRectF.contains(x, y)
+    override fun shapeContains(x: Float, y: Float): Boolean {
+        return if (buildSelfJob.isCompleted) {
+            mSquircleShapeRectF.contains(x, y)
+        } else {
+            Timber.d("BuildSelf job is incompleted")
+            false
+        }
+    }
 
     override fun viewToPresentContains(x: Float, y: Float): Boolean {
         return mViewToPresentBounds.contains(x, y)

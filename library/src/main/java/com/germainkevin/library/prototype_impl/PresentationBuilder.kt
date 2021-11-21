@@ -69,6 +69,12 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
         mPresenter?.let {
             it.mPresentationBuilder = this
             it.mPresenterTouchEventListener = object : Presenter.TouchEventListener {
+                override fun onViewToPresentPressed() {
+                    if (mAutoRemoveApproval) {
+                        removePresenterIfInView()
+                    }
+                }
+
                 override fun onFocalPressed() {
                     if (mAutoRemoveApproval) {
                         removePresenterIfInView()
@@ -103,9 +109,14 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
             // been done, we can now pass this builder to the PresenterShape
             // so it builds a Shape to output to the UI.
             mViewToPresent?.let {
-                mPresenterShape.buildSelfWith(this@PresentationBuilder)
-                val job = async { removePresenterIfInView() }
+                val job = async {
+                    mPresenterShape.buildSelfWith(this@PresentationBuilder)
+                    val job1 = async { removePresenterIfInView() }
+                    job1.await()
+                    job1.join()
+                }
                 job.await()
+                job.join()
                 if (job.isCompleted) {
                     this.cancel()
                     mPresenter?.let { _v ->
@@ -171,6 +182,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
         return this as T
     }
 
+    /**
+     * Returns the Default [PresenterShape]
+     * */
     internal fun getPresenterShape(): PresenterShape = mPresenterShape
 
     /**

@@ -24,8 +24,8 @@ import timber.log.Timber
 open class Presenter constructor(context: Context) : View(context) {
     init {
         id = R.id.android_ui_presenter
-        isFocusableInTouchMode = true
         accessibilityDelegate = AccessibilityDelegate()
+        isFocusableInTouchMode = true
         requestFocus()
     }
 
@@ -86,19 +86,25 @@ open class Presenter constructor(context: Context) : View(context) {
         const val STATE_REMOVED = 4
 
         /**
-         * The [Presenter] has been pressed in the focal area.
-         */
-        const val STATE_FOCAL_PRESSED = 5
+         * The view to present has been pressed
+         * */
+        const val STATE_VTP_PRESSED = 5
 
         /**
-         * The [Presenter] has been pressed outside the focal area.
+         * The [Presenter]'s [PresentationBuilder.getPresenterShape] has been pressed
          */
-        const val STATE_NON_FOCAL_PRESSED = 6
+        const val STATE_FOCAL_PRESSED = 6
+
+        /**
+         * The [Presenter] has been pressed outside the [PresentationBuilder.getPresenterShape]
+         * and not on the view to present
+         */
+        const val STATE_NON_FOCAL_PRESSED = 7
 
         /**
          * The [Presenter] has been dismissed by the system back button being pressed.
          */
-        const val STATE_BACK_BUTTON_PRESSED = 7
+        const val STATE_BACK_BUTTON_PRESSED = 8
     }
 
     /**
@@ -126,13 +132,20 @@ open class Presenter constructor(context: Context) : View(context) {
      * [presenter][Presenter] is touched, or the back button is clicked.
      */
     interface TouchEventListener {
+
         /**
-         * Called when the view to present is pressed.
+         * Called when the [view to present] is pressed
+         * */
+        fun onViewToPresentPressed()
+
+        /**
+         * Called when the [Presenter]'s [PresentationBuilder.getPresenterShape] is pressed
          */
         fun onFocalPressed()
 
         /**
-         * Called when anywhere but the view to present is pressed
+         * Called when anywhere but the [Presenter]'s
+         * [PresentationBuilder.getPresenterShape] is pressed
          */
         fun onNonFocalPressed()
 
@@ -174,15 +187,22 @@ open class Presenter constructor(context: Context) : View(context) {
         val x = event!!.x
         val y = event.y
         val presenterShape = mPresentationBuilder.getPresenterShape()
-        val captureEventFocal = presenterShape.viewToPresentContains(x, y)
-        val captureEventNonFocal = presenterShape.shapeContains(x, y)
-        Timber.d("captureEventNonFocal: $captureEventNonFocal")
-        val eventCaptured = captureEventFocal || captureEventNonFocal
+        val captureEventViewToPresentPressed = presenterShape.viewToPresentContains(x, y)
+        val captureEventFocal = presenterShape.shapeContains(x, y)
+        Timber.d("x & y point: $x and $y")
+        // !captureEventFocal means that a click event is detected outside the presenterShape
+        // and the view to present
+        val eventCaptured =
+            captureEventViewToPresentPressed || captureEventFocal || !captureEventFocal
+        if (captureEventViewToPresentPressed) {
+            notifyBuilderOfStateChange(STATE_VTP_PRESSED)
+            mPresenterTouchEventListener.onViewToPresentPressed()
+        }
         if (captureEventFocal) {
             notifyBuilderOfStateChange(STATE_FOCAL_PRESSED)
             mPresenterTouchEventListener.onFocalPressed()
         }
-        if (captureEventNonFocal) {
+        if (!captureEventFocal && !captureEventViewToPresentPressed) {
             notifyBuilderOfStateChange(STATE_NON_FOCAL_PRESSED)
             mPresenterTouchEventListener.onNonFocalPressed()
         }

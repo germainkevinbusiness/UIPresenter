@@ -8,13 +8,13 @@ import com.germainkevin.library.prototype_impl.PresentationBuilder
  *
  * [buildSelfWith] will be populated from a [PresentationBuilder]
  *
- * [bindCanvasToDraw] will be called from a [com.germainkevin.library.Presenter]'s
- * onDraw method
+ * [bindCanvasToDraw] will be called from the [com.germainkevin.library.Presenter]'s
+ * Canvas onDraw method
  * */
 interface ShapeLifecycle {
     /**
      * Builds a [PresenterShape] to be drawn on
-     * a [presenter][com.germainkevin.library.Presenter], by using data
+     * a [presenter][=Presenter], by using data
      * provided by a [builder][PresentationBuilder]
      *
      * Should always be called before [bindCanvasToDraw]

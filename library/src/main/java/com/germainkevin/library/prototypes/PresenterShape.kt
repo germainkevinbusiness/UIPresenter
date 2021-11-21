@@ -6,8 +6,8 @@ import androidx.annotation.ColorInt
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 
 /**
- * A [PresenterShape] represents the Shape in which
- * a [com.germainkevin.library.Presenter] is drawn on the View to present
+ * A [PresenterShape] represents the shape drawn
+ * by the [Canvas] of the [com.germainkevin.library.Presenter]
  */
 interface PresenterShape : ShapeLifecycle {
     /**
