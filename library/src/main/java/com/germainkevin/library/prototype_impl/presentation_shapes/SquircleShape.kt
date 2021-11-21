@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class SquircleShape(override var descriptionText: String?) : PresenterShape {
 
@@ -23,15 +24,15 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
     private lateinit var mSquircleShapeRectF: RectF
 
     /**
-     * The radius applied to the [SquircleShape.mSquircleShapeRectF]
-     */
-    private var mDefaultSquircleRadius = 15f
-
-    /**
      * The left,top,right and bottom position, of the
      * [view to present][PresentationBuilder.mViewToPresent]
      */
     private lateinit var mViewToPresentBounds: RectF
+
+    /**
+     * The radius applied to the [SquircleShape.mSquircleShapeRectF]
+     */
+    private var mDefaultSquircleRadius = 15f
 
     /**
      * The [Paint] to use to draw the [SquircleShape.mSquircleShapeRectF]
@@ -80,6 +81,10 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
         mDescriptionTextPaint.isAntiAlias = true
     }
 
+    private fun setShadowLayer() {
+        mSquircleShapePaint.setShadowLayer(10f, 5f, 5f, Color.DKGRAY)
+    }
+
     private fun setupRectFs() {
         mViewToPresentBounds = RectF()
         mSquircleShapeRectF = RectF()
@@ -87,6 +92,7 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
 
     init {
         setupPaints()
+        setShadowLayer()
         setupRectFs()
         mDescriptionTextPosition = PointF()
     }
@@ -136,12 +142,40 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
             viewToPresentBounds.second.x, // right
             viewToPresentBounds.second.y // bottom
         )
+        val desiredShapeWidthLeftToRight = mViewToPresentBounds.right + 110
+        val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
+        val finalLeftValue: Float
+        val finalRightValue: Float
+        val finalTopValue: Float
+        val finalBottomValue: Float
+
+        val rightMaxMarginDistance = 44f
+        // 56, the usual height of bottom bars *2 + rightMaxMarginDistance - 10
+        val bottomMaxMarginDistance = 154f
+        val rightSpaceAvailable = mDecorView.width - desiredShapeWidthLeftToRight
+        val bottomSpaceAvailable = mDecorView.height - desiredShapeHeightTopToBottom
+
+        if (rightSpaceAvailable >= rightMaxMarginDistance) {
+            finalLeftValue = mViewToPresentBounds.left
+            finalRightValue = desiredShapeWidthLeftToRight
+        } else {
+            finalLeftValue = mViewToPresentBounds.left - 110
+            finalRightValue = mViewToPresentBounds.right
+        }
+        if (bottomSpaceAvailable >= bottomMaxMarginDistance) {
+            finalTopValue = desiredShapeHeightTopToBottom
+            finalBottomValue = mViewToPresentBounds.bottom
+        } else {
+            finalTopValue = mViewToPresentBounds.top
+            finalBottomValue = mViewToPresentBounds.top - 250
+        }
+        mSquircleShapeRectF.set(finalLeftValue, finalTopValue, finalRightValue, finalBottomValue)
     }
 
     override fun bindCanvasToDraw(canvas: Canvas?) {
         canvas?.let { cv ->
             cv.drawRoundRect(
-                mViewToPresentBounds,
+                mSquircleShapeRectF,
                 mDefaultSquircleRadius,
                 mDefaultSquircleRadius,
                 mSquircleShapePaint

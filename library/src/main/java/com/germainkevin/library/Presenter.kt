@@ -170,11 +170,13 @@ open class Presenter constructor(context: Context) : View(context) {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        super.onTouchEvent(event)
         val x = event!!.x
         val y = event.y
         val presenterShape = mPresentationBuilder.getPresenterShape()
         val captureEventFocal = presenterShape.viewToPresentContains(x, y)
         val captureEventNonFocal = presenterShape.shapeContains(x, y)
+        Timber.d("captureEventNonFocal: $captureEventNonFocal")
         val eventCaptured = captureEventFocal || captureEventNonFocal
         if (captureEventFocal) {
             notifyBuilderOfStateChange(STATE_FOCAL_PRESSED)
@@ -196,7 +198,7 @@ open class Presenter constructor(context: Context) : View(context) {
         }
     }
 
-    internal inner class AccessibilityDelegate : View.AccessibilityDelegate() {
+    private inner class AccessibilityDelegate : View.AccessibilityDelegate() {
         override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
             super.onInitializeAccessibilityNodeInfo(host, info)
             val viewPackage: Package? = Presenter::class.java.getPackage()
@@ -209,14 +211,14 @@ open class Presenter constructor(context: Context) : View(context) {
             info.isChecked = false
             info.isFocusable = true
             info.isFocused = true
-            info.contentDescription = mPresentationBuilder.getPresenterShape().descriptionText
-            info.text = mPresentationBuilder.getPresenterShape().descriptionText
+            info.contentDescription = mPresentationBuilder.getPresenterShape().hashCode().toString()
+            info.text = mPresentationBuilder.getPresenterShape().hashCode().toString()
         }
 
         override fun onPopulateAccessibilityEvent(host: View, event: AccessibilityEvent) {
             super.onPopulateAccessibilityEvent(host, event)
             val contentDescription: CharSequence =
-                mPresentationBuilder.getPresenterShape().descriptionText.toString()
+                "This is a Presenter View, that explains certain UI views"
             if (!TextUtils.isEmpty(contentDescription)) {
                 event.text.add(contentDescription)
             }
