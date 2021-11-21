@@ -152,6 +152,7 @@ class SquircleShape : PresenterShape {
             buildSelfJob = async {
                 val rect = Rect()
                 val viewToPresentBounds = calculateVTPBounds(rect, viewToPresent)
+
                 mViewToPresentBounds.set(
                     viewToPresentBounds.first.x, // left
                     viewToPresentBounds.first.y, // top
@@ -186,23 +187,20 @@ class SquircleShape : PresenterShape {
                     finalTopValue = mViewToPresentBounds.top
                     finalBottomValue = mViewToPresentBounds.top - 250
                 }
-                Timber.d("The rectF coordinates: Left $finalLeftValue, Top: $finalTopValue Right: $finalRightValue, Bottom: $finalBottomValue")
+
+                // Set up the rounded rectangle coordinates
                 mSquircleShapeRectF.set(
                     finalLeftValue,
                     finalTopValue,
                     finalRightValue,
                     finalBottomValue
                 )
+                // Set up the description text coordinates
                 descriptionText?.let {
-                    val alignment = Layout.Alignment.ALIGN_CENTER
-                    val spacingMultiplier = 1f
-                    val spacingAddition = 1f
-                    val includePadding = false
-
                     mStaticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         StaticLayout.Builder.obtain(
                             it,
-                            10,
+                            0,
                             it.length,
                             mDescriptionTextPaint,
                             mSquircleShapeRectF.width().toInt() - 16
@@ -215,12 +213,19 @@ class SquircleShape : PresenterShape {
                             it.length,
                             mDescriptionTextPaint,
                             mSquircleShapeRectF.width().toInt() - 16,
-                            alignment,
-                            spacingMultiplier,
-                            spacingAddition,
-                            includePadding
+                            Layout.Alignment.ALIGN_CENTER,
+                            1f,
+                            1f,
+                            false
                         )
                     }
+
+                    val rect1 = Rect()
+                    val textHeight = getTextHeight(rect1, it, mDescriptionTextPaint)
+                    mDescriptionTextPosition.x = mSquircleShapeRectF.left + 16
+//                    mDescriptionTextPosition.y =
+//                        mSquircleShapeRectF.centerY() - mStaticLayout.lineCount * textHeight / 2
+                    mDescriptionTextPosition.y = mSquircleShapeRectF.bottom + 16
                 }
             }
             buildSelfJob.await()
@@ -230,15 +235,6 @@ class SquircleShape : PresenterShape {
 
     override fun bindCanvasToDraw(canvas: Canvas?) {
         canvas?.let { cv ->
-            //calculate X and Y coordinates - In this case we want to draw the text in the
-            //center of canvas so we calculate
-            //text height and number of lines to move Y coordinate to center.
-            val rect1 = Rect()
-            val textHeight = getTextHeight(rect1, descriptionText!!, mDescriptionTextPaint)
-            val textYCoordinate: Float =
-                mSquircleShapeRectF.centerY() - mStaticLayout.lineCount * textHeight / 2
-            //text will be drawn from left
-            val textXCoordinate: Float = mSquircleShapeRectF.left
             cv.save()
             cv.drawRoundRect(
                 mSquircleShapeRectF,
@@ -246,7 +242,7 @@ class SquircleShape : PresenterShape {
                 mDefaultSquircleRadius,
                 mSquircleShapePaint
             )
-            cv.translate(textXCoordinate, textYCoordinate)
+            cv.translate(mDescriptionTextPosition.x, mDescriptionTextPosition.y)
             mStaticLayout.draw(cv)
             cv.restore()
         }
