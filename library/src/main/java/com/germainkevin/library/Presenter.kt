@@ -50,6 +50,7 @@ open class Presenter constructor(context: Context) : View(context) {
         STATE_REVEALED,
         STATE_REMOVING,
         STATE_REMOVED,
+        STATE_VTP_PRESSED,
         STATE_FOCAL_PRESSED,
         STATE_NON_FOCAL_PRESSED,
         STATE_BACK_BUTTON_PRESSED
