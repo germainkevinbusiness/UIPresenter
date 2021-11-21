@@ -16,14 +16,14 @@ interface PresenterShape : ShapeLifecycle {
     fun setBackgroundColor(@ColorInt color: Int)
 
     /**
-     * @param textColor the background color for the [presenter's][PresenterShape] description text
-     */
-    fun setTextColor(@ColorInt textColor: Int)
+     * Sets the text to be shown inside of a [PresenterShape]
+     * */
+    fun setDescriptionText(text: String)
 
     /**
-     * Gets and sets the text to be shown inside of a [PresenterShape]
+     * @param textColor the background color for the [presenter's][PresenterShape] description text
      */
-    var descriptionText: String?
+    fun setDescriptionTextColor(@ColorInt textColor: Int)
 
     /**
      * Sets the text size of the description text
@@ -31,12 +31,12 @@ interface PresenterShape : ShapeLifecycle {
      * @param textSize       The desired text size wanted for the description text
      * @param typedValueUnit the unit in which the description text should be displayed, e.g. [android.util.TypedValue.COMPLEX_UNIT_SP]
      */
-    fun setTextSize(typedValueUnit: Int, textSize: Float)
+    fun setDescriptionTextSize(typedValueUnit: Int, textSize: Float)
 
     /**
      * Sets the [Typeface] for the description text
      */
-    fun setTypeface(typeface: Typeface?)
+    fun setDescriptionTypeface(typeface: Typeface?)
 
     /**
      * Helps to know if a click occurred on this [shape][PresenterShape]

@@ -14,7 +14,7 @@ import com.germainkevin.library.prototypes.PresenterShape
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class SquircleShape(override var descriptionText: String?) : PresenterShape {
+class SquircleShape : PresenterShape {
 
     private lateinit var buildSelfJob: Deferred<Unit>
 
@@ -47,6 +47,11 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
     private lateinit var mDescriptionTextPaint: TextPaint
 
     /**
+     * The text description the view to present
+     * */
+    private var descriptionText: String? = null
+
+    /**
      * Position of the [SquircleShape.descriptionText] inside
      * the [SquircleShape.mSquircleShapeRectF]
      */
@@ -58,7 +63,7 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
      * default singleLine that the [Canvas.drawText]
      * method puts the text in by default
      */
-    private var mStaticLayout: StaticLayout? = null
+    private lateinit var mStaticLayout: StaticLayout
 
     /**
      * [TypedValue] unit in which the [SquircleShape.descriptionText]
@@ -102,16 +107,20 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
         mSquircleShapePaint.color = color
     }
 
-    override fun setTextColor(textColor: Int) {
+    override fun setDescriptionText(text: String) {
+        descriptionText = text
+    }
+
+    override fun setDescriptionTextColor(textColor: Int) {
         mDescriptionTextPaint.color = textColor
     }
 
-    override fun setTextSize(typedValueUnit: Int, textSize: Float) {
+    override fun setDescriptionTextSize(typedValueUnit: Int, textSize: Float) {
         mDefaultTextUnit = if (typedValueUnit == 0) TypedValue.COMPLEX_UNIT_SP else typedValueUnit
         mDefaultTextSize = textSize
     }
 
-    override fun setTypeface(typeface: Typeface?) {
+    override fun setDescriptionTypeface(typeface: Typeface?) {
         mDescriptionTextPaint.typeface = typeface
     }
 
@@ -129,6 +138,11 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
         return TypedValue.applyDimension(mDefaultTextUnit, mDefaultTextSize, mDisplayMetrics)
     }
 
+    private fun getTextHeight(rect: Rect, text: String, paint: Paint): Float {
+        paint.getTextBounds(text, 0, text.length, rect)
+        return rect.height().toFloat()
+    }
+
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         CoroutineScope(Dispatchers.Main).launch {
             val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
@@ -144,6 +158,7 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
                     viewToPresentBounds.second.x, // right
                     viewToPresentBounds.second.y // bottom
                 )
+
                 val desiredShapeWidthLeftToRight = mViewToPresentBounds.right + 110
                 val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
                 val finalLeftValue: Float
@@ -178,6 +193,35 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
                     finalRightValue,
                     finalBottomValue
                 )
+                descriptionText?.let {
+                    val alignment = Layout.Alignment.ALIGN_CENTER
+                    val spacingMultiplier = 1f
+                    val spacingAddition = 1f
+                    val includePadding = false
+
+                    mStaticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        StaticLayout.Builder.obtain(
+                            it,
+                            10,
+                            it.length,
+                            mDescriptionTextPaint,
+                            mSquircleShapeRectF.width().toInt() - 16
+                        )
+                            .build()
+                    } else {
+                        StaticLayout(
+                            descriptionText,
+                            finalTopValue.toInt() + 16,
+                            it.length,
+                            mDescriptionTextPaint,
+                            mSquircleShapeRectF.width().toInt() - 16,
+                            alignment,
+                            spacingMultiplier,
+                            spacingAddition,
+                            includePadding
+                        )
+                    }
+                }
             }
             buildSelfJob.await()
             buildSelfJob.join()
@@ -186,12 +230,25 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
 
     override fun bindCanvasToDraw(canvas: Canvas?) {
         canvas?.let { cv ->
+            //calculate X and Y coordinates - In this case we want to draw the text in the
+            //center of canvas so we calculate
+            //text height and number of lines to move Y coordinate to center.
+            val rect1 = Rect()
+            val textHeight = getTextHeight(rect1, descriptionText!!, mDescriptionTextPaint)
+            val textYCoordinate: Float =
+                mSquircleShapeRectF.centerY() - mStaticLayout.lineCount * textHeight / 2
+            //text will be drawn from left
+            val textXCoordinate: Float = mSquircleShapeRectF.left
+            cv.save()
             cv.drawRoundRect(
                 mSquircleShapeRectF,
                 mDefaultSquircleRadius,
                 mDefaultSquircleRadius,
                 mSquircleShapePaint
             )
+            cv.translate(textXCoordinate, textYCoordinate)
+            mStaticLayout.draw(cv)
+            cv.restore()
         }
     }
 

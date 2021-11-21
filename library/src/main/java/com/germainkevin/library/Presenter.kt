@@ -17,6 +17,7 @@ import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import timber.log.Timber
 import androidx.core.view.GestureDetectorCompat
+import com.germainkevin.library.prototypes.PresenterShape
 
 
 /**
@@ -31,6 +32,11 @@ open class Presenter constructor(context: Context) : View(context) {
      * Will be set by the [PresentationBuilder] that will create this [Presenter]
      * */
     internal lateinit var mPresentationBuilder: PresentationBuilder<*>
+
+    /**
+     * The presenter shape coming from the [mPresentationBuilder]
+     * */
+    private val presenterShape: PresenterShape by lazy { mPresentationBuilder.getPresenterShape() }
 
     /**
      * Interface to listen to this [View.onTouchEvent]
@@ -191,7 +197,6 @@ open class Presenter constructor(context: Context) : View(context) {
         super.onTouchEvent(event)
         val x = event!!.x
         val y = event.y
-        val presenterShape = mPresentationBuilder.getPresenterShape()
         val captureEventViewToPresentPressed = presenterShape.viewToPresentContains(x, y)
         val captureEventFocal = presenterShape.shapeContains(x, y)
         // !captureEventFocal means that a click event is detected outside the presenterShape
@@ -216,7 +221,7 @@ open class Presenter constructor(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas?) {
         if (mPresentationBuilder.mIsViewToPresentSet) {
             notifyBuilderOfStateChange(STATE_REVEALING)
-            mPresentationBuilder.getPresenterShape().bindCanvasToDraw(canvas)
+            presenterShape.bindCanvasToDraw(canvas)
             circularReveal(view = this, duration = 600L)
             notifyBuilderOfStateChange(STATE_REVEALED)
         }

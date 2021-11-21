@@ -50,23 +50,17 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
     internal var mIsViewToPresentSet = false
 
     /**
-     * The [mViewToPresent] description text
-     * */
-    private var mVTPDescriptionText: String? = null
-
-    /**
      * Should the back button press dismiss the prompt.
      */
     private var mBackButtonDismissEnabled = true
 
     private var mAutoRemoveApproval = true // Remove Presenter onClick on its focal area
 
-    private var mPresenterShape: PresenterShape = SquircleShape(mVTPDescriptionText)
+    private var mPresenterShape: PresenterShape = SquircleShape()
 
     init {
         mDecorView = resourceFinder.getDecorView()
-        resourceFinder.getContext()?.let { mPresenter = Presenter(it) }
-        mPresenter?.let {
+        mPresenter = resourceFinder.getContext()?.let { Presenter(it) }?.also {
             it.mPresentationBuilder = this
             it.mPresenterTouchEventListener = object : Presenter.TouchEventListener {
                 override fun onViewToPresentPressed() {
@@ -200,23 +194,23 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
         return this as T
     }
 
-    open fun setDescriptionText(descriptionText: String?): T {
-        mPresenterShape.descriptionText = descriptionText
+    open fun setDescriptionText(descriptionText: String): T {
+        mPresenterShape.setDescriptionText(descriptionText)
         return this as T
     }
 
     open fun setDescriptionTextColor(textColor: Int): T {
-        mPresenterShape.setTextColor(textColor)
+        mPresenterShape.setDescriptionTextColor(textColor)
         return this as T
     }
 
     open fun setDescriptionTextSize(typedValue: Int, textSize: Float): T {
-        mPresenterShape.setTextSize(typedValue, textSize)
+        mPresenterShape.setDescriptionTextSize(typedValue, textSize)
         return this as T
     }
 
     open fun setDescriptionTypeface(typeface: Typeface?): T {
-        mPresenterShape.setTypeface(typeface)
+        mPresenterShape.setDescriptionTypeface(typeface)
         return this as T
     }
 
