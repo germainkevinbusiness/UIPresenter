@@ -123,22 +123,19 @@ class SquircleShape(override var descriptionText: String?) : PresenterShape {
         return TypedValue.applyDimension(mDefaultTextUnit, mDefaultTextSize, mDisplayMetrics)
     }
 
-    override fun buildSelfWith(builder: PresentationBuilder<*>?) {
-        builder?.let {
-            val mDecorView: ViewGroup = it.resourceFinder.getDecorView()!!
-            val viewToPresent: View = it.mViewToPresent!!
-            val mDisplayMetrics = mDecorView.resources.displayMetrics
-            mDescriptionTextPaint.textSize = calculatedTextSize(mDisplayMetrics)
-            val rect = Rect()
-            val viewToPresentBounds =
-                calculateVTPBounds(rect = rect, viewToPresent = viewToPresent)
-            mViewToPresentBounds.set(
-                viewToPresentBounds.first.x, // left
-                viewToPresentBounds.first.y, // top
-                viewToPresentBounds.second.x, // right
-                viewToPresentBounds.second.y // bottom
-            )
-        }
+    override fun buildSelfWith(builder: PresentationBuilder<*>) {
+        val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
+        val viewToPresent: View = builder.mViewToPresent!!
+        val mDisplayMetrics = mDecorView.resources.displayMetrics
+        mDescriptionTextPaint.textSize = calculatedTextSize(mDisplayMetrics)
+        val rect = Rect()
+        val viewToPresentBounds = calculateVTPBounds(rect = rect, viewToPresent = viewToPresent)
+        mViewToPresentBounds.set(
+            viewToPresentBounds.first.x, // left
+            viewToPresentBounds.first.y, // top
+            viewToPresentBounds.second.x, // right
+            viewToPresentBounds.second.y // bottom
+        )
     }
 
     override fun bindCanvasToDraw(canvas: Canvas?) {

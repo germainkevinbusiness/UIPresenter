@@ -31,9 +31,15 @@ open class Presenter constructor(context: Context) : View(context) {
 
     /**
      * Mainly to access information to draw on the [Canvas]
-     * Will be set by the [UIPresenter] that will create this [Presenter]
+     * Will be set by the [PresentationBuilder] that will create this [Presenter]
      * */
-    internal var mPresentationBuilder: PresentationBuilder<*>? = null
+    internal lateinit var mPresentationBuilder: PresentationBuilder<*>
+
+    /**
+     * Interface to listen to this [View.onTouchEvent]
+     * Will be set by the [PresentationBuilder] that will create this [Presenter]
+     * */
+    internal lateinit var mPresenterTouchEventListener: TouchEventListener
 
     /**
      * A set of states that this class's [Presenter] can be in
@@ -116,11 +122,6 @@ open class Presenter constructor(context: Context) : View(context) {
     internal fun isRemoved(): Boolean = mState == STATE_REMOVED
 
     /**
-     * Interface to listen to this [View.onTouchEvent]
-     * */
-    internal var mPresenterTouchEventListener: TouchEventListener? = null
-
-    /**
      * Interface definition for a callback to be invoked when a
      * [presenter][Presenter] is touched, or the back button is clicked.
      */
@@ -151,7 +152,7 @@ open class Presenter constructor(context: Context) : View(context) {
      */
     open fun notifyBuilderOfStateChange(@Presenter.PresenterState state: Int) {
         mState = state
-        mPresentationBuilder?.onPresenterStateChanged(mState)
+        mPresentationBuilder.onPresenterStateChanged(mState)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -162,7 +163,7 @@ open class Presenter constructor(context: Context) : View(context) {
 
     override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
         if (event!!.keyCode == KeyEvent.KEYCODE_BACK) {
-            mPresenterTouchEventListener?.onBackButtonPressed()
+            mPresenterTouchEventListener.onBackButtonPressed()
             notifyBuilderOfStateChange(STATE_BACK_BUTTON_PRESSED)
         }
         return super.dispatchKeyEventPreIme(event)
@@ -171,31 +172,27 @@ open class Presenter constructor(context: Context) : View(context) {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val x = event!!.x
         val y = event.y
-        val presenterShape = mPresentationBuilder!!.getPresenterShape()
+        val presenterShape = mPresentationBuilder.getPresenterShape()
         val captureEventFocal = presenterShape.viewToPresentContains(x, y)
         val captureEventNonFocal = presenterShape.shapeContains(x, y)
         val eventCaptured = captureEventFocal || captureEventNonFocal
-        mPresenterTouchEventListener?.let {
-            if (captureEventFocal) {
-                notifyBuilderOfStateChange(STATE_FOCAL_PRESSED)
-                it.onFocalPressed()
-            }
-            if (captureEventNonFocal) {
-                notifyBuilderOfStateChange(STATE_NON_FOCAL_PRESSED)
-                it.onNonFocalPressed()
-            }
+        if (captureEventFocal) {
+            notifyBuilderOfStateChange(STATE_FOCAL_PRESSED)
+            mPresenterTouchEventListener.onFocalPressed()
+        }
+        if (captureEventNonFocal) {
+            notifyBuilderOfStateChange(STATE_NON_FOCAL_PRESSED)
+            mPresenterTouchEventListener.onNonFocalPressed()
         }
         return eventCaptured
     }
 
     override fun onDraw(canvas: Canvas?) {
-        mPresentationBuilder?.let { builder ->
-            if (builder.mIsViewToPresentSet) {
-                notifyBuilderOfStateChange(STATE_REVEALING)
-                builder.getPresenterShape().bindCanvasToDraw(canvas)
-                circularReveal(this, 600L)
-                notifyBuilderOfStateChange(STATE_REVEALED)
-            }
+        if (mPresentationBuilder.mIsViewToPresentSet) {
+            notifyBuilderOfStateChange(STATE_REVEALING)
+            mPresentationBuilder.getPresenterShape().bindCanvasToDraw(canvas)
+            circularReveal(view = this, duration = 600L)
+            notifyBuilderOfStateChange(STATE_REVEALED)
         }
     }
 
@@ -212,14 +209,14 @@ open class Presenter constructor(context: Context) : View(context) {
             info.isChecked = false
             info.isFocusable = true
             info.isFocused = true
-            info.contentDescription = mPresentationBuilder?.getPresenterShape()?.descriptionText
-            info.text = mPresentationBuilder?.getPresenterShape()?.descriptionText
+            info.contentDescription = mPresentationBuilder.getPresenterShape().descriptionText
+            info.text = mPresentationBuilder.getPresenterShape().descriptionText
         }
 
         override fun onPopulateAccessibilityEvent(host: View, event: AccessibilityEvent) {
             super.onPopulateAccessibilityEvent(host, event)
             val contentDescription: CharSequence =
-                mPresentationBuilder?.getPresenterShape()?.descriptionText.toString()
+                mPresentationBuilder.getPresenterShape().descriptionText.toString()
             if (!TextUtils.isEmpty(contentDescription)) {
                 event.text.add(contentDescription)
             }

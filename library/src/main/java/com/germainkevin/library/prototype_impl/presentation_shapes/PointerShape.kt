@@ -33,7 +33,7 @@ class PointerShape(override var descriptionText: String?) : PresenterShape {
         TODO("Not yet implemented")
     }
 
-    override fun buildSelfWith(builder: PresentationBuilder<*>?) {
+    override fun buildSelfWith(builder: PresentationBuilder<*>) {
         TODO("Not yet implemented")
     }
 

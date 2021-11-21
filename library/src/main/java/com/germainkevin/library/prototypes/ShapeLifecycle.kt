@@ -22,7 +22,7 @@ interface ShapeLifecycle {
      * @param builder The builder from which the [presenter][com.germainkevin.library.Presenter]
      * was created.
      */
-    fun buildSelfWith(builder: PresentationBuilder<*>?)
+    fun buildSelfWith(builder: PresentationBuilder<*>)
 
     /**
      * Made to be called from a [com.germainkevin.library.Presenter]
