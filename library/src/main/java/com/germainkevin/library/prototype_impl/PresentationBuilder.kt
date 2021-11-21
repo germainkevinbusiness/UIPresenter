@@ -5,10 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
 import com.germainkevin.library.Presenter
+import com.germainkevin.library.R
 import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.prototypes.ResourceFinder
+import kotlinx.coroutines.*
 
 
 /**
@@ -96,14 +98,20 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
      * @return the current [PresentationBuilder]
      */
     open fun present(): T {
-        // By this time, every configuration necessary would have already
-        // been done, we can now pass this builder to the PresenterShape
-        // so it builds a Shape to output to the UI.
-        mViewToPresent?.let {
-            mPresenterShape.buildSelfWith(this)
-            removePresenterIfInView()
-            mPresenter?.let { _v ->
-                mDecorView?.addView(_v)
+        CoroutineScope(Dispatchers.Main).launch {
+            // By this time, every configuration necessary would have already
+            // been done, we can now pass this builder to the PresenterShape
+            // so it builds a Shape to output to the UI.
+            mViewToPresent?.let {
+                mPresenterShape.buildSelfWith(this@PresentationBuilder)
+                val job = async { removePresenterIfInView() }
+                job.await()
+                if (job.isCompleted) {
+                    this.cancel()
+                    mPresenter?.let { _v ->
+                        mDecorView?.addView(_v)
+                    }
+                }
             }
         }
 

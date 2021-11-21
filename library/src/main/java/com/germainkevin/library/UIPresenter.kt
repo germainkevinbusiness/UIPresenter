@@ -22,6 +22,7 @@ import timber.log.Timber
  * */
 object UIPresenter {
 
+    /*Default Presentation Builder class */
     class Builder : PresentationBuilder<Builder> {
         constructor(resourceFinder: ResourceFinder) : super(resourceFinder = resourceFinder)
 
