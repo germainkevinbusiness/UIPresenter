@@ -176,11 +176,18 @@ class SquircleShape : PresenterShape {
                     val rightSpaceAvailable = mDecorView.width - desiredShapeWidthLeftToRight
                     val bottomSpaceAvailable = mDecorView.height - desiredShapeHeightTopToBottom
 
+                    Timber.d("rightSpaceAvailable: $rightSpaceAvailable")
+                    Timber.d("bottomSpaceAvailable: $bottomSpaceAvailable")
+
                     if (rightSpaceAvailable >= rightMaxMarginDistance) {
                         finalLeftValue = mViewToPresentBounds.left
                         finalRightValue = desiredShapeWidthLeftToRight
                     } else {
-                        finalLeftValue = mViewToPresentBounds.left - (description.length * 3)
+                        val preferredLeftPosition =
+                            mViewToPresentBounds.left - (description.length * 3)
+                        finalLeftValue =
+                            if (preferredLeftPosition <= mDecorView.width) mViewToPresentBounds.left
+                            else preferredLeftPosition
                         finalRightValue = mViewToPresentBounds.right
                     }
                     if (bottomSpaceAvailable >= bottomMaxMarginDistance) {

@@ -65,24 +65,28 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
             it.mPresenterTouchEventListener = object : Presenter.TouchEventListener {
                 override fun onViewToPresentPressed() {
                     if (mAutoRemoveApproval) {
+                        it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
                         removePresenterIfInView()
                     }
                 }
 
                 override fun onFocalPressed() {
                     if (mAutoRemoveApproval) {
+                        it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
                         removePresenterIfInView()
                     }
                 }
 
                 override fun onNonFocalPressed() {
                     if (mAutoRemoveApproval) {
+                        it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
                         removePresenterIfInView()
                     }
                 }
 
                 override fun onBackButtonPressed() {
                     if (mAutoRemoveApproval && mBackButtonDismissEnabled) {
+                        it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
                         removePresenterIfInView()
                     }
                 }
@@ -131,9 +135,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
         mPresenter?.let {
             if (!it.isRemoving() || !it.isRemoved()) {
                 it.clearFocus() // removes the focus on the Presenter
-                it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
-                mDecorView?.removeView(it)
                 it.notifyBuilderOfStateChange(Presenter.STATE_REMOVED)
+                mDecorView?.removeView(it)
             }
         }
         return this as T
