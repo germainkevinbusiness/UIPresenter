@@ -205,23 +205,23 @@ class SquircleShape : PresenterShape {
                         finalRightValue,
                         finalBottomValue
                     )
-
+                    val mStaticLayoutWidth = mSquircleShapeRectF.width().toInt() - 16
                     mStaticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         StaticLayout.Builder.obtain(
                             description,
                             0,
                             description.length,
                             mDescriptionTextPaint,
-                            mSquircleShapeRectF.width().toInt() - 16
+                            mStaticLayoutWidth
                         )
                             .build()
                     } else {
                         StaticLayout(
                             descriptionText,
-                            finalTopValue.toInt() + 16,
+                            0,
                             description.length,
                             mDescriptionTextPaint,
-                            mSquircleShapeRectF.width().toInt() - 16,
+                            mStaticLayoutWidth,
                             Layout.Alignment.ALIGN_CENTER,
                             1f,
                             1f,
