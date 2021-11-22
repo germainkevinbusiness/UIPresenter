@@ -165,6 +165,7 @@ class SquircleShape : PresenterShape {
                     val desiredShapeWidthLeftToRight =
                         mViewToPresentBounds.right + (description.length * 3)
                     val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
+
                     val finalLeftValue: Float
                     val finalRightValue: Float
                     val finalTopValue: Float
@@ -219,9 +220,9 @@ class SquircleShape : PresenterShape {
                         StaticLayout(
                             descriptionText,
                             0,
-                            description.length,
-                            mDescriptionTextPaint,
                             mStaticLayoutWidth,
+                            mDescriptionTextPaint,
+                            description.length,
                             Layout.Alignment.ALIGN_CENTER,
                             1f,
                             1f,
