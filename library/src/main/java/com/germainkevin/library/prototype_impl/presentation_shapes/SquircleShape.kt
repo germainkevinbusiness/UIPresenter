@@ -127,7 +127,8 @@ class SquircleShape : PresenterShape {
     /**
      * Gets the exact coordinate on the screen, of the view to present
      * */
-    private fun calculateVTPBounds(rect: Rect, viewToPresent: View): Pair<PointF, PointF> {
+    private fun calculateVTPBounds(viewToPresent: View): Pair<PointF, PointF> {
+        val rect = Rect()
         viewToPresent.getGlobalVisibleRect(rect)
         val viewToPresentLeftTopPosition = PointF(rect.left.toFloat(), rect.top.toFloat())
         val viewToPresentRightBottomPosition = PointF(rect.right.toFloat(), rect.bottom.toFloat())
@@ -138,70 +139,71 @@ class SquircleShape : PresenterShape {
         return TypedValue.applyDimension(mDefaultTextUnit, mDefaultTextSize, mDisplayMetrics)
     }
 
-    private fun getTextHeight(rect: Rect, text: String, paint: Paint): Float {
+    private fun getTextHeight(text: String, paint: Paint): Float {
+        val rect = Rect()
         paint.getTextBounds(text, 0, text.length, rect)
         return rect.height().toFloat()
     }
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         CoroutineScope(Dispatchers.Main).launch {
-            val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
-            val viewToPresent: View = builder.mViewToPresent!!
-            val mDisplayMetrics = mDecorView.resources.displayMetrics
-            mDescriptionTextPaint.textSize = calculatedTextSize(mDisplayMetrics)
-            buildSelfJob = async {
-                val rect = Rect()
-                val viewToPresentBounds = calculateVTPBounds(rect, viewToPresent)
+            // Set up the description text coordinates
+            descriptionText?.let { description ->
+                val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
+                val viewToPresent: View = builder.mViewToPresent!!
+                val mDisplayMetrics = mDecorView.resources.displayMetrics
+                buildSelfJob = async {
+                    mDescriptionTextPaint.textSize = calculatedTextSize(mDisplayMetrics)
+                    val viewToPresentBounds = calculateVTPBounds(viewToPresent)
+                    // We now have the exact coordinates of the view to present
+                    mViewToPresentBounds.set(
+                        viewToPresentBounds.first.x, // left
+                        viewToPresentBounds.first.y, // top
+                        viewToPresentBounds.second.x, // right
+                        viewToPresentBounds.second.y // bottom
+                    )
+                    val desiredShapeWidthLeftToRight =
+                        mViewToPresentBounds.right + (description.length * 3)
+                    val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
+                    val finalLeftValue: Float
+                    val finalRightValue: Float
+                    val finalTopValue: Float
+                    val finalBottomValue: Float
 
-                mViewToPresentBounds.set(
-                    viewToPresentBounds.first.x, // left
-                    viewToPresentBounds.first.y, // top
-                    viewToPresentBounds.second.x, // right
-                    viewToPresentBounds.second.y // bottom
-                )
+                    val rightMaxMarginDistance = 44f
+                    // 56, the usual height of bottom bars *2 + rightMaxMarginDistance - 10
+                    val bottomMaxMarginDistance = 154f
+                    val rightSpaceAvailable = mDecorView.width - desiredShapeWidthLeftToRight
+                    val bottomSpaceAvailable = mDecorView.height - desiredShapeHeightTopToBottom
 
-                val desiredShapeWidthLeftToRight = mViewToPresentBounds.right + 110
-                val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
-                val finalLeftValue: Float
-                val finalRightValue: Float
-                val finalTopValue: Float
-                val finalBottomValue: Float
+                    if (rightSpaceAvailable >= rightMaxMarginDistance) {
+                        finalLeftValue = mViewToPresentBounds.left
+                        finalRightValue = desiredShapeWidthLeftToRight
+                    } else {
+                        finalLeftValue = mViewToPresentBounds.left - (description.length * 3)
+                        finalRightValue = mViewToPresentBounds.right
+                    }
+                    if (bottomSpaceAvailable >= bottomMaxMarginDistance) {
+                        finalTopValue = desiredShapeHeightTopToBottom
+                        finalBottomValue = mViewToPresentBounds.bottom
+                    } else {
+                        finalTopValue = mViewToPresentBounds.top
+                        finalBottomValue = mViewToPresentBounds.top - 250
+                    }
 
-                val rightMaxMarginDistance = 44f
-                // 56, the usual height of bottom bars *2 + rightMaxMarginDistance - 10
-                val bottomMaxMarginDistance = 154f
-                val rightSpaceAvailable = mDecorView.width - desiredShapeWidthLeftToRight
-                val bottomSpaceAvailable = mDecorView.height - desiredShapeHeightTopToBottom
+                    // Set up the rounded rectangle coordinates
+                    mSquircleShapeRectF.set(
+                        finalLeftValue,
+                        finalTopValue,
+                        finalRightValue,
+                        finalBottomValue
+                    )
 
-                if (rightSpaceAvailable >= rightMaxMarginDistance) {
-                    finalLeftValue = mViewToPresentBounds.left
-                    finalRightValue = desiredShapeWidthLeftToRight
-                } else {
-                    finalLeftValue = mViewToPresentBounds.left - 110
-                    finalRightValue = mViewToPresentBounds.right
-                }
-                if (bottomSpaceAvailable >= bottomMaxMarginDistance) {
-                    finalTopValue = desiredShapeHeightTopToBottom
-                    finalBottomValue = mViewToPresentBounds.bottom
-                } else {
-                    finalTopValue = mViewToPresentBounds.top
-                    finalBottomValue = mViewToPresentBounds.top - 250
-                }
-
-                // Set up the rounded rectangle coordinates
-                mSquircleShapeRectF.set(
-                    finalLeftValue,
-                    finalTopValue,
-                    finalRightValue,
-                    finalBottomValue
-                )
-                // Set up the description text coordinates
-                descriptionText?.let {
                     mStaticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         StaticLayout.Builder.obtain(
-                            it,
+                            description,
                             0,
-                            it.length,
+                            description.length,
                             mDescriptionTextPaint,
                             mSquircleShapeRectF.width().toInt() - 16
                         )
@@ -210,7 +212,7 @@ class SquircleShape : PresenterShape {
                         StaticLayout(
                             descriptionText,
                             finalTopValue.toInt() + 16,
-                            it.length,
+                            description.length,
                             mDescriptionTextPaint,
                             mSquircleShapeRectF.width().toInt() - 16,
                             Layout.Alignment.ALIGN_CENTER,
@@ -219,9 +221,6 @@ class SquircleShape : PresenterShape {
                             false
                         )
                     }
-
-                    val rect1 = Rect()
-                    val textHeight = getTextHeight(rect1, it, mDescriptionTextPaint)
                     mDescriptionTextPosition.x = mSquircleShapeRectF.left + 16
 //                    mDescriptionTextPosition.y =
 //                        mSquircleShapeRectF.centerY() - mStaticLayout.lineCount * textHeight / 2
