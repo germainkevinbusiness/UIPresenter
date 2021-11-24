@@ -138,9 +138,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
             mViewToPresent?.let {
                 val job = async {
                     mPresenterShape.buildSelfWith(this@PresentationBuilder)
-                    val job1 = async { removePresenterIfPresent() }
-                    job1.await()
-                    job1.join()
+                    removePresenterIfPresent()
                 }
                 job.await()
                 job.join()
@@ -174,7 +172,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * This method is only called from the [mPresenter] to notify this builder
      * of its state change
      */
-    internal fun onPresenterStateChanged(@Presenter.PresenterState state: Int) {
+    private fun onPresenterStateChanged(@Presenter.PresenterState state: Int) {
         mState = state
         mPresenterStateChangeListener(state)
     }
