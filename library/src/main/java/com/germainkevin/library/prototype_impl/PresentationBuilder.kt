@@ -110,20 +110,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Is the [Presenter]'s current state: [STATE_REMOVING].
-     *
-     * @return True if removing.
-     */
-    private fun isRemoving(): Boolean = mState == Presenter.STATE_REMOVING
-
-    /**
-     * Is the [Presenter]'s current state: [Presenter.STATE_REMOVED].
-     *
-     * @return True if removed.
-     */
-    private fun isRemoved(): Boolean = mState == Presenter.STATE_REMOVED
-
-    /**
      * This method is made to only be called after you've finished
      * propagating data to a [PresentationBuilder]
      * It displays a [Presenter] inside a [DecorView][ViewGroup]
@@ -153,6 +139,20 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
 
         return this as T
     }
+
+    /**
+     * Is the [Presenter]'s current state: [Presenter.STATE_REMOVING].
+     *
+     * @return True if removing.
+     */
+    private fun isRemoving(): Boolean = mState == Presenter.STATE_REMOVING
+
+    /**
+     * Is the [Presenter]'s current state: [Presenter.STATE_REMOVED].
+     *
+     * @return True if removed.
+     */
+    private fun isRemoved(): Boolean = mState == Presenter.STATE_REMOVED
 
     /**
      * Removes the [mPresenter] if present, from the [mDecorView]
