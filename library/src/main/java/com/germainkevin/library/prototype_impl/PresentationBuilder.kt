@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
 import com.germainkevin.library.Presenter
+import com.germainkevin.library.R
 import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
@@ -68,9 +69,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
         mPresenter = resourceFinder.getContext()?.let { Presenter(it) }?.also {
             it.mPresentationBuilder = this
             it.mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
-                override fun onPresenterStateChange(eventType: Int) {
-                    onPresenterStateChanged(eventType)
-                    when (eventType) {
+                override fun onPresenterStateChange(state: Int) {
+                    onPresenterStateChanged(state)
+                    when (state) {
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
                             if (mAutoRemoveApproval && mBackButtonDismissEnabled) {
                                 onPresenterStateChanged(Presenter.STATE_REMOVING)
@@ -153,9 +154,10 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
      * @return the current [PresentationBuilder]
      * */
     open fun removePresenterIfInView(): T {
-        mPresenter?.let {
-            if (!isRemoving() || !isRemoved()) {
-                it.clearFocus() // removes the focus on the Presenter
+        // Never reference mPresenter directly, always reference the mPresenter this way
+        val mViewToRemove = mDecorView?.findViewById<View>(R.id.android_ui_presenter)
+        mViewToRemove?.let {
+            if (isRemoving() && !isRemoved()) {
                 onPresenterStateChanged(Presenter.STATE_REMOVED)
                 mDecorView?.removeView(it)
             }

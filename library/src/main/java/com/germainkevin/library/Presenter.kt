@@ -34,11 +34,16 @@ open class Presenter constructor(context: Context) : View(context) {
     internal lateinit var mPresentationBuilder: PresentationBuilder<*>
 
     /**
+     * Exposed to the [PresentationBuilder] that will create this [Presenter]
+     * so that it can notify this builder of state changes in this [Presenter]
+     * */
+    internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
+
+    /**
      * The presenter shape coming from the [mPresentationBuilder]
      * */
     private val presenterShape: PresenterShape by lazy { mPresentationBuilder.getPresenterShape() }
 
-    internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
 
     /**
      * A set of states that this class's [Presenter] can be in
@@ -112,8 +117,7 @@ open class Presenter constructor(context: Context) : View(context) {
      * [presenter][Presenter] state has changed.
      */
     interface StateChangeNotifier {
-
-        fun onPresenterStateChange(@PresenterState eventType: Int)
+        fun onPresenterStateChange(@PresenterState state: Int)
     }
 
     init {
