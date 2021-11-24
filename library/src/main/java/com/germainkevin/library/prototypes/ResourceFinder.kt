@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 
 /**
- * Gives View-specific access for activities or fragments
+ * Gives access to activities or fragments resources
  */
 interface ResourceFinder {
 

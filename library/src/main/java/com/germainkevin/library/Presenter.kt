@@ -38,11 +38,7 @@ open class Presenter constructor(context: Context) : View(context) {
      * */
     private val presenterShape: PresenterShape by lazy { mPresentationBuilder.getPresenterShape() }
 
-    /**
-     * Interface to listen to this [View.onTouchEvent]
-     * Will be set by the [PresentationBuilder] that will create this [Presenter]
-     * */
-    internal lateinit var mPresenterTouchEventListener: TouchEventListener
+    internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
 
     /**
      * A set of states that this class's [Presenter] can be in
@@ -112,64 +108,12 @@ open class Presenter constructor(context: Context) : View(context) {
     }
 
     /**
-     * Exposes the state of this [Presenter] for the functions [isRemoving] and [isRemoved]
-     */
-    @Presenter.PresenterState
-    private var mState = STATE_NOT_SHOWN
-
-    /**
-     * Is the [Presenter]'s current state: [STATE_REMOVING].
-     *
-     * @return True if removing.
-     */
-    internal fun isRemoving(): Boolean = mState == STATE_REMOVING
-
-    /**
-     * Is the [Presenter]'s current state: [STATE_REMOVED].
-     *
-     * @return True if removed.
-     */
-    internal fun isRemoved(): Boolean = mState == STATE_REMOVED
-
-    /**
      * Interface definition for a callback to be invoked when a
-     * [presenter][Presenter] is touched, or the back button is clicked.
+     * [presenter][Presenter] state has changed.
      */
-    interface TouchEventListener {
+    interface StateChangeNotifier {
 
-        /**
-         * Called when the [view to present] is pressed
-         * */
-        fun onViewToPresentPressed()
-
-        /**
-         * Called when the [Presenter]'s [PresentationBuilder.getPresenterShape] is pressed
-         */
-        fun onFocalPressed()
-
-        /**
-         * Called when anywhere but the [Presenter]'s
-         * [PresentationBuilder.getPresenterShape] is pressed
-         */
-        fun onNonFocalPressed()
-
-        /**
-         * Called when the system back button is pressed.
-         */
-        fun onBackButtonPressed()
-    }
-
-    /**
-     * This method notifies the [builder][PresentationBuilder] about a state
-     * change, so an implementation of the builder's
-     * [PresentationBuilder.setPresenterStateChangeListener] gets notified of the state changes
-     * via the builder's [PresentationBuilder.onPresenterStateChanged] method
-     * @param state The new state that the builder's [PresentationBuilder.onPresenterStateChanged]
-     * method gets notified of
-     */
-    open fun notifyBuilderOfStateChange(@Presenter.PresenterState state: Int) {
-        mState = state
-        mPresentationBuilder.onPresenterStateChanged(mState)
+        fun onPresenterStateChange(@PresenterState eventType: Int)
     }
 
     init {
@@ -187,8 +131,7 @@ open class Presenter constructor(context: Context) : View(context) {
 
     override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
         if (event!!.keyCode == KeyEvent.KEYCODE_BACK) {
-            mPresenterTouchEventListener.onBackButtonPressed()
-            notifyBuilderOfStateChange(STATE_BACK_BUTTON_PRESSED)
+            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_BACK_BUTTON_PRESSED)
         }
         return super.dispatchKeyEventPreIme(event)
     }
@@ -204,30 +147,31 @@ open class Presenter constructor(context: Context) : View(context) {
         val eventCaptured =
             captureEventViewToPresentPressed || captureEventFocal || !captureEventFocal
         if (captureEventViewToPresentPressed) {
-            notifyBuilderOfStateChange(STATE_VTP_PRESSED)
-            mPresenterTouchEventListener.onViewToPresentPressed()
+            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_VTP_PRESSED)
         }
         if (captureEventFocal) {
-            notifyBuilderOfStateChange(STATE_FOCAL_PRESSED)
-            mPresenterTouchEventListener.onFocalPressed()
+            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_FOCAL_PRESSED)
         }
         if (!captureEventFocal && !captureEventViewToPresentPressed) {
-            notifyBuilderOfStateChange(STATE_NON_FOCAL_PRESSED)
-            mPresenterTouchEventListener.onNonFocalPressed()
+            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_NON_FOCAL_PRESSED)
         }
         return eventCaptured
     }
 
     override fun onDraw(canvas: Canvas?) {
         if (mPresentationBuilder.mIsViewToPresentSet) {
-            notifyBuilderOfStateChange(STATE_REVEALING)
+            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALING)
             presenterShape.bindCanvasToDraw(canvas)
-            circularReveal(view = this, duration = 600L)
-            notifyBuilderOfStateChange(STATE_REVEALED)
+            handleViewAnimation()
         }
     }
 
-    private inner class AccessibilityDelegate : View.AccessibilityDelegate() {
+    private fun handleViewAnimation() {
+        circularReveal(view = this, duration = 600L)
+        mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALED)
+    }
+
+    private class AccessibilityDelegate : View.AccessibilityDelegate() {
         override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
             super.onInitializeAccessibilityNodeInfo(host, info)
             val viewPackage: Package? = Presenter::class.java.getPackage()
@@ -240,8 +184,8 @@ open class Presenter constructor(context: Context) : View(context) {
             info.isChecked = false
             info.isFocusable = true
             info.isFocused = true
-            info.contentDescription = mPresentationBuilder.getPresenterShape().hashCode().toString()
-            info.text = mPresentationBuilder.getPresenterShape().hashCode().toString()
+            info.contentDescription = info.hashCode().toString()
+            info.text = info.hashCode().toString()
         }
 
         override fun onPopulateAccessibilityEvent(host: View, event: AccessibilityEvent) {

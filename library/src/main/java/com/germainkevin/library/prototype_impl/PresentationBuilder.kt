@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
 import com.germainkevin.library.Presenter
-import com.germainkevin.library.R
 import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
@@ -31,6 +30,12 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
      * The [Presenter] that will be created and added by the [mDecorView]
      */
     private var mPresenter: Presenter? = null
+
+    /**
+     * Exposes the state of this [Presenter] for the functions [isRemoving] and [isRemoved]
+     */
+    @Presenter.PresenterState
+    private var mState = Presenter.STATE_NOT_SHOWN
 
     /**
      * Listens for state changes from [mPresenter]
@@ -62,37 +67,53 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
         mDecorView = resourceFinder.getDecorView()
         mPresenter = resourceFinder.getContext()?.let { Presenter(it) }?.also {
             it.mPresentationBuilder = this
-            it.mPresenterTouchEventListener = object : Presenter.TouchEventListener {
-                override fun onViewToPresentPressed() {
-                    if (mAutoRemoveApproval) {
-                        it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
-                        removePresenterIfInView()
-                    }
-                }
-
-                override fun onFocalPressed() {
-                    if (mAutoRemoveApproval) {
-                        it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
-                        removePresenterIfInView()
-                    }
-                }
-
-                override fun onNonFocalPressed() {
-                    if (mAutoRemoveApproval) {
-                        it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
-                        removePresenterIfInView()
-                    }
-                }
-
-                override fun onBackButtonPressed() {
-                    if (mAutoRemoveApproval && mBackButtonDismissEnabled) {
-                        it.notifyBuilderOfStateChange(Presenter.STATE_REMOVING)
-                        removePresenterIfInView()
+            it.mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
+                override fun onPresenterStateChange(eventType: Int) {
+                    onPresenterStateChanged(eventType)
+                    when (eventType) {
+                        Presenter.STATE_BACK_BUTTON_PRESSED -> {
+                            if (mAutoRemoveApproval && mBackButtonDismissEnabled) {
+                                onPresenterStateChanged(Presenter.STATE_REMOVING)
+                                removePresenterIfInView()
+                            }
+                        }
+                        Presenter.STATE_VTP_PRESSED -> {
+                            if (mAutoRemoveApproval) {
+                                onPresenterStateChanged(Presenter.STATE_REMOVING)
+                                removePresenterIfInView()
+                            }
+                        }
+                        Presenter.STATE_FOCAL_PRESSED -> {
+                            if (mAutoRemoveApproval) {
+                                onPresenterStateChanged(Presenter.STATE_REMOVING)
+                                removePresenterIfInView()
+                            }
+                        }
+                        Presenter.STATE_NON_FOCAL_PRESSED -> {
+                            if (mAutoRemoveApproval) {
+                                onPresenterStateChanged(Presenter.STATE_REMOVING)
+                                removePresenterIfInView()
+                            }
+                        }
                     }
                 }
             }
         }
     }
+
+    /**
+     * Is the [Presenter]'s current state: [STATE_REMOVING].
+     *
+     * @return True if removing.
+     */
+    private fun isRemoving(): Boolean = mState == Presenter.STATE_REMOVING
+
+    /**
+     * Is the [Presenter]'s current state: [Presenter.STATE_REMOVED].
+     *
+     * @return True if removed.
+     */
+    private fun isRemoved(): Boolean = mState == Presenter.STATE_REMOVED
 
     /**
      * This method is made to only be called after you've finished
@@ -133,9 +154,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
      * */
     open fun removePresenterIfInView(): T {
         mPresenter?.let {
-            if (!it.isRemoving() || !it.isRemoved()) {
+            if (!isRemoving() || !isRemoved()) {
                 it.clearFocus() // removes the focus on the Presenter
-                it.notifyBuilderOfStateChange(Presenter.STATE_REMOVED)
+                onPresenterStateChanged(Presenter.STATE_REMOVED)
                 mDecorView?.removeView(it)
             }
         }
@@ -156,6 +177,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
      * of its state change
      */
     internal fun onPresenterStateChanged(@Presenter.PresenterState state: Int) {
+        mState = state
         mPresenterStateChangeListener(state)
     }
 
