@@ -15,15 +15,15 @@ import kotlinx.coroutines.*
 
 /**
  * Contains all the methods for presenting a UI element.
- * <p>
- * Provides data for [UIPresenter] and any [PresenterShape]s
- *</p>
+ * Provides data for [mPresenter] and any [presenter shapes][PresenterShape]
+ * Those data are marked as internal variables
  * @param T the subclass that extends this class
  */
-abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val resourceFinder: ResourceFinder) {
+abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinder: ResourceFinder) {
 
     /**
-     * [DecorView][View] of [PresentationBuilder.mViewToPresent]
+     * [DecorView][ViewGroup] of [mViewToPresent]
+     * It is responsible for adding [mPresenter] to your UI
      */
     private var mDecorView: ViewGroup? = null
 
@@ -33,19 +33,34 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
     private var mPresenter: Presenter? = null
 
     /**
-     * Exposes the state of this [Presenter] for the functions [isRemoving] and [isRemoved]
+     * Exposes the current state of this [mPresenter] to the function [isRemoving] and [isRemoved]
      */
     @Presenter.PresenterState
     private var mState = Presenter.STATE_NOT_SHOWN
 
     /**
-     * Listens for state changes from [mPresenter]
+     * Exposes state changes from the [mPresenter] to the user of this library
      */
     private var mPresenterStateChangeListener: (Int) -> Unit = {}
 
     /**
-     * The view to place the [presenter][Presenter] around.
-     * Will be access from a [PresenterShape] for example [SquircleShape]
+     * Should the back button press dismiss the [Presenter].
+     */
+    private var mBackButtonDismissEnabled = true
+
+    /**
+     * Should the [mPresenter] be removed when clicked on the screen while it's displayed
+     * */
+    private var mAutoRemoveApproval = true
+
+    /**
+     * The [PresenterShape] by default or set by the user for this [mPresenter]
+     * */
+    private var mPresenterShape: PresenterShape = SquircleShape()
+
+    /**
+     * The view that the [presenter][Presenter] will present.
+     * Will be accessed from a [PresenterShape] for example [SquircleShape]
      */
     internal var mViewToPresent: View? = null
 
@@ -55,19 +70,11 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
      */
     internal var mIsViewToPresentSet = false
 
-    /**
-     * Should the back button press dismiss the prompt.
-     */
-    private var mBackButtonDismissEnabled = true
-
-    private var mAutoRemoveApproval = true // Remove Presenter onClick on its focal area
-
-    private var mPresenterShape: PresenterShape = SquircleShape()
-
     init {
         mDecorView = resourceFinder.getDecorView()
         mPresenter = resourceFinder.getContext()?.let { Presenter(it) }?.also {
             it.mPresentationBuilder = this
+            it.presenterShape = mPresenterShape
             it.mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
                 override fun onPresenterStateChange(state: Int) {
                     onPresenterStateChanged(state)
@@ -75,25 +82,25 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
                             if (mAutoRemoveApproval && mBackButtonDismissEnabled) {
                                 onPresenterStateChanged(Presenter.STATE_REMOVING)
-                                removePresenterIfInView()
+                                removePresenterIfPresent()
                             }
                         }
                         Presenter.STATE_VTP_PRESSED -> {
                             if (mAutoRemoveApproval) {
                                 onPresenterStateChanged(Presenter.STATE_REMOVING)
-                                removePresenterIfInView()
+                                removePresenterIfPresent()
                             }
                         }
                         Presenter.STATE_FOCAL_PRESSED -> {
                             if (mAutoRemoveApproval) {
                                 onPresenterStateChanged(Presenter.STATE_REMOVING)
-                                removePresenterIfInView()
+                                removePresenterIfPresent()
                             }
                         }
                         Presenter.STATE_NON_FOCAL_PRESSED -> {
                             if (mAutoRemoveApproval) {
                                 onPresenterStateChanged(Presenter.STATE_REMOVING)
-                                removePresenterIfInView()
+                                removePresenterIfPresent()
                             }
                         }
                     }
@@ -131,7 +138,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
             mViewToPresent?.let {
                 val job = async {
                     mPresenterShape.buildSelfWith(this@PresentationBuilder)
-                    val job1 = async { removePresenterIfInView() }
+                    val job1 = async { removePresenterIfPresent() }
                     job1.await()
                     job1.join()
                 }
@@ -150,10 +157,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
     }
 
     /**
-     * Removes the [mPresenter] from the [mDecorView]
-     * @return the current [PresentationBuilder]
+     * Removes the [mPresenter] if present, from the [mDecorView]
      * */
-    open fun removePresenterIfInView(): T {
+    private fun removePresenterIfPresent() {
         // Never reference mPresenter directly, always reference the mPresenter this way
         val mViewToRemove = mDecorView?.findViewById<View>(R.id.android_ui_presenter)
         mViewToRemove?.let {
@@ -162,16 +168,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
                 mDecorView?.removeView(it)
             }
         }
-        return this as T
-    }
-
-    /**
-     * Sets a listener that listens to the [presenter][Presenter] state changes.
-     * @param listener The listener to use
-     */
-    open fun setPresenterStateChangeListener(listener: (Int) -> Unit): T {
-        mPresenterStateChangeListener = listener
-        return this as T
     }
 
     /**
@@ -181,6 +177,15 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
     internal fun onPresenterStateChanged(@Presenter.PresenterState state: Int) {
         mState = state
         mPresenterStateChangeListener(state)
+    }
+
+    /**
+     * Sets a listener that listens to the [presenter][Presenter] state changes.
+     * @param listener The listener to use
+     */
+    open fun setPresenterStateChangeListener(listener: (Int) -> Unit): T {
+        mPresenterStateChangeListener = listener
+        return this as T
     }
 
     /**
@@ -204,11 +209,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
     }
 
     /**
-     * Returns the Default [PresenterShape]
-     * */
-    internal fun getPresenterShape(): PresenterShape = mPresenterShape
-
-    /**
      * Sets the shape of the [Presenter] to be added to the UI
      */
     open fun setPresenterShape(mPresenterShape: PresenterShape): T {
@@ -216,7 +216,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>> constructor(val r
         return this as T
     }
 
-    open fun setPresenterBackgroundColor(bgColor: Int): T {
+    open fun setBackgroundColor(bgColor: Int): T {
         mPresenterShape.setBackgroundColor(bgColor)
         return this as T
     }

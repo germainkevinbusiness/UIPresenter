@@ -24,11 +24,13 @@ import com.germainkevin.library.prototypes.PresenterShape
  * A [View] that will be added to a UI by a DecorView to present a UI element
  * The public variables here are to be set by a the [UIPresenter] that will create
  * this [Presenter]
+ *
+ * [Presenters][Presenter] are created at the creation of the constructor of a [PresentationBuilder]
  * */
 open class Presenter constructor(context: Context) : View(context) {
 
     /**
-     * Mainly to access information to draw on the [Canvas]
+     * Here to know if the [PresentationBuilder.mIsViewToPresentSet]
      * Will be set by the [PresentationBuilder] that will create this [Presenter]
      * */
     internal lateinit var mPresentationBuilder: PresentationBuilder<*>
@@ -40,13 +42,22 @@ open class Presenter constructor(context: Context) : View(context) {
     internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
 
     /**
-     * The presenter shape coming from the [mPresentationBuilder]
+     * The default presenter shape in the [mPresentationBuilder]
+     * Will be set by the [PresentationBuilder] that will create this [Presenter]
      * */
-    private val presenterShape: PresenterShape by lazy { mPresentationBuilder.getPresenterShape() }
+    internal lateinit var presenterShape: PresenterShape
+
+    /**
+     * Interface definition for a callback to be invoked when a
+     * [presenter][Presenter] state has changed.
+     */
+    interface StateChangeNotifier {
+        fun onPresenterStateChange(@PresenterState state: Int)
+    }
 
 
     /**
-     * A set of states that this class's [Presenter] can be in
+     * A set of states that this [Presenter] can be in
      */
     @IntDef(
         STATE_NOT_SHOWN,
@@ -96,12 +107,12 @@ open class Presenter constructor(context: Context) : View(context) {
         const val STATE_VTP_PRESSED = 5
 
         /**
-         * The [Presenter]'s [PresentationBuilder.getPresenterShape] has been pressed
+         * The [Presenter]'s [PresentationBuilder.mPresenterShape] has been pressed
          */
         const val STATE_FOCAL_PRESSED = 6
 
         /**
-         * The [Presenter] has been pressed outside the [PresentationBuilder.getPresenterShape]
+         * The [Presenter] has been pressed outside the [PresentationBuilder.mPresenterShape]
          * and not on the view to present
          */
         const val STATE_NON_FOCAL_PRESSED = 7
@@ -110,14 +121,6 @@ open class Presenter constructor(context: Context) : View(context) {
          * The [Presenter] has been dismissed by the system back button being pressed.
          */
         const val STATE_BACK_BUTTON_PRESSED = 8
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when a
-     * [presenter][Presenter] state has changed.
-     */
-    interface StateChangeNotifier {
-        fun onPresenterStateChange(@PresenterState state: Int)
     }
 
     init {

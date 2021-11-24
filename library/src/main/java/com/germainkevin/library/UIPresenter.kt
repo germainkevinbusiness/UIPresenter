@@ -17,17 +17,14 @@ import com.germainkevin.library.prototypes.ResourceFinder
 import timber.log.Timber
 
 /**
- * [Class] who's purpose is to display a [Presenter] that helps
+ * [Builder class][Class] whose purpose is to display a [Presenter] that helps
  * explain a [View]'s role in the UI.
+ * @author Kevin Germain
  * */
-object UIPresenter {
+class UIPresenter : PresentationBuilder<UIPresenter> {
+    constructor(resourceFinder: ResourceFinder) : super(resourceFinder = resourceFinder)
 
-    /*Default Presentation Builder class */
-    class Builder : PresentationBuilder<Builder> {
-        constructor(resourceFinder: ResourceFinder) : super(resourceFinder = resourceFinder)
+    constructor(activity: Activity) : super(resourceFinder = ActivityResourceFinder(activity))
 
-        constructor(activity: Activity) : super(resourceFinder = ActivityResourceFinder(activity))
-
-        constructor(fragment: Fragment) : super(resourceFinder = FragmentResourceFinder(fragment))
-    }
+    constructor(fragment: Fragment) : super(resourceFinder = FragmentResourceFinder(fragment))
 }
