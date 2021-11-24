@@ -74,7 +74,7 @@ open class Presenter constructor(context: Context) : View(context) {
         const val STATE_REVEALED = 2
 
         /**
-         * The [isRemoving] method has been called and
+         * The [PresentationBuilder.isRemoving] method has been called and
          * the [Presenter] is being removed from the UI.
          */
         const val STATE_REMOVING = 3
@@ -118,7 +118,6 @@ open class Presenter constructor(context: Context) : View(context) {
 
     init {
         id = R.id.android_ui_presenter
-        accessibilityDelegate = AccessibilityDelegate()
         isFocusableInTouchMode = true
         requestFocus()
     }
@@ -169,32 +168,5 @@ open class Presenter constructor(context: Context) : View(context) {
     private fun handleViewAnimation() {
         circularReveal(view = this, duration = 600L)
         mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALED)
-    }
-
-    private class AccessibilityDelegate : View.AccessibilityDelegate() {
-        override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
-            super.onInitializeAccessibilityNodeInfo(host, info)
-            val viewPackage: Package? = Presenter::class.java.getPackage()
-            if (viewPackage != null) {
-                info.packageName = viewPackage.name
-            }
-            info.setSource(host)
-            info.isClickable = true
-            info.isEnabled = true
-            info.isChecked = false
-            info.isFocusable = true
-            info.isFocused = true
-            info.contentDescription = info.hashCode().toString()
-            info.text = info.hashCode().toString()
-        }
-
-        override fun onPopulateAccessibilityEvent(host: View, event: AccessibilityEvent) {
-            super.onPopulateAccessibilityEvent(host, event)
-            val contentDescription: CharSequence =
-                "This is a Presenter View, that explains certain UI views"
-            if (!TextUtils.isEmpty(contentDescription)) {
-                event.text.add(contentDescription)
-            }
-        }
     }
 }
