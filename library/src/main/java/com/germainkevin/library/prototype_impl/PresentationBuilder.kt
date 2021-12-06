@@ -21,6 +21,9 @@ import kotlinx.coroutines.*
  */
 abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinder: ResourceFinder) {
 
+    // The default coroutine we use
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+
     /**
      * [DecorView][ViewGroup] of [mViewToPresent]
      * It is responsible for adding [mPresenter] to your UI
@@ -117,14 +120,16 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * @return the current [PresentationBuilder]
      */
     open fun present(): T {
-        CoroutineScope(Dispatchers.Main).launch {
+        coroutineScope.launch {
             // By this time, every configuration necessary would have already
             // been done, we can now pass this builder to the PresenterShape
             // so it builds a Shape to output to the UI.
             mViewToPresent?.let {
                 val job = async {
                     mPresenterShape.buildSelfWith(this@PresentationBuilder)
-                    removePresenterIfPresent()
+                    val job1 = async { removePresenterIfPresent() }
+                    job1.await()
+                    job1.join()
                 }
                 job.await()
                 job.join()
@@ -158,12 +163,21 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * Removes the [mPresenter] if present, from the [mDecorView]
      * */
     private fun removePresenterIfPresent() {
-        // Never reference mPresenter directly, always reference the mPresenter this way
-        val mViewToRemove = mDecorView?.findViewById<View>(R.id.android_ui_presenter)
-        mViewToRemove?.let {
-            if (isRemoving() && !isRemoved()) {
-                onPresenterStateChanged(Presenter.STATE_REMOVED)
-                mDecorView?.removeView(it)
+        coroutineScope.launch {
+            var mViewToRemove: View? = null
+            val job = async {
+                // Never reference mPresenter directly, always reference the mPresenter this way
+                mViewToRemove = mDecorView?.findViewById(R.id.android_ui_presenter)
+            }
+            job.await()
+            job.join()
+            if (job.isCompleted) {
+                mViewToRemove?.let {
+                    if (isRemoving() && !isRemoved()) {
+                        onPresenterStateChanged(Presenter.STATE_REMOVED)
+                        mDecorView?.removeView(it)
+                    }
+                }
             }
         }
     }

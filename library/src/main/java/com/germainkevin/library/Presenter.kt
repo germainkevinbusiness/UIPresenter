@@ -2,21 +2,11 @@ package com.germainkevin.library
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.text.TextUtils
-import android.view.GestureDetector
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
-import android.view.accessibility.AccessibilityEvent
-import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.IntDef
-import com.germainkevin.library.R
-import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.PresentationBuilder
-import timber.log.Timber
-import androidx.core.view.GestureDetectorCompat
 import com.germainkevin.library.prototypes.PresenterShape
 
 
@@ -27,19 +17,13 @@ import com.germainkevin.library.prototypes.PresenterShape
  *
  * [Presenters][Presenter] are created at the creation of the constructor of a [PresentationBuilder]
  * */
-open class Presenter constructor(context: Context) : View(context) {
+open class Presenter(context: Context) : View(context) {
 
     /**
      * Here to know if the [PresentationBuilder.mIsViewToPresentSet]
      * Will be set by the [PresentationBuilder] that will create this [Presenter]
      * */
     internal lateinit var mPresentationBuilder: PresentationBuilder<*>
-
-    /**
-     * Exposed to the [PresentationBuilder] that will create this [Presenter]
-     * so that it can notify this builder of state changes in this [Presenter]
-     * */
-    internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
 
     /**
      * The default presenter shape in the [mPresentationBuilder]
@@ -54,6 +38,12 @@ open class Presenter constructor(context: Context) : View(context) {
     interface StateChangeNotifier {
         fun onPresenterStateChange(@PresenterState state: Int)
     }
+
+    /**
+     * Exposed to the [PresentationBuilder] that will create this [Presenter]
+     * so that it can notify this builder of state changes in this [Presenter]
+     * */
+    internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
 
 
     /**
@@ -125,8 +115,6 @@ open class Presenter constructor(context: Context) : View(context) {
 
     init {
         id = R.id.android_ui_presenter
-        isFocusableInTouchMode = true
-        requestFocus()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -173,7 +161,7 @@ open class Presenter constructor(context: Context) : View(context) {
     }
 
     private fun handleViewAnimation() {
-        circularReveal(view = this, duration = 600L)
+        circularReveal(duration = 600L)
         mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALED)
     }
 }

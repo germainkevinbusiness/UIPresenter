@@ -11,13 +11,13 @@ import kotlin.math.hypot
 /**
  * Creates a [ViewAnimationUtils.createCircularReveal] animation on a [View]
  * */
-fun circularReveal(view: View, duration: Long?) {
-    val cx: Int = view.width / 2
-    val cy: Int = view.height / 2
+fun Presenter.circularReveal(duration: Long?) {
+    val cx: Int = this.width / 2
+    val cy: Int = this.height / 2
     val finalRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
-    val anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0f, finalRadius)
+    val anim = ViewAnimationUtils.createCircularReveal(this, cx, cy, 0f, finalRadius)
     duration?.let { anim.duration = it }
-    view.isVisible = true
+    this.isVisible = true
     anim.start()
 }
 
