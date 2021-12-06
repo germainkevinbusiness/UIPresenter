@@ -68,7 +68,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     internal var mViewToPresent: View? = null
 
     /**
-     * Has the [View] to present been set successfully.
+     * Has the [View] to present been set successfully?
      * true, if the [PresentationBuilder.mViewToPresent] is not null or false otherwise
      */
     internal var mIsViewToPresentSet = false
