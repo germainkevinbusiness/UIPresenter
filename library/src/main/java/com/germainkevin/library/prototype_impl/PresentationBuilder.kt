@@ -17,7 +17,9 @@ import kotlinx.coroutines.*
  * Contains all the methods for presenting a UI element.
  * Provides data for [mPresenter] and any [presenter shapes][PresenterShape]
  * Those data are marked as internal variables
- * @param T the subclass that extends this class
+ * @param resourceFinder is an interface that gives access to an Activity or
+ * a fragment's environment
+ * @param T whatever class that implements this class
  */
 abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinder: ResourceFinder) {
 

@@ -9,27 +9,16 @@ import com.germainkevin.library.prototypes.ResourceFinder
 
 /**
  * Gives access to an [Activity]'s environment
+ * @param activity can be null, use case: when being extended by the [DialogResourceFinder]
+ * the dialog's ownerActivity might return null, thus we need to prepare for that
  * */
-class ActivityResourceFinder constructor(activity: Activity) : ResourceFinder {
-    private var mActivity: Activity? = null
+open class ActivityResourceFinder(private val activity: Activity?) : ResourceFinder {
 
-    init {
-        mActivity = activity
-    }
+    override fun getDecorView(): ViewGroup? = activity?.window?.decorView as ViewGroup?
 
-    override fun getDecorView(): ViewGroup? {
-        mActivity?.let { return it.window.decorView as ViewGroup? } ?: return null
-    }
+    override fun findViewById(id: Int): View? = activity?.findViewById(id)
 
-    override fun findViewById(id: Int): View? {
-        return mActivity?.let { return it.findViewById(id) } ?: return null
-    }
+    override fun getContext(): Context? = activity
 
-    override fun getContext(): Context? {
-        mActivity?.let { return it } ?: return null
-    }
-
-    override fun getResources(): Resources? {
-        mActivity?.let { return it.resources } ?: return null
-    }
+    override fun getResources(): Resources? = activity?.resources
 }

@@ -10,26 +10,13 @@ import com.germainkevin.library.prototypes.ResourceFinder
 /**
  * Gives access to an [Fragment]'s environment
  * */
-class FragmentResourceFinder constructor(fragment: Fragment) : ResourceFinder {
-    private var mFragment: Fragment? = null
+class FragmentResourceFinder(private val fragment: Fragment) : ResourceFinder {
 
-    init {
-        mFragment = fragment
-    }
+    override fun getDecorView(): ViewGroup? = fragment.activity?.window?.decorView as ViewGroup?
 
-    override fun getDecorView(): ViewGroup? {
-        mFragment?.let { return it.activity?.window?.decorView as ViewGroup? } ?: return null
-    }
+    override fun findViewById(id: Int): View? = fragment.activity?.findViewById(id)
 
-    override fun findViewById(id: Int): View? {
-        mFragment?.let { return it.activity?.findViewById(id) } ?: return null
-    }
+    override fun getContext(): Context? = fragment.requireContext()
 
-    override fun getContext(): Context? {
-        mFragment?.let { return it.requireContext() } ?: return null
-    }
-
-    override fun getResources(): Resources? {
-        mFragment?.let { return it.resources } ?: return null
-    }
+    override fun getResources(): Resources = fragment.resources
 }

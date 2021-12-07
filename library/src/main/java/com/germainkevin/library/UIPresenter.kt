@@ -1,6 +1,7 @@
 package com.germainkevin.library
 
 import android.app.Activity
+import android.app.Dialog
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IntDef
@@ -12,6 +13,7 @@ import com.germainkevin.library.Presenter.Companion.STATE_REMOVING
 import com.germainkevin.library.Presenter.Companion.STATE_REVEALING
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototype_impl.resource_finders.ActivityResourceFinder
+import com.germainkevin.library.prototype_impl.resource_finders.DialogResourceFinder
 import com.germainkevin.library.prototype_impl.resource_finders.FragmentResourceFinder
 import com.germainkevin.library.prototypes.ResourceFinder
 import timber.log.Timber
@@ -25,6 +27,8 @@ class UIPresenter : PresentationBuilder<UIPresenter> {
     constructor(resourceFinder: ResourceFinder) : super(resourceFinder = resourceFinder)
 
     constructor(activity: Activity) : super(resourceFinder = ActivityResourceFinder(activity))
+
+    constructor(dialog: Dialog) : super(resourceFinder = DialogResourceFinder(dialog))
 
     constructor(fragment: Fragment) : super(resourceFinder = FragmentResourceFinder(fragment))
 }
