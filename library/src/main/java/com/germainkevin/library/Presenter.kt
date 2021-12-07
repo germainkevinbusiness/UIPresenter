@@ -20,33 +20,6 @@ import com.germainkevin.library.prototypes.PresenterShape
 open class Presenter(context: Context) : View(context) {
 
     /**
-     * Here to know if the [PresentationBuilder.mIsViewToPresentSet]
-     * Will be set by the [PresentationBuilder] that will create this [Presenter]
-     * */
-    internal lateinit var mPresentationBuilder: PresentationBuilder<*>
-
-    /**
-     * The default presenter shape in the [mPresentationBuilder]
-     * Will be set by the [PresentationBuilder] that will create this [Presenter]
-     * */
-    internal lateinit var presenterShape: PresenterShape
-
-    /**
-     * Interface definition for a callback to be invoked when a
-     * [presenter][Presenter] state has changed.
-     */
-    interface StateChangeNotifier {
-        fun onPresenterStateChange(@PresenterState state: Int)
-    }
-
-    /**
-     * Exposed to the [PresentationBuilder] that will create this [Presenter]
-     * so that it can notify this builder of state changes in this [Presenter]
-     * */
-    internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
-
-
-    /**
      * A set of states that this [Presenter] can be in
      */
     @IntDef(
@@ -113,6 +86,38 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_BACK_BUTTON_PRESSED = 8
     }
 
+    /**
+     * Will be assigned to the MotionEvent given to us by the [onTouchEvent] function
+     * so we can detect press events on this Presenter
+     **/
+    private var motionEvent: MotionEvent? = null
+
+    /**
+     * Here to know if the [PresentationBuilder.mIsViewToPresentSet]
+     * Will be set by the [PresentationBuilder] that will create this [Presenter]
+     * */
+    internal lateinit var mPresentationBuilder: PresentationBuilder<*>
+
+    /**
+     * The default presenter shape in the [mPresentationBuilder]
+     * Will be set by the [PresentationBuilder] that will create this [Presenter]
+     * */
+    internal lateinit var presenterShape: PresenterShape
+
+    /**
+     * Interface definition for a callback to be invoked when a
+     * [presenter][Presenter] state has changed.
+     */
+    interface StateChangeNotifier {
+        fun onPresenterStateChange(@PresenterState state: Int)
+    }
+
+    /**
+     * Exposed to the [PresentationBuilder] that will create this [Presenter]
+     * so that it can notify this builder of state changes in this [Presenter]
+     * */
+    internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
+
     init {
         id = R.id.android_ui_presenter
     }
@@ -132,14 +137,24 @@ open class Presenter(context: Context) : View(context) {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         super.onTouchEvent(event)
-        val x = event!!.x
-        val y = event.y
+        motionEvent = event
+        // after a press has occurred on this Presenter
+        if (event?.action == MotionEvent.ACTION_UP) {
+            performClick()
+        }
+        return true
+    }
+
+    /**
+     * For people with disabilities, an android talkback app will execute this logic for them
+     * */
+    override fun performClick(): Boolean {
+        super.performClick()
+        val x = motionEvent!!.x
+        val y = motionEvent!!.y
         val captureEventViewToPresentPressed = presenterShape.viewToPresentContains(x, y)
         val captureEventFocal = presenterShape.shapeContains(x, y)
-        // !captureEventFocal means that a click event is detected outside the presenterShape
-        // and the view to present
-        val eventCaptured =
-            captureEventViewToPresentPressed || captureEventFocal || !captureEventFocal
+
         if (captureEventViewToPresentPressed) {
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_VTP_PRESSED)
         }
@@ -149,7 +164,8 @@ open class Presenter(context: Context) : View(context) {
         if (!captureEventFocal && !captureEventViewToPresentPressed) {
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_NON_FOCAL_PRESSED)
         }
-        return eventCaptured
+
+        return true
     }
 
     override fun onDraw(canvas: Canvas?) {

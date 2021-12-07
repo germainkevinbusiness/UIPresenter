@@ -55,7 +55,7 @@ class SquircleShape : PresenterShape {
      * Position of the [SquircleShape.descriptionText] inside
      * the [SquircleShape.mSquircleShapeRectF]
      */
-    private var mDescriptionTextPosition: PointF
+    private lateinit var mDescriptionTextPosition: PointF
 
     /**
      * Layout to wrap the [SquircleShape.descriptionText]
@@ -78,6 +78,13 @@ class SquircleShape : PresenterShape {
      */
     private var mDefaultTextSize = 18f
 
+    /**
+     * Defines whether to add a shadow layer or not to the [mSquircleShapePaint]
+     * */
+    private var isShadowLayerEnabled = true
+
+    private var shadowLayerColor = Color.DKGRAY
+
     private fun setupPaints() {
         mSquircleShapePaint = Paint()
         mSquircleShapePaint.isAntiAlias = true
@@ -86,22 +93,29 @@ class SquircleShape : PresenterShape {
         mDescriptionTextPaint.isAntiAlias = true
     }
 
-    private fun setShadowLayer() {
-        mSquircleShapePaint.setShadowLayer(10f, 5f, 5f, Color.DKGRAY)
-    }
-
-    private fun setupRectFs() {
+    private fun setupFloats() {
         mViewToPresentBounds = RectF()
         mSquircleShapeRectF = RectF()
+        mDescriptionTextPosition = PointF()
+
     }
 
     init {
         setupPaints()
-        setShadowLayer()
-        setupRectFs()
-        mDescriptionTextPosition = PointF()
+        setupFloats()
     }
 
+    private fun setShadowLayer() {
+        mSquircleShapePaint.setShadowLayer(10f, 5f, 5f, shadowLayerColor)
+    }
+
+    override fun setHasShadowLayer(mBoolean: Boolean) {
+        isShadowLayerEnabled = mBoolean
+    }
+
+    override fun setShadowLayerColor(shadowColor: Int) {
+        shadowLayerColor = shadowColor
+    }
 
     override fun setBackgroundColor(color: Int) {
         mSquircleShapePaint.color = color
@@ -147,6 +161,7 @@ class SquircleShape : PresenterShape {
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         CoroutineScope(Dispatchers.Main).launch {
+            if (isShadowLayerEnabled) setShadowLayer()
             // Set up the description text coordinates
             descriptionText?.let { description ->
                 val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
@@ -259,7 +274,7 @@ class SquircleShape : PresenterShape {
         return if (buildSelfJob.isCompleted) {
             mSquircleShapeRectF.contains(x, y)
         } else {
-            Timber.d("BuildSelf job is incompleted")
+            Timber.d("BuildSelf job is incomplete")
             false
         }
     }

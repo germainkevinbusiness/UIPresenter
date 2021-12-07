@@ -1,6 +1,7 @@
 package com.germainkevin.library.prototypes
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Typeface
 import androidx.annotation.ColorInt
 import com.germainkevin.library.prototype_impl.PresentationBuilder
@@ -14,6 +15,17 @@ interface PresenterShape : ShapeLifecycle {
      * @param color the background color for the [PresenterShape]
      */
     fun setBackgroundColor(@ColorInt color: Int)
+
+    /**
+     * @param mBoolean defines whether the shape should have
+     * a shadow layer drawn in its background or not
+     * */
+    fun setHasShadowLayer(mBoolean: Boolean)
+
+    /**
+     * @param shadowColor The color of the shadow layer
+     * */
+    fun setShadowLayerColor(@ColorInt shadowColor: Int)
 
     /**
      * Sets the text to be shown inside of a [PresenterShape]

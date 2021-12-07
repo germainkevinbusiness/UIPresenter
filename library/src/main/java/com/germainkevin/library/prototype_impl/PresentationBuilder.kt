@@ -3,6 +3,7 @@ package com.germainkevin.library.prototype_impl
 import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import com.germainkevin.library.Presenter
 import com.germainkevin.library.R
@@ -164,21 +165,19 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * Removes the [mPresenter] if present, from the [mDecorView]
      * */
-    private fun removePresenterIfPresent() {
-        coroutineScope.launch {
-            var mViewToRemove: View? = null
-            val job = async {
-                // Never reference mPresenter directly, always reference the mPresenter this way
-                mViewToRemove = mDecorView?.findViewById(R.id.android_ui_presenter)
-            }
-            job.await()
-            job.join()
-            if (job.isCompleted) {
-                mViewToRemove?.let {
-                    if (isRemoving() && !isRemoved()) {
-                        onPresenterStateChanged(Presenter.STATE_REMOVED)
-                        mDecorView?.removeView(it)
-                    }
+    private fun removePresenterIfPresent() = coroutineScope.launch {
+        var mViewToRemove: View? = null
+        val job = async {
+            // Never reference mPresenter directly, always reference the mPresenter this way
+            mViewToRemove = mDecorView?.findViewById(R.id.android_ui_presenter)
+        }
+        job.await()
+        job.join()
+        if (job.isCompleted) {
+            mViewToRemove?.let {
+                if (isRemoving() && !isRemoved()) {
+                    onPresenterStateChanged(Presenter.STATE_REMOVED)
+                    mDecorView?.removeView(it)
                 }
             }
         }
@@ -235,6 +234,23 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         return this as T
     }
 
+    /**
+     * @param mBoolean defines whether the shape should have
+     * a shadow layer drawn in its background or not
+     * */
+    open fun setHasShadowLayer(mBoolean: Boolean): T {
+        mPresenterShape.setHasShadowLayer(mBoolean)
+        return this as T
+    }
+
+    /**
+     * @param shadowColor The color of the shadow layer
+     * */
+    open fun setShadowLayerColor(@ColorInt shadowColor: Int): T {
+        mPresenterShape.setShadowLayerColor(shadowColor)
+        return this as T
+    }
+
     open fun setDescriptionText(descriptionText: String): T {
         mPresenterShape.setDescriptionText(descriptionText)
         return this as T
@@ -256,7 +272,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Sets whether or not a click on a
+     * Sets whether or not, a click on a
      * [Presenter] should result in the removal ot this [Presenter] from the DecorView
      */
     open fun setAutoRemoveApproval(autoRemoveApproval: Boolean): T {
@@ -265,9 +281,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Back button can be used to dismiss the prompt.
-     * Default: true
-     *
+     * Back button can be used to dismiss the prompt. True by default.
      * @param enabled True for back button dismiss enabled
      * @return This Builder object to allow for chaining of calls to set methods
      */
