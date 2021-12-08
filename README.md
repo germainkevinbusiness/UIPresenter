@@ -26,10 +26,10 @@ private val mFirstColor by lazy { ContextCompat.getColor(this, R.color.purple_70
 private val mSecondColor by lazy { ContextCompat.getColor(this, R.color.blue_500) }
 private val mThirdColor by lazy { ContextCompat.getColor(this, R.color.white) }
 
-UIPresenter(fragment = this)
+UIPresenter(this)
             .setViewToPresent(binding.mHelloWorld)
             .setBackgroundColor(mFirstColor)
-            .setDescriptionText("This is a TextView, its role is to display a Hello World text at the top of the screen")
+            .setDescriptionText("This is a TextView, its role is to display text, like the one seen here")
             .setDescriptionTextColor(mThirdColor)
             .setDescriptionTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
             .setDescriptionTypeface(Typeface.DEFAULT)
