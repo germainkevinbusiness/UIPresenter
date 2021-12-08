@@ -3,7 +3,8 @@
 A library to present android UI elements. The library is still under development
 
 ## Here is an example of a Squircle-shaped Presenter
-<img src="/screenshots/device-2021-12-07-224734.png" alt="A Squircle-shaped Presenter View" width="360" />
+<img src="/screenshots/device-2021-12-07-230050.png" alt="A Squircle-shaped Presenter View" width="360" />
+<img src="/screenshots/device-2021-12-07-225956.png" alt="A Squircle-shaped Presenter View" width="360" />
 
 ## Usage (might change in the future)
 This library is only functional when called from a class that is either an Activity, a Dialog or a Fragment.

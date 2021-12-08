@@ -178,7 +178,7 @@ class SquircleShape : PresenterShape {
                         finalRightValue = desiredShapeWidthLeftToRight
                     } else {
                         val preferredLeftPosition =
-                            mViewToPresentBounds.left - (description.length * 3)
+                            mViewToPresentBounds.left - (description.length * 3.5).toInt()
                         finalLeftValue =
                             if (preferredLeftPosition <= mDecorView.width) mViewToPresentBounds.left
                             else preferredLeftPosition
