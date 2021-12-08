@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
-import com.germainkevin.library.Presenter
+import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.R
+import com.germainkevin.library.presenter_view.RevealAnimation
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.prototypes.ResourceFinder
 import com.germainkevin.library.utils.*
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 
 /**
@@ -77,7 +77,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
 
     /** Represents what animation to use to animate [mPresenter]
      */
-    private var mPresenterRevealAnimation: Int = Presenter.ANIM_CIRCULAR_REVEAL
+    private var mPresenterRevealAnimation: RevealAnimation = RevealAnimation.CIRCULAR_REVEAL
 
     /**
      * The duration of the animation when revealing the [mPresenter]
@@ -100,20 +100,23 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                     when (state) {
                         Presenter.STATE_CANVAS_DRAWN -> {
                             when (mPresenterRevealAnimation) {
-                                Presenter.ANIM_CIRCULAR_REVEAL -> {
+                                RevealAnimation.CIRCULAR_REVEAL -> {
                                     mPresenter?.circularReveal(mRevealAnimDuration)
                                     onPresenterStateChange(Presenter.STATE_REVEALED)
                                 }
-                                Presenter.ANIM_FADE_IN -> {
+                                RevealAnimation.FADE_IN -> {
                                     mPresenter?.fadeIn(mRemovingAnimDuration)
                                     onPresenterStateChange(Presenter.STATE_REVEALED)
                                 }
-                                Presenter.ANIM_ROTATION_X -> {
+                                RevealAnimation.ROTATION_X -> {
                                     mPresenter?.rotationXByImpl(mRevealAnimDuration)
                                     onPresenterStateChange(Presenter.STATE_REVEALED)
                                 }
-                                Presenter.ANIM_ROTATION_Y -> {
+                                RevealAnimation.ROTATION_Y -> {
                                     mPresenter?.rotationYByImpl(mRevealAnimDuration)
+                                    onPresenterStateChange(Presenter.STATE_REVEALED)
+                                }
+                                RevealAnimation.NO_REVEAL_ANIMATION -> {
                                     onPresenterStateChange(Presenter.STATE_REVEALED)
                                 }
                             }
@@ -237,10 +240,10 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Sets which one of the [Presenter.PresenterAnimation]to run to reveal the [mPresenter]
+     * Sets which one of the [RevealAnimation]to run to reveal the [mPresenter]
      * */
-    open fun setPresenterAnimation(@Presenter.PresenterAnimation presenterAnimation: Int): T {
-        mPresenterRevealAnimation = presenterAnimation
+    open fun setRevealAnimation(presenterRevealAnimation: RevealAnimation): T {
+        mPresenterRevealAnimation = presenterRevealAnimation
         return this as T
     }
 
@@ -341,8 +344,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Sets whether or not, a click on a
-     * [Presenter] should result in the removal ot this [Presenter] from the DecorView
+     * Defines whether a detected click event should result in the
+     * removal ot this [mPresenter] from the DecorView
      */
     open fun setAutoRemoveApproval(autoRemoveApproval: Boolean): T {
         mAutoRemoveApproval = autoRemoveApproval

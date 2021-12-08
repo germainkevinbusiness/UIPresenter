@@ -5,8 +5,8 @@ A library to present android UI elements. The library is still under development
 ## Here is an example of a Squircle-shaped Presenter
 
 The purple background rectangle with the text is displayed using this library.
-<img src="/screenshots/device-2021-12-07-230050.png" alt="A Squircle-shaped Presenter View" width="360" />
-<img src="/screenshots/device-2021-12-07-225956.png" alt="A Squircle-shaped Presenter View" width="360" />
+<img src="/screenshots/device-2021-12-08-095612.png" alt="A Squircle-shaped Presenter View" width="360" />
+<img src="/screenshots/device-2021-12-08-095720.png" alt="A Squircle-shaped Presenter View" width="360" />
 
 ## Usage (might change in the future)
 
@@ -37,26 +37,29 @@ private val mSecondColor by lazy { ContextCompat.getColor(this, R.color.blue_500
 private val mThirdColor by lazy { ContextCompat.getColor(this, R.color.white) }
 
 UIPresenter(fragment = this)
-    .setViewToPresent(R.id.mHelloWorld)
+    .setViewToPresent(binding.mListItemCountTv)
     .setBackgroundColor(mFirstColor)
-    .setDescriptionText("This is a TextView, its role is to display text, like the one seen here")
+    .setDescriptionText("This text tells you how many animal names are displayed in the below list")
     .setDescriptionTextColor(mThirdColor)
     .setDescriptionTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
     .setDescriptionTypeface(Typeface.DEFAULT)
     .setHasShadowLayer(true)
     .setShadowLayerColor(mSecondColor)
-    .setPresenterAnimation(Presenter.ANIM_CIRCULAR_REVEAL)
-    .setAnimationDuration(1000L)
+    .setRevealAnimation(RevealAnimation.CIRCULAR_REVEAL)
+    .setRevealAnimationDuration(1000L)
+    .setRemovingAnimationDuration(0L)
     .setPresenterStateChangeListener { state ->
-        Timber.d("state: $state")
         if (state == Presenter.STATE_NON_FOCAL_PRESSED) {
             showListViewItem()
         }
     }
     .present()
 ```
+
 ## License
+
 Licenced under the MIT Licence
+
 ```
 Copyright (c) 2021 Kevin Germain
 

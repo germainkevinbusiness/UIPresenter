@@ -1,4 +1,4 @@
-package com.germainkevin.library
+package com.germainkevin.library.presenter_view
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,17 +6,25 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.IntDef
-import com.germainkevin.library.Presenter.Companion.ANIM_CIRCULAR_REVEAL
+import com.germainkevin.library.R
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 
 
 /**
- * A [View] that will be added to a UI by a DecorView to present a UI element
- * The public variables here are to be set by a the [UIPresenter] that will create
- * this [Presenter]
+ * The [Presenter] is a [View] that presents a [View]
+ * in your [Activity][android.app.Activity], [Dialog][android.app.Dialog]
+ * or [Fragment][android.app.Fragment]
+ *
+ * The public variables here are to be set by the
+ * [UIPresenter][com.germainkevin.library.UIPresenter] that will create this [Presenter]
+ * after the call of [PresentationBuilder.present]
  *
  * [Presenters][Presenter] are created at the creation of the constructor of a [PresentationBuilder]
+ * It is made visible by your activity, dialog, or fragment's "decorView"
+ * at the call of [PresentationBuilder.present]
+ *
+ * Made visible means that the "decorView" adds it with [android.view.ViewGroup.addView]
  * */
 open class Presenter(context: Context) : View(context) {
 
@@ -37,10 +45,6 @@ open class Presenter(context: Context) : View(context) {
     )
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     annotation class PresenterState
-
-    @IntDef(ANIM_CIRCULAR_REVEAL, ANIM_FADE_IN, ANIM_ROTATION_X, ANIM_ROTATION_Y)
-    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
-    annotation class PresenterAnimation
 
     companion object {
         /**
@@ -95,26 +99,6 @@ open class Presenter(context: Context) : View(context) {
          * The [Presenter] has been dismissed by the system back button being pressed.
          */
         const val STATE_BACK_BUTTON_PRESSED = 9
-
-        /**
-         * The [Presenter] will be shown in the UI using a circular reveal animation
-         * */
-        const val ANIM_CIRCULAR_REVEAL = 10
-
-        /**
-         * The [Presenter] will be shown in the UI using a customRotationXBy animation
-         * */
-        const val ANIM_ROTATION_X = 11
-
-        /**
-         * The [Presenter] will be shown in the UI using a customRotationYBy animation
-         * */
-        const val ANIM_ROTATION_Y = 12
-
-        /**
-         * The [Presenter] will be shown in the UI using a fade in animation
-         * */
-        const val ANIM_FADE_IN = 13
     }
 
     /**

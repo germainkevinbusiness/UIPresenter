@@ -2,7 +2,7 @@ package com.germainkevin.library.utils
 
 import android.view.ViewAnimationUtils
 import androidx.core.view.isVisible
-import com.germainkevin.library.Presenter
+import com.germainkevin.library.presenter_view.Presenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

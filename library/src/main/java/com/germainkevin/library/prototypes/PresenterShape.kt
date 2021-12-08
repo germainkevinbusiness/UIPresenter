@@ -1,10 +1,8 @@
 package com.germainkevin.library.prototypes
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Typeface
 import androidx.annotation.ColorInt
-import com.germainkevin.library.prototype_impl.PresentationBuilder
 
 /**
  * A [PresenterShape] represents the shape drawn
