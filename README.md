@@ -7,6 +7,7 @@ A library to present android UI elements. The library is still under development
 This library is only functional when called from a class that is either an Activity, a Dialog or a Fragment.
 
 Basic usage is shown below, when you want to present a View with this library.
+
 In this case, when you want to set a background color, text, text color:
 ```kotlin
 private val mFirstColor by lazy { ContextCompat.getColor(this, R.color.purple_700) }
