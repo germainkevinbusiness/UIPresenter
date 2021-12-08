@@ -38,7 +38,7 @@ open class Presenter(context: Context) : View(context) {
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     annotation class PresenterState
 
-    @IntDef(ANIM_CIRCULAR_REVEAL)
+    @IntDef(ANIM_CIRCULAR_REVEAL, ANIM_FADE_IN, ANIM_ROTATION_X, ANIM_ROTATION_Y)
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     annotation class PresenterAnimation
 
@@ -100,6 +100,21 @@ open class Presenter(context: Context) : View(context) {
          * The [Presenter] will be shown in the UI using a circular reveal animation
          * */
         const val ANIM_CIRCULAR_REVEAL = 10
+
+        /**
+         * The [Presenter] will be shown in the UI using a customRotationXBy animation
+         * */
+        const val ANIM_ROTATION_X = 11
+
+        /**
+         * The [Presenter] will be shown in the UI using a customRotationYBy animation
+         * */
+        const val ANIM_ROTATION_Y = 12
+
+        /**
+         * The [Presenter] will be shown in the UI using a fade in animation
+         * */
+        const val ANIM_FADE_IN = 13
     }
 
     /**

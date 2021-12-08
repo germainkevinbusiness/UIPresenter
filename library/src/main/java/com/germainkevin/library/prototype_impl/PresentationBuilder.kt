@@ -4,17 +4,14 @@ import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import androidx.annotation.AnimRes
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import com.germainkevin.library.Presenter
 import com.germainkevin.library.R
-import com.germainkevin.library.circularReveal
-import com.germainkevin.library.mainThread
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.prototypes.ResourceFinder
+import com.germainkevin.library.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -80,12 +77,17 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
 
     /** Represents what animation to use to animate [mPresenter]
      */
-    private var mPresenterAnimation: Int = Presenter.ANIM_CIRCULAR_REVEAL
+    private var mPresenterRevealAnimation: Int = Presenter.ANIM_CIRCULAR_REVEAL
 
     /**
-     * The duration of the animation on the [mPresenter]
+     * The duration of the animation when revealing the [mPresenter]
      * */
-    private var mPresenterAnimDuration = 600L
+    private var mRevealAnimDuration = 600L
+
+    /**
+     * The duration of the animation when removing the [mPresenter]
+     * */
+    private var mRemovingAnimDuration = 600L
 
     init {
         mDecorView = resourceFinder.getDecorView()
@@ -97,9 +99,23 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                     onPresenterStateChanged(state)
                     when (state) {
                         Presenter.STATE_CANVAS_DRAWN -> {
-                            if (mPresenterAnimation == Presenter.ANIM_CIRCULAR_REVEAL) {
-                                mPresenter?.circularReveal(mPresenterAnimDuration)
-                                onPresenterStateChange(Presenter.STATE_REVEALED)
+                            when (mPresenterRevealAnimation) {
+                                Presenter.ANIM_CIRCULAR_REVEAL -> {
+                                    mPresenter?.circularReveal(mRevealAnimDuration)
+                                    onPresenterStateChange(Presenter.STATE_REVEALED)
+                                }
+                                Presenter.ANIM_FADE_IN -> {
+                                    mPresenter?.fadeIn(mRemovingAnimDuration)
+                                    onPresenterStateChange(Presenter.STATE_REVEALED)
+                                }
+                                Presenter.ANIM_ROTATION_X -> {
+                                    mPresenter?.rotationXByImpl(mRevealAnimDuration)
+                                    onPresenterStateChange(Presenter.STATE_REVEALED)
+                                }
+                                Presenter.ANIM_ROTATION_Y -> {
+                                    mPresenter?.rotationYByImpl(mRevealAnimDuration)
+                                    onPresenterStateChange(Presenter.STATE_REVEALED)
+                                }
                             }
                         }
 
@@ -193,8 +209,10 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         if (job.isCompleted) {
             mViewToRemove?.let {
                 if (isRemoving() && !isRemoved()) {
-                    onPresenterStateChanged(Presenter.STATE_REMOVED)
-                    mDecorView?.removeView(it)
+                    fadeOut(mPresenter, mRemovingAnimDuration) {
+                        onPresenterStateChanged(Presenter.STATE_REMOVED)
+                        mDecorView?.removeView(it)
+                    }
                 }
             }
         }
@@ -219,19 +237,28 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Gives the user the possibility to choose one of one of the animations available
-     * to display [mPresenter]
+     * Sets which one of the [Presenter.PresenterAnimation]to run to reveal the [mPresenter]
      * */
     open fun setPresenterAnimation(@Presenter.PresenterAnimation presenterAnimation: Int): T {
-        mPresenterAnimation = presenterAnimation
+        mPresenterRevealAnimation = presenterAnimation
         return this as T
     }
 
     /**
-     * Gives the user the possibility to define how long the [mPresenterAnimation] should run
+     * Defines how long the [mPresenterRevealAnimation] should run.
+     * 600L is the default value
      * */
-    open fun setAnimationDuration(duration: Long): T {
-        mPresenterAnimDuration = duration
+    open fun setRevealAnimationDuration(duration: Long): T {
+        mRevealAnimDuration = duration
+        return this as T
+    }
+
+    /**
+     * Defines how long the removing animation of the [mPresenter] should run.
+     * 600L is the default value
+     * */
+    open fun setRemovingAnimationDuration(duration: Long): T {
+        mRemovingAnimDuration = duration
         return this as T
     }
 

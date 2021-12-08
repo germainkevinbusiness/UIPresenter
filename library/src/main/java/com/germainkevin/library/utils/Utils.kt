@@ -1,4 +1,4 @@
-package com.germainkevin.library
+package com.germainkevin.library.utils
 
 import android.graphics.Paint
 import android.graphics.PointF
@@ -15,21 +15,10 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.hypot
 
-
-// CoroutineScope always launched on a Main Dispatcher
-class MainScope : CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
-}
-
 // Lambda function to launch a coroutine on a Main Dispatcher
-fun mainThread(block: suspend MainScope.() -> Unit) {
-    val mainScope = MainScope()
-    with(mainScope) {
-        launch {
-            block.invoke(this@with)
-        }
-    }
+fun mainThread(block: suspend CoroutineScope.() -> Unit) {
+    val mainScope = CoroutineScope(Dispatchers.Main)
+    mainScope.launch { block.invoke(this) }
 }
 
 fun setShadowLayer(paint: Paint, @ColorInt shadowLayerColor: Int) {
@@ -57,17 +46,4 @@ fun getTextHeight(text: String, paint: Paint): Float {
     val rect = Rect()
     paint.getTextBounds(text, 0, text.length, rect)
     return rect.height().toFloat()
-}
-
-/**
- * Creates a [ViewAnimationUtils.createCircularReveal] animation on a [View]
- * */
-fun Presenter.circularReveal(duration: Long?) {
-    val cx: Int = this.width / 2
-    val cy: Int = this.height / 2
-    val finalRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
-    val anim = ViewAnimationUtils.createCircularReveal(this, cx, cy, 0f, finalRadius)
-    duration?.let { anim.duration = it }
-    this.isVisible = true
-    anim.start()
 }

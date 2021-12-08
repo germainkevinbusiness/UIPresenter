@@ -8,12 +8,12 @@ import android.text.TextPaint
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import com.germainkevin.library.calculateVTPBounds
-import com.germainkevin.library.calculatedTextSize
-import com.germainkevin.library.mainThread
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
-import com.germainkevin.library.setShadowLayer
+import com.germainkevin.library.utils.calculateVTPBounds
+import com.germainkevin.library.utils.calculatedTextSize
+import com.germainkevin.library.utils.mainThread
+import com.germainkevin.library.utils.setShadowLayer
 import kotlinx.coroutines.*
 import timber.log.Timber
 
