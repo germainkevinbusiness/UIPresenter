@@ -1,6 +1,7 @@
 package com.germainkevin.library.prototype_impl
 
 import android.graphics.Typeface
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -299,8 +300,11 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         return this as T
     }
 
-    open fun setDescriptionTextSize(typedValue: Int, textSize: Float): T {
-        mPresenterShape.setDescriptionTextSize(typedValue, textSize)
+    open fun setDescriptionTextSize(
+        typedValueUnit: Int = TypedValue.COMPLEX_UNIT_SP,
+        textSize: Float
+    ): T {
+        mPresenterShape.setDescriptionTextSize(typedValueUnit, textSize)
         return this as T
     }
 
