@@ -4,6 +4,7 @@ A library to present android UI elements. The library is still under development
 
 
 ## Usage (might change in the future)
+This library is only functional when called from either an Activity, a Dialog or a Fragment.
 Basic usage is shown below, when you want to present a View with this library.
 In this case, when you want to set a background color, text, text color:
 ```kotlin
