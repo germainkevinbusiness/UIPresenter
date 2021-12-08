@@ -21,7 +21,7 @@ In this case, when you want to set a background color, text, text color:
 private val mFirstColor by lazy { ContextCompat.getColor(this, R.color.purple_700) }
 
 UIPresenter(activity = this)
-    .setViewToPresent(binding.mHelloWorld)
+    .setViewToPresent(R.id.mHelloWorld)
     .setBackgroundColor(mFirstColor)
     .setDescriptionText("This is a TextView, its role is to display a Hello World text at the top of the screen")
     .setDescriptionTextColor(mThirdColor)
@@ -37,7 +37,7 @@ private val mSecondColor by lazy { ContextCompat.getColor(this, R.color.blue_500
 private val mThirdColor by lazy { ContextCompat.getColor(this, R.color.white) }
 
 UIPresenter(fragment = this)
-    .setViewToPresent(binding.mHelloWorld)
+    .setViewToPresent(R.id.mHelloWorld)
     .setBackgroundColor(mFirstColor)
     .setDescriptionText("This is a TextView, its role is to display text, like the one seen here")
     .setDescriptionTextColor(mThirdColor)
