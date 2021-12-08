@@ -3,15 +3,19 @@ package com.germainkevin.library.prototype_impl
 import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import androidx.annotation.AnimRes
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import com.germainkevin.library.Presenter
 import com.germainkevin.library.R
-import com.germainkevin.library.UIPresenter
+import com.germainkevin.library.circularReveal
+import com.germainkevin.library.mainThread
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.prototypes.ResourceFinder
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 
 /**
@@ -23,9 +27,6 @@ import kotlinx.coroutines.*
  * @param T whatever class that implements this class
  */
 abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinder: ResourceFinder) {
-
-    // The default coroutine we use
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 
     /**
      * [DecorView][ViewGroup] of [mViewToPresent]
@@ -76,6 +77,15 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      */
     internal var mIsViewToPresentSet = false
 
+    /** Represents what animation to use to animate [mPresenter]
+     */
+    private var mPresenterAnimation: Int = Presenter.ANIM_CIRCULAR_REVEAL
+
+    /**
+     * The duration of the animation on the [mPresenter]
+     * */
+    private var mPresenterAnimDuration = 600L
+
     init {
         mDecorView = resourceFinder.getDecorView()
         mPresenter = resourceFinder.getContext()?.let { Presenter(it) }?.also {
@@ -85,6 +95,13 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                 override fun onPresenterStateChange(state: Int) {
                     onPresenterStateChanged(state)
                     when (state) {
+                        Presenter.STATE_CANVAS_DRAWN -> {
+                            if (mPresenterAnimation == Presenter.ANIM_CIRCULAR_REVEAL) {
+                                mPresenter?.circularReveal(mPresenterAnimDuration)
+                                onPresenterStateChange(Presenter.STATE_REVEALED)
+                            }
+                        }
+
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
                             if (mAutoRemoveApproval && mBackButtonDismissEnabled) {
                                 onPresenterStateChanged(Presenter.STATE_REMOVING)
@@ -123,7 +140,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * @return the current [PresentationBuilder]
      */
     open fun present(): T {
-        coroutineScope.launch {
+        mainThread {
             // By this time, every configuration necessary would have already
             // been done, we can now pass this builder to the PresenterShape
             // so it builds a Shape to output to the UI.
@@ -137,7 +154,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                 job.await()
                 job.join()
                 if (job.isCompleted) {
-                    this.cancel()
                     mPresenter?.let { _v ->
                         mDecorView?.addView(_v)
                     }
@@ -165,7 +181,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * Removes the [mPresenter] if present, from the [mDecorView]
      * */
-    private fun removePresenterIfPresent() = coroutineScope.launch {
+    private fun removePresenterIfPresent() = mainThread {
         var mViewToRemove: View? = null
         val job = async {
             // Never reference mPresenter directly, always reference the mPresenter this way
@@ -198,6 +214,23 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      */
     open fun setPresenterStateChangeListener(listener: (Int) -> Unit): T {
         mPresenterStateChangeListener = listener
+        return this as T
+    }
+
+    /**
+     * Gives the user the possibility to choose one of one of the animations available
+     * to display [mPresenter]
+     * */
+    open fun setPresenterAnimation(@Presenter.PresenterAnimation presenterAnimation: Int): T {
+        mPresenterAnimation = presenterAnimation
+        return this as T
+    }
+
+    /**
+     * Gives the user the possibility to define how long the [mPresenterAnimation] should run
+     * */
+    open fun setAnimationDuration(duration: Long): T {
+        mPresenterAnimDuration = duration
         return this as T
     }
 
@@ -251,6 +284,11 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         return this as T
     }
 
+    /**
+     * The text that will be explaining the ui element you
+     * want to present to the user
+     * @param descriptionText The text you want to explain the ui element
+     * */
     open fun setDescriptionText(descriptionText: String): T {
         mPresenterShape.setDescriptionText(descriptionText)
         return this as T

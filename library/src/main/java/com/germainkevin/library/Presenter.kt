@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.IntDef
+import com.germainkevin.library.Presenter.Companion.ANIM_CIRCULAR_REVEAL
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 
@@ -25,6 +26,7 @@ open class Presenter(context: Context) : View(context) {
     @IntDef(
         STATE_NOT_SHOWN,
         STATE_REVEALING,
+        STATE_CANVAS_DRAWN,
         STATE_REVEALED,
         STATE_REMOVING,
         STATE_REMOVED,
@@ -35,6 +37,10 @@ open class Presenter(context: Context) : View(context) {
     )
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     annotation class PresenterState
+
+    @IntDef(ANIM_CIRCULAR_REVEAL)
+    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    annotation class PresenterAnimation
 
     companion object {
         /**
@@ -48,42 +54,52 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_REVEALING = 1
 
         /**
+         * The [presenterShape]'s [PresenterShape.bindCanvasToDraw] method has been executed
+         * */
+        const val STATE_CANVAS_DRAWN = 2
+
+        /**
          * [Presenter] reveal animation has finished and its view is displayed.
          */
-        const val STATE_REVEALED = 2
+        const val STATE_REVEALED = 3
 
         /**
          * The [PresentationBuilder.isRemoving] method has been called and
          * the [Presenter] is being removed from the UI.
          */
-        const val STATE_REMOVING = 3
+        const val STATE_REMOVING = 4
 
         /**
          * The [Presenter] has been removed from view
          * after it has been pressed in the focal area.
          */
-        const val STATE_REMOVED = 4
+        const val STATE_REMOVED = 5
 
         /**
          * The view to present has been pressed
          * */
-        const val STATE_VTP_PRESSED = 5
+        const val STATE_VTP_PRESSED = 6
 
         /**
          * The [Presenter]'s [PresentationBuilder.mPresenterShape] has been pressed
          */
-        const val STATE_FOCAL_PRESSED = 6
+        const val STATE_FOCAL_PRESSED = 7
 
         /**
          * The [Presenter] has been pressed outside the [PresentationBuilder.mPresenterShape]
          * and not on the view to present
          */
-        const val STATE_NON_FOCAL_PRESSED = 7
+        const val STATE_NON_FOCAL_PRESSED = 8
 
         /**
          * The [Presenter] has been dismissed by the system back button being pressed.
          */
-        const val STATE_BACK_BUTTON_PRESSED = 8
+        const val STATE_BACK_BUTTON_PRESSED = 9
+
+        /**
+         * The [Presenter] will be shown in the UI using a circular reveal animation
+         * */
+        const val ANIM_CIRCULAR_REVEAL = 10
     }
 
     /**
@@ -172,12 +188,7 @@ open class Presenter(context: Context) : View(context) {
         if (mPresentationBuilder.mIsViewToPresentSet) {
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALING)
             presenterShape.bindCanvasToDraw(canvas)
-            handleViewAnimation()
+            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_CANVAS_DRAWN)
         }
-    }
-
-    private fun handleViewAnimation() {
-        circularReveal(duration = 600L)
-        mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALED)
     }
 }

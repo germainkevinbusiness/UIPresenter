@@ -5,12 +5,15 @@ import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
-import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import com.germainkevin.library.calculateVTPBounds
+import com.germainkevin.library.calculatedTextSize
+import com.germainkevin.library.mainThread
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
+import com.germainkevin.library.setShadowLayer
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -97,16 +100,11 @@ class SquircleShape : PresenterShape {
         mViewToPresentBounds = RectF()
         mSquircleShapeRectF = RectF()
         mDescriptionTextPosition = PointF()
-
     }
 
     init {
         setupPaints()
         setupFloats()
-    }
-
-    private fun setShadowLayer() {
-        mSquircleShapePaint.setShadowLayer(10f, 5f, 5f, shadowLayerColor)
     }
 
     override fun setHasShadowLayer(mBoolean: Boolean) {
@@ -138,37 +136,17 @@ class SquircleShape : PresenterShape {
         mDescriptionTextPaint.typeface = typeface
     }
 
-    /**
-     * Gets the exact coordinate on the screen, of the view to present
-     * */
-    private fun calculateVTPBounds(viewToPresent: View): Pair<PointF, PointF> {
-        val rect = Rect()
-        viewToPresent.getGlobalVisibleRect(rect)
-        val viewToPresentLeftTopPosition = PointF(rect.left.toFloat(), rect.top.toFloat())
-        val viewToPresentRightBottomPosition = PointF(rect.right.toFloat(), rect.bottom.toFloat())
-        return Pair(viewToPresentLeftTopPosition, viewToPresentRightBottomPosition)
-    }
-
-    private fun calculatedTextSize(mDisplayMetrics: DisplayMetrics): Float {
-        return TypedValue.applyDimension(mDefaultTextUnit, mDefaultTextSize, mDisplayMetrics)
-    }
-
-    private fun getTextHeight(text: String, paint: Paint): Float {
-        val rect = Rect()
-        paint.getTextBounds(text, 0, text.length, rect)
-        return rect.height().toFloat()
-    }
-
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
-        CoroutineScope(Dispatchers.Main).launch {
-            if (isShadowLayerEnabled) setShadowLayer()
+        mainThread {
+            if (isShadowLayerEnabled) setShadowLayer(mSquircleShapePaint, shadowLayerColor)
             // Set up the description text coordinates
             descriptionText?.let { description ->
                 val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
                 val viewToPresent: View = builder.mViewToPresent!!
                 val mDisplayMetrics = mDecorView.resources.displayMetrics
                 buildSelfJob = async {
-                    mDescriptionTextPaint.textSize = calculatedTextSize(mDisplayMetrics)
+                    mDescriptionTextPaint.textSize =
+                        calculatedTextSize(mDisplayMetrics, mDefaultTextUnit, mDefaultTextSize)
                     val viewToPresentBounds = calculateVTPBounds(viewToPresent)
                     // We now have the exact coordinates of the view to present
                     mViewToPresentBounds.set(
