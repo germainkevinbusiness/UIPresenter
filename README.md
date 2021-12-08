@@ -10,7 +10,7 @@ In this case, when you want to set a background color, text, text color:
 ```kotlin
 private val mFirstColor by lazy { ContextCompat.getColor(this, R.color.purple_700) }
 
-UIPresenter(this)
+UIPresenter(activity = this)
             .setViewToPresent(binding.mHelloWorld)
             .setBackgroundColor(mFirstColor)
             .setDescriptionText("This is a TextView, its role is to display a Hello World text at the top of the screen")
@@ -24,7 +24,7 @@ private val mFirstColor by lazy { ContextCompat.getColor(this, R.color.purple_70
 private val mSecondColor by lazy { ContextCompat.getColor(this, R.color.blue_500) }
 private val mThirdColor by lazy { ContextCompat.getColor(this, R.color.white) }
 
-UIPresenter(this)
+UIPresenter(activity = this)
             .setViewToPresent(binding.mHelloWorld)
             .setBackgroundColor(mFirstColor)
             .setDescriptionText("This is a TextView, its role is to display a Hello World text at the top of the screen")
