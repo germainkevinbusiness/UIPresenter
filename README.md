@@ -5,7 +5,6 @@ A library to present android UI elements. The library is still under development
 ## Here is an example of a Squircle-shaped Presenter
 
 The purple background rectangle with the text is displayed using this library.
-
 <img src="/screenshots/device-2021-12-07-230050.png" alt="A Squircle-shaped Presenter View" width="360" />
 <img src="/screenshots/device-2021-12-07-225956.png" alt="A Squircle-shaped Presenter View" width="360" />
 
