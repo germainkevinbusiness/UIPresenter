@@ -11,7 +11,9 @@ import com.germainkevin.library.prototype_impl.resource_finders.FragmentResource
 import com.germainkevin.library.prototypes.ResourceFinder
 
 /**
- * [Builder class][Class] whose purpose is to display a [Presenter] that helps
+ * [Builder class][PresentationBuilder] which has the purpose of constructing needed
+ * information to display a
+ * [com.germainkevin.library.presenter_view.Presenter] that helps
  * explain a [View]'s role in the UI.
  * @author Kevin Germain
  * */

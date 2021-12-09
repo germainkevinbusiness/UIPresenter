@@ -10,14 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
-import com.germainkevin.library.utils.calculateVTPBounds
-import com.germainkevin.library.utils.calculatedTextSize
-import com.germainkevin.library.utils.mainThread
-import com.germainkevin.library.utils.setShadowLayer
-import kotlinx.coroutines.*
+import com.germainkevin.library.utils.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import timber.log.Timber
+import kotlin.math.abs
 
-class SquircleShape : PresenterShape {
+class TestShape : PresenterShape {
 
     private lateinit var buildSelfJob: Deferred<Unit>
 
@@ -136,17 +135,54 @@ class SquircleShape : PresenterShape {
         mDescriptionTextPaint.typeface = typeface
     }
 
+    override fun shapeContains(x: Float, y: Float): Boolean {
+        return if (buildSelfJob.isCompleted) {
+            mSquircleShapeRectF.contains(x, y)
+        } else {
+            Timber.d("BuildSelf job is incomplete")
+            false
+        }
+    }
+
+    override fun viewToPresentContains(x: Float, y: Float): Boolean {
+        return mViewToPresentBounds.contains(x, y)
+    }
+
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         mainThread {
             if (isShadowLayerEnabled) setShadowLayer(mSquircleShapePaint, shadowLayerColor)
-            // Set up the description text coordinates
-            descriptionText?.let { description ->
+            descriptionText?.let { displayedText ->
                 val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
                 val mDisplayMetrics = mDecorView.resources.displayMetrics
                 val viewToPresent: View = builder.mViewToPresent!!
+                // Doing some calculations
                 buildSelfJob = async {
+                    // Determine text size
                     mDescriptionTextPaint.textSize =
                         calculatedTextSize(mDisplayMetrics, mDefaultTextUnit, mDefaultTextSize)
+                    // Determine description text width
+                    val displayTextWidth = mDescriptionTextPaint.measureText(displayedText).toInt()
+                    // Testing distances
+                    val rightSpaceAvailable = mDecorView.width - displayTextWidth
+
+                    Timber.d("DecorView width: ${mDecorView.width}")
+                    Timber.d("DecorView height: ${mDecorView.height}")
+                    Timber.d("rightSpaceAvailable: $rightSpaceAvailable")
+                    Timber.d("displayTextWidth: $displayTextWidth")
+
+                    val finalStaticLayoutWidth: Int = if (rightSpaceAvailable <= 25) {
+                        displayTextWidth - (abs(rightSpaceAvailable) + 56)
+                    } else displayTextWidth
+
+                    Timber.d("finalStaticLayoutWidth: $finalStaticLayoutWidth")
+                    // Build Static layout
+                    mStaticLayout =
+                        buildStaticLayout(
+                            displayedText,
+                            mDescriptionTextPaint,
+                            finalStaticLayoutWidth
+                        )
+                    // Get the exact coordinates of the view to present
                     val viewToPresentBounds = calculateVTPBounds(viewToPresent)
                     // We now have the exact coordinates of the view to present
                     mViewToPresentBounds.set(
@@ -155,77 +191,16 @@ class SquircleShape : PresenterShape {
                         viewToPresentBounds.second.x, // right
                         viewToPresentBounds.second.y // bottom
                     )
-                    val desiredShapeWidthLeftToRight =
-                        mViewToPresentBounds.right + (description.length * 3.5).toInt()
-                    val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
-
-                    val finalLeftValue: Float
-                    val finalRightValue: Float
-                    val finalTopValue: Float
-                    val finalBottomValue: Float
-
-                    val rightMaxMarginDistance = 44f
-                    // 56, the usual height of bottom bars *2 + rightMaxMarginDistance - 10
-                    val bottomMaxMarginDistance = 154f
-                    val rightSpaceAvailable = mDecorView.width - desiredShapeWidthLeftToRight
-                    val bottomSpaceAvailable = mDecorView.height - desiredShapeHeightTopToBottom
-
-                    Timber.d("rightSpaceAvailable: $rightSpaceAvailable")
-                    Timber.d("bottomSpaceAvailable: $bottomSpaceAvailable")
-
-                    if (rightSpaceAvailable >= rightMaxMarginDistance) {
-                        finalLeftValue = mViewToPresentBounds.left
-                        finalRightValue = desiredShapeWidthLeftToRight
-                    } else {
-                        val preferredLeftPosition =
-                            mViewToPresentBounds.left - (description.length * 3.5).toInt()
-                        finalLeftValue =
-                            if (preferredLeftPosition <= mDecorView.width) mViewToPresentBounds.left
-                            else preferredLeftPosition
-                        finalRightValue = mViewToPresentBounds.right
-                    }
-                    if (bottomSpaceAvailable >= bottomMaxMarginDistance) {
-                        finalTopValue = desiredShapeHeightTopToBottom
-                        finalBottomValue = mViewToPresentBounds.bottom
-                    } else {
-                        finalTopValue = mViewToPresentBounds.top
-                        finalBottomValue = mViewToPresentBounds.top - 250
-                    }
-
-                    // Set up the rounded rectangle coordinates
+                    // Determine DescriptionText position on screen
+                    mDescriptionTextPosition.x = mViewToPresentBounds.left + 16
+                    mDescriptionTextPosition.y = mViewToPresentBounds.bottom + 16
+                    // Build mSquircleShapeRectF
                     mSquircleShapeRectF.set(
-                        finalLeftValue,
-                        finalTopValue,
-                        finalRightValue,
-                        finalBottomValue
+                        mDescriptionTextPosition.x - 16,
+                        mDescriptionTextPosition.y - 16,
+                        mStaticLayout.width.toFloat(),
+                        (mViewToPresentBounds.bottom + 16) + (mStaticLayout.height + 20)
                     )
-                    val mStaticLayoutWidth = mSquircleShapeRectF.width().toInt() - 16
-                    mStaticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        StaticLayout.Builder.obtain(
-                            description,
-                            0,
-                            description.length,
-                            mDescriptionTextPaint,
-                            mStaticLayoutWidth
-                        )
-                            .build()
-                    } else {
-                        StaticLayout(
-                            description,
-                            0,
-                            mStaticLayoutWidth,
-                            mDescriptionTextPaint,
-                            description.length,
-                            Layout.Alignment.ALIGN_CENTER,
-                            1f,
-                            1f,
-                            false
-                        )
-                    }
-                    mDescriptionTextPosition.x = mSquircleShapeRectF.left + 16
-//                    mDescriptionTextPosition.y =
-//                        mSquircleShapeRectF.centerY() - mStaticLayout.lineCount * textHeight / 2
-                    mDescriptionTextPosition.y = mSquircleShapeRectF.bottom + 16
                 }
                 buildSelfJob.await()
                 buildSelfJob.join()
@@ -246,18 +221,5 @@ class SquircleShape : PresenterShape {
             mStaticLayout.draw(cv)
             cv.restore()
         }
-    }
-
-    override fun shapeContains(x: Float, y: Float): Boolean {
-        return if (buildSelfJob.isCompleted) {
-            mSquircleShapeRectF.contains(x, y)
-        } else {
-            Timber.d("BuildSelf job is incomplete")
-            false
-        }
-    }
-
-    override fun viewToPresentContains(x: Float, y: Float): Boolean {
-        return mViewToPresentBounds.contains(x, y)
     }
 }

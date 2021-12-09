@@ -10,5 +10,5 @@ enum class RevealAnimation {
     FADE_IN,
     ROTATION_X,
     ROTATION_Y,
-    NO_REVEAL_ANIMATION,
+    NO_REVEAL_ANIMATION
 }

@@ -3,6 +3,11 @@ package com.germainkevin.library.utils
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
+import android.graphics.text.LineBreaker
+import android.os.Build
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
@@ -46,4 +51,43 @@ fun getTextHeight(text: String, paint: Paint): Float {
     val rect = Rect()
     paint.getTextBounds(text, 0, text.length, rect)
     return rect.height().toFloat()
+}
+
+fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): StaticLayout {
+    return when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+            StaticLayout.Builder.obtain(
+                text,
+                0,
+                text.length,
+                textPaint,
+                textWidth
+            )
+                .build()
+        }
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+            StaticLayout.Builder.obtain(
+                text,
+                0,
+                text.length,
+                textPaint,
+                textWidth
+            )
+                .setBreakStrategy(LineBreaker.BREAK_STRATEGY_BALANCED)
+                .build()
+        }
+        else -> {
+            StaticLayout(
+                text,
+                0,
+                textWidth,
+                textPaint,
+                text.length,
+                Layout.Alignment.ALIGN_CENTER,
+                1f,
+                1f,
+                false
+            )
+        }
+    }
 }

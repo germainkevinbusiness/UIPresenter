@@ -10,6 +10,7 @@ import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.R
 import com.germainkevin.library.presenter_view.RevealAnimation
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
+import com.germainkevin.library.prototype_impl.presentation_shapes.TestShape
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.prototypes.ResourceFinder
 import com.germainkevin.library.utils.*
@@ -25,6 +26,19 @@ import kotlinx.coroutines.*
  * @param T whatever class that implements this class
  */
 abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinder: ResourceFinder) {
+
+    /**
+     * The view that the [mPresenter] will present.
+     * Made public to be accessed from a [PresenterShape] for example [SquircleShape]
+     */
+    internal var mViewToPresent: View? = null
+
+    /**
+     * Has the [mViewToPresent] been set successfully?
+     * true, if the [mViewToPresent] is not null or false otherwise
+     * Made public to be accessed from the [mPresenter]
+     */
+    internal var mIsViewToPresentSet = false
 
     /**
      * [DecorView][ViewGroup] of [mViewToPresent]
@@ -46,34 +60,23 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * Exposes state changes from the [mPresenter] to the user of this library
      */
-    private var mPresenterStateChangeListener: (Int) -> Unit = {}
+    private var mPresenterStateChangeListener: (Int, (Unit) -> Unit) -> Unit =
+        { _: Int, _: (Unit) -> Unit -> }
 
     /**
-     * Should the back button press dismiss the [Presenter].
+     * Should the back button press remove the [mPresenter].
      */
-    private var mBackButtonDismissEnabled = true
+    private var mRemoveOnBackPress = true
 
     /**
-     * Should the [mPresenter] be removed when clicked on the screen while it's displayed
+     * Should the [mPresenter] be removed when a click event is detected on the [mDecorView]
      * */
-    private var mAutoRemoveApproval = true
+    private var mAutoRemoveOnClickEvent = true
 
     /**
      * The [PresenterShape] by default or set by the user for this [mPresenter]
      * */
-    private var mPresenterShape: PresenterShape = SquircleShape()
-
-    /**
-     * The view that the [presenter][Presenter] will present.
-     * Will be accessed from a [PresenterShape] for example [SquircleShape]
-     */
-    internal var mViewToPresent: View? = null
-
-    /**
-     * Has the [View] to present been set successfully?
-     * true, if the [PresentationBuilder.mViewToPresent] is not null or false otherwise
-     */
-    internal var mIsViewToPresentSet = false
+    private var mPresenterShape: PresenterShape = TestShape()
 
     /** Represents what animation to use to animate [mPresenter]
      */
@@ -102,50 +105,34 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                             when (mPresenterRevealAnimation) {
                                 RevealAnimation.CIRCULAR_REVEAL -> {
                                     mPresenter?.circularReveal(mRevealAnimDuration)
-                                    onPresenterStateChange(Presenter.STATE_REVEALED)
                                 }
                                 RevealAnimation.FADE_IN -> {
                                     mPresenter?.fadeIn(mRemovingAnimDuration)
-                                    onPresenterStateChange(Presenter.STATE_REVEALED)
                                 }
                                 RevealAnimation.ROTATION_X -> {
                                     mPresenter?.rotationXByImpl(mRevealAnimDuration)
-                                    onPresenterStateChange(Presenter.STATE_REVEALED)
                                 }
                                 RevealAnimation.ROTATION_Y -> {
                                     mPresenter?.rotationYByImpl(mRevealAnimDuration)
-                                    onPresenterStateChange(Presenter.STATE_REVEALED)
                                 }
-                                RevealAnimation.NO_REVEAL_ANIMATION -> {
-                                    onPresenterStateChange(Presenter.STATE_REVEALED)
-                                }
+                                else -> {}
                             }
+                            onPresenterStateChange(Presenter.STATE_REVEALED)
                         }
 
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
-                            if (mAutoRemoveApproval && mBackButtonDismissEnabled) {
-                                onPresenterStateChanged(Presenter.STATE_REMOVING)
-                                removePresenterIfPresent()
+                            if (mAutoRemoveOnClickEvent && mRemoveOnBackPress) {
+                                removingPresenter()
                             }
                         }
-                        Presenter.STATE_VTP_PRESSED -> {
-                            if (mAutoRemoveApproval) {
-                                onPresenterStateChanged(Presenter.STATE_REMOVING)
-                                removePresenterIfPresent()
-                            }
-                        }
-                        Presenter.STATE_FOCAL_PRESSED -> {
-                            if (mAutoRemoveApproval) {
-                                onPresenterStateChanged(Presenter.STATE_REMOVING)
-                                removePresenterIfPresent()
-                            }
-                        }
+                        Presenter.STATE_VTP_PRESSED,
+                        Presenter.STATE_FOCAL_PRESSED,
                         Presenter.STATE_NON_FOCAL_PRESSED -> {
-                            if (mAutoRemoveApproval) {
-                                onPresenterStateChanged(Presenter.STATE_REMOVING)
-                                removePresenterIfPresent()
+                            if (mAutoRemoveOnClickEvent) {
+                                removingPresenter()
                             }
                         }
+
                     }
                 }
             }
@@ -199,7 +186,16 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private fun isRemoved(): Boolean = mState == Presenter.STATE_REMOVED
 
     /**
-     * Removes the [mPresenter] if present, from the [mDecorView]
+     * Called when removing the [mPresenter]
+     * */
+    private fun removingPresenter() {
+        onPresenterStateChanged(Presenter.STATE_REMOVING)
+        removePresenterIfPresent()
+    }
+
+    /**
+     * Removes the [mPresenter] from the [mDecorView],
+     * if it's present in the [mDecorView]
      * */
     private fun removePresenterIfPresent() = mainThread {
         var mViewToRemove: View? = null
@@ -215,10 +211,18 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                     fadeOut(mPresenter, mRemovingAnimDuration) {
                         onPresenterStateChanged(Presenter.STATE_REMOVED)
                         mDecorView?.removeView(it)
+                        finish()
                     }
                 }
             }
         }
+    }
+
+    // nullify all nullables, they are no longer useful
+    private fun finish() {
+        mDecorView = null
+        mPresenter = null
+        mViewToPresent = null
     }
 
     /**
@@ -227,14 +231,14 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      */
     private fun onPresenterStateChanged(@Presenter.PresenterState state: Int) {
         mState = state
-        mPresenterStateChangeListener(state)
+        mPresenterStateChangeListener(state) { removingPresenter() }
     }
 
     /**
      * Sets a listener that listens to the [presenter][Presenter] state changes.
      * @param listener The listener to use
      */
-    open fun setPresenterStateChangeListener(listener: (Int) -> Unit): T {
+    open fun setPresenterStateChangeListener(listener: (Int, (Unit) -> Unit) -> Unit): T {
         mPresenterStateChangeListener = listener
         return this as T
     }
@@ -293,17 +297,20 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         return this as T
     }
 
+    /**
+     * Sets the background color of the [mPresenterShape]
+     * */
     open fun setBackgroundColor(bgColor: Int): T {
         mPresenterShape.setBackgroundColor(bgColor)
         return this as T
     }
 
     /**
-     * @param mBoolean defines whether the shape should have
+     * @param choice defines whether the shape should have
      * a shadow layer drawn in its background or not
      * */
-    open fun setHasShadowLayer(mBoolean: Boolean): T {
-        mPresenterShape.setHasShadowLayer(mBoolean)
+    open fun setHasShadowLayer(choice: Boolean): T {
+        mPresenterShape.setHasShadowLayer(choice)
         return this as T
     }
 
@@ -344,21 +351,21 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Defines whether a detected click event should result in the
-     * removal ot this [mPresenter] from the DecorView
+     * Defines whether or not a detected click event on the [mDecorView],
+     * should result in the removal of the [mPresenter] from the [mDecorView].
+     * It is true by default
      */
-    open fun setAutoRemoveApproval(autoRemoveApproval: Boolean): T {
-        mAutoRemoveApproval = autoRemoveApproval
+    open fun setAutoRemoveOnClickEvent(autoRemoveApproval: Boolean): T {
+        mAutoRemoveOnClickEvent = autoRemoveApproval
         return this as T
     }
 
     /**
-     * Back button can be used to dismiss the prompt. True by default.
-     * @param enabled True for back button dismiss enabled
-     * @return This Builder object to allow for chaining of calls to set methods
+     * Sets whether or not a press on the back button should result in the removal of
+     * the [mPresenter] from the [mDecorView]. True by default
      */
-    open fun setBackButtonDismissEnabled(enabled: Boolean): T {
-        mBackButtonDismissEnabled = enabled
+    open fun setRemoveOnBackPress(enabled: Boolean): T {
+        mRemoveOnBackPress = enabled
         return this as T
     }
 }
