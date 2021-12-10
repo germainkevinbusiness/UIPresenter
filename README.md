@@ -20,11 +20,20 @@ In this case, when you want to set a background color, text, text color:
 ```kotlin
 private val mFirstColor by lazy { ContextCompat.getColor(this, R.color.purple_700) }
 
-UIPresenter(activity = this)
-    .setViewToPresent(R.id.mHelloWorld)
+UIPresenter(this)
+    .setViewToPresent(R.id.tvListCounter)
     .setBackgroundColor(mFirstColor)
-    .setDescriptionText("This is a TextView, its role is to display a Hello World text at the top of the screen")
+    .setDescriptionText(descriptionText)
     .setDescriptionTextColor(mThirdColor)
+    .setAutoRemoveOnClickEvent(false)
+    .setPresenterStateChangeListener { state, removePresenter ->
+        // check if the user has pressed on the presenter
+        if (state == Presenter.STATE_FOCAL_PRESSED) {
+            // use this to remove the presenter from the UI
+            removePresenter(Unit)
+            showMenuItem()
+        }
+    }
     .present()
 ```
 
@@ -39,18 +48,18 @@ private val mThirdColor by lazy { ContextCompat.getColor(this, R.color.white) }
 UIPresenter(fragment = this)
     .setViewToPresent(binding.mListItemCountTv)
     .setBackgroundColor(mFirstColor)
-    .setDescriptionText("This text tells you how many animal names are displayed in the below list")
+    .setDescriptionText("This text tells you how many animal names are displayed in the below list. There are 7 days in a week, the first one being Monday, the second one is Tuesday, the third one is Wednesday")
     .setDescriptionTextColor(mThirdColor)
     .setDescriptionTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
     .setDescriptionTypeface(Typeface.DEFAULT)
     .setHasShadowLayer(true)
     .setShadowLayerColor(mSecondColor)
-    .setRevealAnimation(RevealAnimation.CIRCULAR_REVEAL)
+    .setRevealAnimation(RevealAnimation.ROTATION_Y)
     .setRevealAnimationDuration(1000L)
-    .setRemovingAnimationDuration(0L)
-    .setPresenterStateChangeListener { state ->
-        if (state == Presenter.STATE_NON_FOCAL_PRESSED) {
-            showListViewItem()
+    .setAutoRemoveOnClickEvent(false)
+    .setPresenterStateChangeListener { state, removePresenter ->
+        if (state == Presenter.STATE_FOCAL_PRESSED) {
+            removePresenter(Unit)
         }
     }
     .present()

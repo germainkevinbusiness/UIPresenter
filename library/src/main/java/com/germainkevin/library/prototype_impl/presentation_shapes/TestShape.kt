@@ -1,13 +1,9 @@
 package com.germainkevin.library.prototype_impl.presentation_shapes
 
 import android.graphics.*
-import android.os.Build
-import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.TypedValue
-import android.view.View
-import android.view.ViewGroup
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.utils.*
@@ -17,8 +13,6 @@ import timber.log.Timber
 import kotlin.math.abs
 
 class TestShape : PresenterShape {
-
-    private lateinit var buildSelfJob: Deferred<Unit>
 
     /**
      * The background to draw on the SquircleShape
@@ -65,7 +59,7 @@ class TestShape : PresenterShape {
      * default singleLine that the [Canvas.drawText]
      * method puts the text in by default
      */
-    private lateinit var mStaticLayout: StaticLayout
+    private lateinit var staticLayout: StaticLayout
 
     /**
      * [TypedValue] unit in which the [SquircleShape.descriptionText]
@@ -105,6 +99,8 @@ class TestShape : PresenterShape {
         setupPaints()
         setupFloats()
     }
+
+    override lateinit var buildSelfJob: Deferred<Unit>
 
     override fun setHasShadowLayer(mBoolean: Boolean) {
         isShadowLayerEnabled = mBoolean
@@ -151,46 +147,36 @@ class TestShape : PresenterShape {
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         mainThread {
             if (isShadowLayerEnabled) setShadowLayer(mSquircleShapePaint, shadowLayerColor)
-            descriptionText?.let { displayedText ->
-                val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
-                val mDisplayMetrics = mDecorView.resources.displayMetrics
-                val viewToPresent: View = builder.mViewToPresent!!
+            descriptionText?.let {
+                val mDecorView = builder.resourceFinder.getDecorView()!!
+                val displayMetrics = mDecorView.resources.displayMetrics
+                val viewToPresent = builder.mViewToPresent!!
                 // Doing some calculations
                 buildSelfJob = async {
                     // Determine text size
                     mDescriptionTextPaint.textSize =
-                        calculatedTextSize(mDisplayMetrics, mDefaultTextUnit, mDefaultTextSize)
+                        calculatedTextSize(displayMetrics, mDefaultTextUnit, mDefaultTextSize)
                     // Determine description text width
-                    val displayTextWidth = mDescriptionTextPaint.measureText(displayedText).toInt()
+                    val descTextWidth = mDescriptionTextPaint.measureText(it).toInt()
                     // Testing distances
-                    val rightSpaceAvailable = mDecorView.width - displayTextWidth
+                    val rightSpaceAvailable = mDecorView.width - descTextWidth
 
                     Timber.d("DecorView width: ${mDecorView.width}")
                     Timber.d("DecorView height: ${mDecorView.height}")
                     Timber.d("rightSpaceAvailable: $rightSpaceAvailable")
-                    Timber.d("displayTextWidth: $displayTextWidth")
+                    Timber.d("descTextWidth: $descTextWidth")
 
                     val finalStaticLayoutWidth: Int = if (rightSpaceAvailable <= 25) {
-                        displayTextWidth - (abs(rightSpaceAvailable) + 56)
-                    } else displayTextWidth
+                        descTextWidth - (abs(rightSpaceAvailable) + 56)
+                    } else descTextWidth
 
                     Timber.d("finalStaticLayoutWidth: $finalStaticLayoutWidth")
                     // Build Static layout
-                    mStaticLayout =
-                        buildStaticLayout(
-                            displayedText,
-                            mDescriptionTextPaint,
-                            finalStaticLayoutWidth
-                        )
+                    staticLayout =
+                        buildStaticLayout(it, mDescriptionTextPaint, finalStaticLayoutWidth)
                     // Get the exact coordinates of the view to present
-                    val viewToPresentBounds = calculateVTPBounds(viewToPresent)
-                    // We now have the exact coordinates of the view to present
-                    mViewToPresentBounds.set(
-                        viewToPresentBounds.first.x, // left
-                        viewToPresentBounds.first.y, // top
-                        viewToPresentBounds.second.x, // right
-                        viewToPresentBounds.second.y // bottom
-                    )
+                    mViewToPresentBounds = viewToPresent.getBounds()
+
                     // Determine DescriptionText position on screen
                     mDescriptionTextPosition.x = mViewToPresentBounds.left + 16
                     mDescriptionTextPosition.y = mViewToPresentBounds.bottom + 16
@@ -198,8 +184,8 @@ class TestShape : PresenterShape {
                     mSquircleShapeRectF.set(
                         mDescriptionTextPosition.x - 16,
                         mDescriptionTextPosition.y - 16,
-                        mStaticLayout.width.toFloat(),
-                        (mViewToPresentBounds.bottom + 16) + (mStaticLayout.height + 20)
+                        staticLayout.width.toFloat(),
+                        (mViewToPresentBounds.bottom + 16) + (staticLayout.height + 20)
                     )
                 }
                 buildSelfJob.await()
@@ -208,7 +194,7 @@ class TestShape : PresenterShape {
         }
     }
 
-    override fun bindCanvasToDraw(canvas: Canvas?) {
+    override fun onDrawInPresenterWith(canvas: Canvas?) {
         canvas?.let { cv ->
             cv.save()
             cv.drawRoundRect(
@@ -218,7 +204,7 @@ class TestShape : PresenterShape {
                 mSquircleShapePaint
             )
             cv.translate(mDescriptionTextPosition.x, mDescriptionTextPosition.y)
-            mStaticLayout.draw(cv)
+            staticLayout.draw(cv)
             cv.restore()
         }
     }

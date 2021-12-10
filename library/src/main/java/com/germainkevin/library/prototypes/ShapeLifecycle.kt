@@ -4,30 +4,35 @@ import android.graphics.Canvas
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 
 /**
- * [buildSelfWith] should always be called before [bindCanvasToDraw]
+ * [buildSelfWith] should always be called before [onDrawInPresenterWith]
  *
- * [buildSelfWith] will be populated from a [PresentationBuilder]
+ * [buildSelfWith] will be populated from a [PresentationBuilder]'s [PresentationBuilder.present]
+ * method
  *
- * [bindCanvasToDraw] will be called from the [com.germainkevin.library.Presenter]'s
- * Canvas onDraw method
+ * [onDrawInPresenterWith] will be called from the
+ * [Presenter][com.germainkevin.library.presenter_view.Presenter]'s
+ * [onDraw][com.germainkevin.library.presenter_view.Presenter.onDraw] method
  * */
 interface ShapeLifecycle {
     /**
-     * Builds a [PresenterShape] to be drawn on
-     * a [presenter][=Presenter], by using data
-     * provided by a [builder][PresentationBuilder]
+     * Builds the [PresenterShape] that will be drawn on the call of [onDrawInPresenterWith]
+     * Some information necessary for positioning are available in the [builder][PresentationBuilder]
+     * Which is why it is put there as a parameter, and will be assigned from the
+     * [builder][PresentationBuilder] calling this method
      *
-     * Should always be called before [bindCanvasToDraw]
+     * Should always be called before [onDrawInPresenterWith]
      *
-     * @param builder The builder from which the [presenter][com.germainkevin.library.Presenter]
-     * was created.
+     * @param builder The builder that will create this [PresenterShape]
+     * by calling its [PresentationBuilder.present] method
      */
     fun buildSelfWith(builder: PresentationBuilder<*>)
 
     /**
-     * Made to be called from a [com.germainkevin.library.Presenter]
-     * that will pass its [Canvas] to this method, so this method's implementation
-     * will be executed
+     * Made to be called from the [Presenter's][com.germainkevin.library.presenter_view.Presenter]
+     * [onDraw][com.germainkevin.library.presenter_view.Presenter.onDraw] method
+     * @param canvas The canvas that will come from
+     * the [Presenter's][com.germainkevin.library.presenter_view.Presenter]
+     * [onDraw][com.germainkevin.library.presenter_view.Presenter.onDraw] method
      */
-    fun bindCanvasToDraw(canvas: Canvas?)
+    fun onDrawInPresenterWith(canvas: Canvas?)
 }

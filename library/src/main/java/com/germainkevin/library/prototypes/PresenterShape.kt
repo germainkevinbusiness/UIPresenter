@@ -3,12 +3,17 @@ package com.germainkevin.library.prototypes
 import android.graphics.Canvas
 import android.graphics.Typeface
 import androidx.annotation.ColorInt
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.Deferred
 
 /**
  * A [PresenterShape] represents the shape drawn
- * by the [Canvas] of the [com.germainkevin.library.Presenter]
+ * by the [Canvas] of the [com.germainkevin.library.presenter_view.Presenter]
  */
 interface PresenterShape : ShapeLifecycle {
+
+    var buildSelfJob: Deferred<Unit>
+
     /**
      * @param color the background color for the [PresenterShape]
      */
@@ -39,7 +44,8 @@ interface PresenterShape : ShapeLifecycle {
      * Sets the text size of the description text
      *
      * @param textSize       The desired text size wanted for the description text
-     * @param typedValueUnit the unit in which the description text should be displayed, e.g. [android.util.TypedValue.COMPLEX_UNIT_SP]
+     * @param typedValueUnit the unit in which the description text should be displayed,
+     * e.g. [android.util.TypedValue.COMPLEX_UNIT_SP]
      */
     fun setDescriptionTextSize(typedValueUnit: Int, textSize: Float)
 

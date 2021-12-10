@@ -11,6 +11,8 @@ import com.germainkevin.library.prototype_impl.resource_finders.FragmentResource
 import com.germainkevin.library.prototypes.ResourceFinder
 
 /**
+ * Handles building cases such as for [Activity], [Dialog] or [Fragment]
+ *
  * [Builder class][PresentationBuilder] which has the purpose of constructing needed
  * information to display a
  * [com.germainkevin.library.presenter_view.Presenter] that helps

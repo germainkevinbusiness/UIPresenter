@@ -2,6 +2,7 @@ package com.germainkevin.library.prototype_impl
 
 import android.graphics.Typeface
 import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
@@ -18,12 +19,12 @@ import kotlinx.coroutines.*
 
 
 /**
- * Contains all the methods for presenting a UI element.
- * Provides data for [mPresenter] and any [presenter shapes][PresenterShape]
- * Those data are marked as internal variables
+ * Contains all the methods for presenting a UI element with a [Presenter].
+ *
+ * Provides data for [mPresenter] and [mPresenterShape] that are marked as internal variables
  * @param resourceFinder is an interface that gives access to an Activity or
  * a fragment's environment
- * @param T whatever class that implements this class
+ * @param T whatever [PresentationBuilder] class that implements this class
  */
 abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinder: ResourceFinder) {
 
@@ -50,6 +51,12 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * The [Presenter] that will be created and added by the [mDecorView]
      */
     private var mPresenter: Presenter? = null
+
+    /**
+     * Will be assigned by the [mDecorView] in the [removePresenterIfPresent] method
+     * when removing the [mPresenter]
+     * */
+    private var mViewToRemove: Presenter? = null
 
     /**
      * Exposes the current state of this [mPresenter] to the function [isRemoving] and [isRemoved]
@@ -198,7 +205,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * if it's present in the [mDecorView]
      * */
     private fun removePresenterIfPresent() = mainThread {
-        var mViewToRemove: View? = null
         val job = async {
             // Never reference mPresenter directly, always reference the mPresenter this way
             mViewToRemove = mDecorView?.findViewById(R.id.android_ui_presenter)
@@ -208,9 +214,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         if (job.isCompleted) {
             mViewToRemove?.let {
                 if (isRemoving() && !isRemoved()) {
-                    fadeOut(mPresenter, mRemovingAnimDuration) {
-                        onPresenterStateChanged(Presenter.STATE_REMOVED)
+                    fadeOut(it, mRemovingAnimDuration) {
                         mDecorView?.removeView(it)
+                        onPresenterStateChanged(Presenter.STATE_REMOVED)
                         finish()
                     }
                 }
@@ -222,6 +228,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private fun finish() {
         mDecorView = null
         mPresenter = null
+        mViewToRemove = null
         mViewToPresent = null
     }
 
@@ -235,8 +242,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Sets a listener that listens to the [presenter][Presenter] state changes.
-     * @param listener The listener to use
+     * Sets a listener that listens to the [presenter's][Presenter] state changes.
+     * @param listener The listener that propagates the states & also a [removingPresenter] method
      */
     open fun setPresenterStateChangeListener(listener: (Int, (Unit) -> Unit) -> Unit): T {
         mPresenterStateChangeListener = listener
@@ -254,6 +261,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * Defines how long the [mPresenterRevealAnimation] should run.
      * 600L is the default value
+     * @param duration the duration of the reveal animation in milliseconds
      * */
     open fun setRevealAnimationDuration(duration: Long): T {
         mRevealAnimDuration = duration
@@ -263,6 +271,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * Defines how long the removing animation of the [mPresenter] should run.
      * 600L is the default value
+     * @param duration the duration of the reveal animation in milliseconds
      * */
     open fun setRemovingAnimationDuration(duration: Long): T {
         mRemovingAnimDuration = duration
@@ -273,7 +282,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * Sets the view to place the [presenter][Presenter] around.
      * @param view The view to present
      */
-    open fun setViewToPresent(view: View?): T {
+    open fun setViewToPresent(view: View): T {
         mViewToPresent = view
         mIsViewToPresentSet = mViewToPresent != null
         return this as T
@@ -292,8 +301,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * Sets the shape of the [Presenter] to be added to the UI
      */
-    open fun setPresenterShape(mPresenterShape: PresenterShape): T {
-        this.mPresenterShape = mPresenterShape
+    open fun setPresenterShape(presenterShape: PresenterShape): T {
+        mPresenterShape = presenterShape
         return this as T
     }
 
@@ -315,6 +324,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
+     * Sets a shadow layer color for the [mPresenterShape]'s shadow layer
      * @param shadowColor The color of the shadow layer
      * */
     open fun setShadowLayerColor(@ColorInt shadowColor: Int): T {
@@ -351,6 +361,10 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
+     * If you don't want the [presenter][mPresenter] to be removed automatically
+     * when a [click][MotionEvent.ACTION_UP] event is detected on the app screen,
+     * set this to false
+     *
      * Defines whether or not a detected click event on the [mDecorView],
      * should result in the removal of the [mPresenter] from the [mDecorView].
      * It is true by default

@@ -10,16 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
-import com.germainkevin.library.utils.calculateVTPBounds
-import com.germainkevin.library.utils.calculatedTextSize
-import com.germainkevin.library.utils.mainThread
-import com.germainkevin.library.utils.setShadowLayer
+import com.germainkevin.library.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 
 class SquircleShape : PresenterShape {
-
-    private lateinit var buildSelfJob: Deferred<Unit>
 
     /**
      * The background to draw on the SquircleShape
@@ -88,6 +83,8 @@ class SquircleShape : PresenterShape {
 
     private var shadowLayerColor = Color.DKGRAY
 
+    override lateinit var buildSelfJob: Deferred<Unit>
+
     private fun setupPaints() {
         mSquircleShapePaint = Paint()
         mSquircleShapePaint.isAntiAlias = true
@@ -136,6 +133,19 @@ class SquircleShape : PresenterShape {
         mDescriptionTextPaint.typeface = typeface
     }
 
+    override fun shapeContains(x: Float, y: Float): Boolean {
+        return if (buildSelfJob.isCompleted) {
+            mSquircleShapeRectF.contains(x, y)
+        } else {
+            Timber.d("BuildSelf job is incomplete")
+            false
+        }
+    }
+
+    override fun viewToPresentContains(x: Float, y: Float): Boolean {
+        return mViewToPresentBounds.contains(x, y)
+    }
+
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         mainThread {
             if (isShadowLayerEnabled) setShadowLayer(mSquircleShapePaint, shadowLayerColor)
@@ -147,14 +157,8 @@ class SquircleShape : PresenterShape {
                 buildSelfJob = async {
                     mDescriptionTextPaint.textSize =
                         calculatedTextSize(mDisplayMetrics, mDefaultTextUnit, mDefaultTextSize)
-                    val viewToPresentBounds = calculateVTPBounds(viewToPresent)
-                    // We now have the exact coordinates of the view to present
-                    mViewToPresentBounds.set(
-                        viewToPresentBounds.first.x, // left
-                        viewToPresentBounds.first.y, // top
-                        viewToPresentBounds.second.x, // right
-                        viewToPresentBounds.second.y // bottom
-                    )
+
+                    mViewToPresentBounds = viewToPresent.getBounds()
                     val desiredShapeWidthLeftToRight =
                         mViewToPresentBounds.right + (description.length * 3.5).toInt()
                     val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
@@ -233,7 +237,7 @@ class SquircleShape : PresenterShape {
         }
     }
 
-    override fun bindCanvasToDraw(canvas: Canvas?) {
+    override fun onDrawInPresenterWith(canvas: Canvas?) {
         canvas?.let { cv ->
             cv.save()
             cv.drawRoundRect(
@@ -246,18 +250,5 @@ class SquircleShape : PresenterShape {
             mStaticLayout.draw(cv)
             cv.restore()
         }
-    }
-
-    override fun shapeContains(x: Float, y: Float): Boolean {
-        return if (buildSelfJob.isCompleted) {
-            mSquircleShapeRectF.contains(x, y)
-        } else {
-            Timber.d("BuildSelf job is incomplete")
-            false
-        }
-    }
-
-    override fun viewToPresentContains(x: Float, y: Float): Boolean {
-        return mViewToPresentBounds.contains(x, y)
     }
 }

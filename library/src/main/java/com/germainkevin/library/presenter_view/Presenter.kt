@@ -53,12 +53,14 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_NOT_SHOWN = 0
 
         /**
-         * [Presenter] reveal animation is running.
+         * The [PresenterShape] inside [Presenter.onDraw], has a method
+         * called [PresenterShape.onDrawInPresenterWith] that is about to be executed
          */
         const val STATE_REVEALING = 1
 
         /**
-         * The [presenterShape]'s [PresenterShape.bindCanvasToDraw] method has been executed
+         * The [presenterShape]'s [PresenterShape.onDrawInPresenterWith] method has been executed
+         * and the [presenter's][Presenter] reveal animation is running.
          * */
         const val STATE_CANVAS_DRAWN = 2
 
@@ -167,16 +169,16 @@ open class Presenter(context: Context) : View(context) {
         super.performClick()
         val x = motionEvent!!.x
         val y = motionEvent!!.y
-        val captureEventViewToPresentPressed = presenterShape.viewToPresentContains(x, y)
+        val captureEventVTP = presenterShape.viewToPresentContains(x, y)
         val captureEventFocal = presenterShape.shapeContains(x, y)
 
-        if (captureEventViewToPresentPressed) {
+        if (captureEventVTP) {
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_VTP_PRESSED)
         }
         if (captureEventFocal) {
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_FOCAL_PRESSED)
         }
-        if (!captureEventFocal && !captureEventViewToPresentPressed) {
+        if (!captureEventFocal && !captureEventVTP) {
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_NON_FOCAL_PRESSED)
         }
 
@@ -186,7 +188,7 @@ open class Presenter(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas?) {
         if (mPresentationBuilder.mIsViewToPresentSet) {
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALING)
-            presenterShape.bindCanvasToDraw(canvas)
+            presenterShape.onDrawInPresenterWith(canvas)
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_CANVAS_DRAWN)
         }
     }
