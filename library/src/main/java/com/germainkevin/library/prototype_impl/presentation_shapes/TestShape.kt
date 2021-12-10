@@ -197,11 +197,11 @@ class TestShape : PresenterShape {
                     mDescriptionTextPosition.y = mViewToPresentBounds.bottom + 16
 
                     // Build the squircle
-                    val mSquircleWidth = (staticLayoutWidth).toFloat()
+                    val mSquircleWidth = staticLayoutWidth.toFloat()
                     mSquircleShapeRectF.set(
                         mDescriptionTextPosition.x - 16,
                         mDescriptionTextPosition.y - 16,
-                        mSquircleWidth,
+                        mDescriptionTextPosition.x + mSquircleWidth,
                         mDescriptionTextPosition.y + (staticLayout.height + 20)
                     )
                 }
