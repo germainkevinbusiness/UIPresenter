@@ -180,7 +180,7 @@ class TestShape : PresenterShape {
                         // for it to be laid out horizontally
                         b <= 0 -> (a - horizontalMargin).toInt()
                         // The description text's width is large enough to be laid out
-                        b >= horizontalMargin -> descTextWidth
+                        b >= horizontalMargin -> descTextWidth + 16
                         // The description text's width is larger than the horizontalMargin
                         // but not larger than the remaining space it can be laid out in, inside
                         // the decorView's width

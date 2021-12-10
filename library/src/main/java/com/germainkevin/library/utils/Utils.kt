@@ -45,12 +45,6 @@ fun calculatedTextSize(
     mDefaultTextSize: Float
 ): Float = TypedValue.applyDimension(mDefaultTextUnit, mDefaultTextSize, mDisplayMetrics)
 
-//fun getTextHeight(text: String, paint: Paint): Float {
-//    val rect = Rect()
-//    paint.getTextBounds(text, 0, text.length, rect)
-//    return rect.height().toFloat()
-//}
-
 fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): StaticLayout {
     return when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
