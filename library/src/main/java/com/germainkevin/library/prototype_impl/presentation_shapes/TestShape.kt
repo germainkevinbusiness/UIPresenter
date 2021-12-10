@@ -212,7 +212,7 @@ class TestShape : PresenterShape {
                         mStaticLayoutPosition =
                             PointF(mDescriptionTextPosition.x, mDescriptionTextPosition.y)
                     } else {
-                        // let's increase staticLayoutWidth to 65%, which is 25% more
+                        // let's make staticLayoutWidth 65% of decor view
                         staticLayoutWidth = (65 * mDecorView.width / 100)
                         // then build it with new width
                         staticLayout =
