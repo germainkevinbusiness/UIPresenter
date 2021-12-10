@@ -9,6 +9,18 @@ import kotlinx.coroutines.launch
 import kotlin.math.hypot
 
 /**
+ * A set of animations we can apply to a [Presenter].
+ * The animation is applied to a [Presenter] right
+ * after its state changes to [Presenter.STATE_CANVAS_DRAWN]
+ * */
+enum class RevealAnimation {
+    CIRCULAR_REVEAL, // This is the default animation
+    ROTATION_X,
+    ROTATION_Y,
+    NO_REVEAL_ANIMATION
+}
+
+/**
  * Creates a [ViewAnimationUtils.createCircularReveal] animation on a [Presenter]
  * */
 fun Presenter.circularReveal(mDuration: Long) {
@@ -22,27 +34,20 @@ fun Presenter.circularReveal(mDuration: Long) {
 }
 
 fun Presenter.rotationXByImpl(mDuration: Long) {
-    animate().apply {
+    this.animate().apply {
         duration = mDuration
         rotationXBy(360f)
     }.start()
 }
 
 fun Presenter.rotationYByImpl(mDuration: Long) {
-    animate().apply {
+    this.animate().apply {
         duration = mDuration
         rotationYBy(360f)
     }.start()
 }
 
-fun Presenter.fadeIn(fadeInDuration: Long) {
-    animate().apply {
-        duration = fadeInDuration
-        alpha(1f)
-    }.start()
-}
-
-fun CoroutineScope.fadeOut(presenter: Presenter?, fadeOutDuration: Long, afterAnim: () -> Unit) {
+fun CoroutineScope.fadeOut(presenter: Presenter?, fadeOutDuration: Long, afterAnim: () -> Unit) =
     launch {
         presenter?.let {
             it.animate().apply {
@@ -53,4 +58,3 @@ fun CoroutineScope.fadeOut(presenter: Presenter?, fadeOutDuration: Long, afterAn
         delay(fadeOutDuration)
         afterAnim()
     }
-}

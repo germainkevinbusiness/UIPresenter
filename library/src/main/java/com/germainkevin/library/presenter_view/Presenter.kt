@@ -188,8 +188,10 @@ open class Presenter(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas?) {
         if (mPresentationBuilder.mIsViewToPresentSet) {
             mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALING)
-            presenterShape.onDrawInPresenterWith(canvas)
-            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_CANVAS_DRAWN)
+            if (presenterShape.buildSelfJob.isCompleted) {
+                presenterShape.onDrawInPresenterWith(canvas)
+                mPresenterStateChangeNotifier.onPresenterStateChange(STATE_CANVAS_DRAWN)
+            }
         }
     }
 }

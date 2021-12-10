@@ -9,7 +9,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.R
-import com.germainkevin.library.presenter_view.RevealAnimation
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototype_impl.presentation_shapes.TestShape
 import com.germainkevin.library.prototypes.PresenterShape
@@ -99,6 +98,11 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * */
     private var mRemovingAnimDuration = 600L
 
+    /**
+     * Created to start the reveal animations in a Coroutine
+     * */
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
     init {
         mDecorView = resourceFinder.getDecorView()
         mPresenter = resourceFinder.getContext()?.let { Presenter(it) }?.also {
@@ -111,18 +115,15 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                         Presenter.STATE_CANVAS_DRAWN -> {
                             when (mPresenterRevealAnimation) {
                                 RevealAnimation.CIRCULAR_REVEAL -> {
-                                    mPresenter?.circularReveal(mRevealAnimDuration)
-                                }
-                                RevealAnimation.FADE_IN -> {
-                                    mPresenter?.fadeIn(mRemovingAnimDuration)
+                                    it.circularReveal(mRevealAnimDuration)
                                 }
                                 RevealAnimation.ROTATION_X -> {
-                                    mPresenter?.rotationXByImpl(mRevealAnimDuration)
+                                    it.rotationXByImpl(mRevealAnimDuration)
                                 }
                                 RevealAnimation.ROTATION_Y -> {
-                                    mPresenter?.rotationYByImpl(mRevealAnimDuration)
+                                    it.rotationYByImpl(mRevealAnimDuration)
                                 }
-                                else -> {}
+                                else -> Unit
                             }
                             onPresenterStateChange(Presenter.STATE_REVEALED)
                         }

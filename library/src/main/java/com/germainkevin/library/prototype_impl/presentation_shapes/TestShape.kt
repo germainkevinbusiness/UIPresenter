@@ -153,39 +153,56 @@ class TestShape : PresenterShape {
                 val viewToPresent = builder.mViewToPresent!!
                 // Doing some calculations
                 buildSelfJob = async {
-                    // Determine text size
                     mDescriptionTextPaint.textSize =
                         calculatedTextSize(displayMetrics, mDefaultTextUnit, mDefaultTextSize)
-                    // Determine description text width
-                    val descTextWidth = mDescriptionTextPaint.measureText(it).toInt()
-                    // Testing distances
-                    val rightSpaceAvailable = mDecorView.width - descTextWidth
-
-                    Timber.d("DecorView width: ${mDecorView.width}")
-                    Timber.d("DecorView height: ${mDecorView.height}")
-                    Timber.d("rightSpaceAvailable: $rightSpaceAvailable")
-                    Timber.d("descTextWidth: $descTextWidth")
-
-                    val finalStaticLayoutWidth: Int = if (rightSpaceAvailable <= 25) {
-                        descTextWidth - (abs(rightSpaceAvailable) + 56)
-                    } else descTextWidth
-
-                    Timber.d("finalStaticLayoutWidth: $finalStaticLayoutWidth")
-                    // Build Static layout
-                    staticLayout =
-                        buildStaticLayout(it, mDescriptionTextPaint, finalStaticLayoutWidth)
                     // Get the exact coordinates of the view to present
                     mViewToPresentBounds = viewToPresent.getBounds()
+
+                    // Determine description text width
+                    val descTextWidth = mDescriptionTextPaint.measureText(it).toInt()
+
+
+                    // Thorough calculations
+                    Timber.d("DecorView Width: ${mDecorView.width}")
+                    Timber.d("mViewToPresentBounds.left: ${mViewToPresentBounds.left}")
+                    // Remaining Space between View to present's left position and the end of the
+                    // decorView's width
+                    val a = mDecorView.width - mViewToPresentBounds.left
+                    // $a minus description text width
+                    val b = a - descTextWidth
+
+                    Timber.d("Space between View to present and end edge: $a")
+                    Timber.d(" Remaining space minus descriptionText width: $b")
+
+                    val horizontalMargin = 56
+                    val staticLayoutWidth: Int = when {
+                        // The description text's width is larger than the available space
+                        // for it to be laid out horizontally
+                        b <= 0 -> (a - horizontalMargin).toInt()
+                        // The description text's width is large enough to be laid out
+                        b >= horizontalMargin -> descTextWidth
+                        // The description text's width is larger than the horizontalMargin
+                        // but not larger than the remaining space it can be laid out in, inside
+                        // the decorView's width
+                        else -> descTextWidth - horizontalMargin
+                    }
+
+                    Timber.d("descTextWidth: $descTextWidth")
+                    Timber.d("staticLayoutWidth: $staticLayoutWidth")
+                    // Build Static layout
+                    staticLayout = buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
 
                     // Determine DescriptionText position on screen
                     mDescriptionTextPosition.x = mViewToPresentBounds.left + 16
                     mDescriptionTextPosition.y = mViewToPresentBounds.bottom + 16
-                    // Build mSquircleShapeRectF
+
+                    // Build the squircle
+                    val mSquircleWidth = (staticLayoutWidth).toFloat()
                     mSquircleShapeRectF.set(
                         mDescriptionTextPosition.x - 16,
                         mDescriptionTextPosition.y - 16,
-                        staticLayout.width.toFloat(),
-                        (mViewToPresentBounds.bottom + 16) + (staticLayout.height + 20)
+                        mSquircleWidth,
+                        mDescriptionTextPosition.y + (staticLayout.height + 20)
                     )
                 }
                 buildSelfJob.await()

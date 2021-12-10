@@ -21,10 +21,6 @@ fun mainThread(block: suspend CoroutineScope.() -> Unit) {
     mainScope.launch { block.invoke(this) }
 }
 
-fun setShadowLayer(paint: Paint, @ColorInt shadowLayerColor: Int) {
-    paint.setShadowLayer(10f, 5f, 5f, shadowLayerColor)
-}
-
 /**
  * Gets the exact coordinate on the screen of a View
  *
@@ -37,6 +33,10 @@ fun View.getBounds(): RectF {
     // We now have the exact left,top,right,bottom position of the view on the screen
     viewBounds.set(rect)
     return viewBounds
+}
+
+fun setShadowLayer(paint: Paint, @ColorInt shadowLayerColor: Int) {
+    paint.setShadowLayer(10f, 5f, 5f, shadowLayerColor)
 }
 
 fun calculatedTextSize(
@@ -61,17 +61,6 @@ fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): Stati
                 textPaint,
                 textWidth
             )
-                .build()
-        }
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-            StaticLayout.Builder.obtain(
-                text,
-                0,
-                text.length,
-                textPaint,
-                textWidth
-            )
-                .setBreakStrategy(LineBreaker.BREAK_STRATEGY_BALANCED)
                 .build()
         }
         else -> {
