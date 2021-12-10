@@ -48,10 +48,9 @@ class TestShape : PresenterShape {
     private var descriptionText: String? = null
 
     /**
-     * Position of the [SquircleShape.descriptionText] inside
-     * the [SquircleShape.mSquircleShapeRectF]
+     * Position of the [staticLayout] inside this [PresenterShape]
      */
-    private lateinit var mDescriptionTextPosition: PointF
+    private lateinit var mStaticLayoutPosition: PointF
 
     /**
      * Layout to wrap the [SquircleShape.descriptionText]
@@ -92,7 +91,7 @@ class TestShape : PresenterShape {
     private fun setupFloats() {
         mViewToPresentBounds = RectF()
         mSquircleShapeRectF = RectF()
-        mDescriptionTextPosition = PointF()
+        mStaticLayoutPosition = PointF()
     }
 
     init {
@@ -175,7 +174,7 @@ class TestShape : PresenterShape {
                     Timber.d(" Remaining space minus descriptionText width: $b")
 
                     val horizontalMargin = 56
-                    val staticLayoutWidth: Int = when {
+                    var staticLayoutWidth: Int = when {
                         // The description text's width is larger than the available space
                         // for it to be laid out horizontally
                         b <= 0 -> (a - horizontalMargin).toInt()
@@ -187,23 +186,50 @@ class TestShape : PresenterShape {
                         else -> descTextWidth - horizontalMargin
                     }
 
+                    // The percentage of the decor view's width occupied by the staticLayoutWidth
+                    val c = staticLayoutWidth * 100 / mDecorView.width
+
                     Timber.d("descTextWidth: $descTextWidth")
                     Timber.d("staticLayoutWidth: $staticLayoutWidth")
-                    // Build Static layout
-                    staticLayout = buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
+                    Timber.d("staticLayoutWidth % of width: $c%")
 
-                    // Determine DescriptionText position on screen
-                    mDescriptionTextPosition.x = mViewToPresentBounds.left + 16
-                    mDescriptionTextPosition.y = mViewToPresentBounds.bottom + 16
+                    // Determine DescriptionText position on screen & Build the squircle
+                    val mDescriptionTextPosition = PointF()
+                    if (c > 45) {
+                        // Build Static layout as we are satisfied with its current width
+                        staticLayout =
+                            buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
+                        mDescriptionTextPosition.x = mViewToPresentBounds.left + 16
+                        mDescriptionTextPosition.y = mViewToPresentBounds.bottom + 16
 
-                    // Build the squircle
-                    val mSquircleWidth = staticLayoutWidth.toFloat()
-                    mSquircleShapeRectF.set(
-                        mDescriptionTextPosition.x - 16,
-                        mDescriptionTextPosition.y - 16,
-                        mDescriptionTextPosition.x + mSquircleWidth,
-                        mDescriptionTextPosition.y + (staticLayout.height + 20)
-                    )
+                        mSquircleShapeRectF.set(
+                            mDescriptionTextPosition.x - 16,
+                            mDescriptionTextPosition.y - 16,
+                            mDescriptionTextPosition.x + staticLayoutWidth.toFloat(),
+                            mDescriptionTextPosition.y + (staticLayout.height + 20)
+                        )
+
+                        mStaticLayoutPosition =
+                            PointF(mDescriptionTextPosition.x, mDescriptionTextPosition.y)
+                    } else {
+                        // let's increase staticLayoutWidth to 65%, which is 25% more
+                        staticLayoutWidth = (65 * mDecorView.width / 100)
+                        // then build it with new width
+                        staticLayout =
+                            buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
+                        // the position of the text based on those conditions
+                        mDescriptionTextPosition.x = mViewToPresentBounds.right - 16
+                        mDescriptionTextPosition.y = mViewToPresentBounds.bottom + 16
+
+                        mSquircleShapeRectF.set(
+                            mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
+                            mDescriptionTextPosition.y - 16,
+                            mDescriptionTextPosition.x + 16,
+                            mDescriptionTextPosition.y + (staticLayout.height + 20)
+                        )
+                        mStaticLayoutPosition =
+                            PointF(mSquircleShapeRectF.left + 16, mDescriptionTextPosition.y)
+                    }
                 }
                 buildSelfJob.await()
                 buildSelfJob.join()
@@ -220,7 +246,7 @@ class TestShape : PresenterShape {
                 mDefaultSquircleRadius,
                 mSquircleShapePaint
             )
-            cv.translate(mDescriptionTextPosition.x, mDescriptionTextPosition.y)
+            cv.translate(mStaticLayoutPosition.x, mStaticLayoutPosition.y)
             staticLayout.draw(cv)
             cv.restore()
         }
