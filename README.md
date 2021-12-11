@@ -20,12 +20,13 @@ Basic usage is shown below, when you want to present a View with this library.
 In this case, when you want to set a background color, text, text color:
 
 ```kotlin
-val descText0 = "This is a TextView. Proceed to explain what the TextView's use is in your UI"
+private val descriptionText =
+    "This is a TextView. Proceed to explain what the TextView's use is in your UI"
 private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
 UIPresenter(activity = this)
     .setViewToPresent(R.id.the_view_to_present)
     .setBackgroundColor(purple700)
-    .setDescriptionText(descText0)
+    .setDescriptionText(descriptionText)
     .setDescriptionTextColor(whiteColor)
     .setRemoveOnAnyClickEvent(false)
     .setPresenterStateChangeListener { state, removePresenter ->
@@ -46,12 +47,12 @@ animation duration, listening to state changes:
 private val purple200 by lazy { ContextCompat.getColor(this, R.color.purple_200) }
 private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
 private val whiteColor by lazy { ContextCompat.getColor(this, R.color.white) }
-
+private val descriptionText = "Proceed to explain what the button's role is"
 
 UIPresenter(fragment = this)
     .setViewToPresent(R.id.dummyBtn)
     .setBackgroundColor(purple700)
-    .setDescriptionText("Proceed to explain what the button's role is")
+    .setDescriptionText(descriptionText)
     .setDescriptionTextColor(whiteColor)
     .setDescriptionTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
     .setDescriptionTypeface(Typeface.DEFAULT)
