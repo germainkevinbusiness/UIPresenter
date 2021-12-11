@@ -36,7 +36,6 @@ class SquircleShape : PresenterShape {
      */
     private lateinit var mSquircleShapePaint: Paint
 
-
     /**
      * The [Paint] to use to draw the Description text inside the
      * [SquircleShape.mSquircleShapeRectF]
@@ -102,8 +101,8 @@ class SquircleShape : PresenterShape {
 
     override lateinit var buildSelfJob: Deferred<Unit>
 
-    override fun setHasShadowLayer(mBoolean: Boolean) {
-        isShadowLayerEnabled = mBoolean
+    override fun setHasShadowLayer(choice: Boolean) {
+        isShadowLayerEnabled = choice
     }
 
     override fun setShadowLayerColor(shadowColor: Int) {
@@ -288,8 +287,7 @@ class SquircleShape : PresenterShape {
                                 mDescriptionTextPosition.x + 16,
                                 mDescriptionTextPosition.y + (staticLayout.height + 20)
                             )
-                            mStaticLayoutPosition =
-                                PointF(mSquircleShapeRectF.left + 16, f)
+                            mStaticLayoutPosition = PointF(mSquircleShapeRectF.left + 16, f)
                         }
                     }
                 }
