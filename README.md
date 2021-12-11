@@ -20,9 +20,10 @@ Basic usage is shown below, when you want to present a View with this library.
 In this case, when you want to set a background color, text, text color:
 
 ```kotlin
+private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
 private val descriptionText =
     "This is a TextView. Proceed to explain what the TextView's use is in your UI"
-private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
+
 UIPresenter(activity = this)
     .setViewToPresent(R.id.the_view_to_present)
     .setBackgroundColor(purple700)
