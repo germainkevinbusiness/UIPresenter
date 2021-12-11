@@ -36,7 +36,7 @@ fun View.getBounds(): RectF {
 }
 
 fun setShadowLayer(paint: Paint, @ColorInt shadowLayerColor: Int) {
-    paint.setShadowLayer(10f, 5f, 5f, shadowLayerColor)
+    paint.setShadowLayer(8f, 0f, 1f, shadowLayerColor)
 }
 
 fun calculatedTextSize(

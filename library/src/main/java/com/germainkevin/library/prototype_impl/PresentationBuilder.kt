@@ -108,7 +108,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
             it.mPresentationBuilder = this
             it.presenterShape = mPresenterShape
             it.mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
-                override fun onPresenterStateChange(state: Int) {
+                override fun onStateChange(state: Int) {
                     onPresenterStateChanged(state)
                     when (state) {
                         Presenter.STATE_CANVAS_DRAWN -> {
@@ -124,7 +124,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                                 }
                                 else -> Unit
                             }
-                            onPresenterStateChange(Presenter.STATE_REVEALED)
+                            onPresenterStateChanged(Presenter.STATE_REVEALED)
                         }
 
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {

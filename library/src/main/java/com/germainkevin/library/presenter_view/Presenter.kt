@@ -123,10 +123,10 @@ open class Presenter(context: Context) : View(context) {
 
     /**
      * Interface definition for a callback to be invoked when a
-     * [presenter][Presenter] state has changed.
+     * [presenter's][Presenter] [state][PresenterState] has changed.
      */
     interface StateChangeNotifier {
-        fun onPresenterStateChange(@PresenterState state: Int)
+        fun onStateChange(@PresenterState state: Int)
     }
 
     /**
@@ -147,7 +147,7 @@ open class Presenter(context: Context) : View(context) {
 
     override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
         if (event!!.keyCode == KeyEvent.KEYCODE_BACK) {
-            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_BACK_BUTTON_PRESSED)
+            mPresenterStateChangeNotifier.onStateChange(STATE_BACK_BUTTON_PRESSED)
         }
         return super.dispatchKeyEventPreIme(event)
     }
@@ -173,13 +173,13 @@ open class Presenter(context: Context) : View(context) {
         val captureEventFocal = presenterShape.shapeContains(x, y)
 
         if (captureEventVTP) {
-            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_VTP_PRESSED)
+            mPresenterStateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
         }
         if (captureEventFocal) {
-            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_FOCAL_PRESSED)
+            mPresenterStateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
         }
         if (!captureEventFocal && !captureEventVTP) {
-            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_NON_FOCAL_PRESSED)
+            mPresenterStateChangeNotifier.onStateChange(STATE_NON_FOCAL_PRESSED)
         }
 
         return true
@@ -187,10 +187,10 @@ open class Presenter(context: Context) : View(context) {
 
     override fun onDraw(canvas: Canvas?) {
         if (mPresentationBuilder.mIsViewToPresentSet) {
-            mPresenterStateChangeNotifier.onPresenterStateChange(STATE_REVEALING)
             if (presenterShape.buildSelfJob.isCompleted) {
+                mPresenterStateChangeNotifier.onStateChange(STATE_REVEALING)
                 presenterShape.onDrawInPresenterWith(canvas)
-                mPresenterStateChangeNotifier.onPresenterStateChange(STATE_CANVAS_DRAWN)
+                mPresenterStateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
             }
         }
     }

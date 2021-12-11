@@ -228,7 +228,7 @@ class SquircleShape : PresenterShape {
                     // The static layout position on screen from the top of the vtp
                     // to its height when put at the top
                     // So this is the new top coordinate
-                    val f = (mViewToPresentBounds.top - 16) - (staticLayout.height + 20)
+                    val f = (mViewToPresentBounds.top - 16) - (staticLayout.height + 16)
 
                     if (isWidthMoreThan45Percent) {
                         Timber.d("Static layout height end in position: $staticLayoutHeightPosition")
@@ -242,7 +242,7 @@ class SquircleShape : PresenterShape {
                                 mDescriptionTextPosition.x - 16,
                                 mDescriptionTextPosition.y - 16,
                                 mDescriptionTextPosition.x + staticLayoutWidth.toFloat(),
-                                mDescriptionTextPosition.y + (staticLayout.height + 20)
+                                mDescriptionTextPosition.y + (staticLayout.height + 16)
                             )
                             mStaticLayoutPosition =
                                 PointF(mDescriptionTextPosition.x, mDescriptionTextPosition.y)
@@ -257,7 +257,7 @@ class SquircleShape : PresenterShape {
                                 mDescriptionTextPosition.x - 16,
                                 mDescriptionTextPosition.y,
                                 mDescriptionTextPosition.x + staticLayoutWidth.toFloat(),
-                                mDescriptionTextPosition.y - (staticLayout.height + 20)
+                                mDescriptionTextPosition.y - (staticLayout.height + 16)
                             )
                             mStaticLayoutPosition =
                                 PointF(mDescriptionTextPosition.x, f)
@@ -273,7 +273,7 @@ class SquircleShape : PresenterShape {
                                 mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
                                 mDescriptionTextPosition.y - 16,
                                 mDescriptionTextPosition.x + 16,
-                                mDescriptionTextPosition.y + (staticLayout.height + 20)
+                                mDescriptionTextPosition.y + (staticLayout.height + 16)
                             )
                             mStaticLayoutPosition =
                                 PointF(mSquircleShapeRectF.left + 16, mDescriptionTextPosition.y)
@@ -285,7 +285,7 @@ class SquircleShape : PresenterShape {
                                 mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
                                 mDescriptionTextPosition.y - 16,
                                 mDescriptionTextPosition.x + 16,
-                                mDescriptionTextPosition.y + (staticLayout.height + 20)
+                                mDescriptionTextPosition.y + (staticLayout.height + 16)
                             )
                             mStaticLayoutPosition = PointF(mSquircleShapeRectF.left + 16, f)
                         }
