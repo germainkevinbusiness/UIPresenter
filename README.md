@@ -21,6 +21,8 @@ In this case, when you want to set a background color, text, text color:
 
 ```kotlin
 private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
+private val whiteColor by lazy { ContextCompat.getColor(this, R.color.white) }
+
 private val descriptionText =
     "This is a TextView. Proceed to explain what the TextView's use is in your UI"
 
