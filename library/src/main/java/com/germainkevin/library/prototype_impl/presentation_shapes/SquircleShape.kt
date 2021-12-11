@@ -15,7 +15,6 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 
 class SquircleShape : PresenterShape {
-
     /**
      * The background to draw on the SquircleShape
      */
@@ -50,10 +49,9 @@ class SquircleShape : PresenterShape {
     private var descriptionText: String? = null
 
     /**
-     * Position of the [SquircleShape.descriptionText] inside
-     * the [SquircleShape.mSquircleShapeRectF]
+     * Position of the [staticLayout] inside this [PresenterShape]
      */
-    private lateinit var mDescriptionTextPosition: PointF
+    private lateinit var mStaticLayoutPosition: PointF
 
     /**
      * Layout to wrap the [SquircleShape.descriptionText]
@@ -61,7 +59,7 @@ class SquircleShape : PresenterShape {
      * default singleLine that the [Canvas.drawText]
      * method puts the text in by default
      */
-    private lateinit var mStaticLayout: StaticLayout
+    private lateinit var staticLayout: StaticLayout
 
     /**
      * [TypedValue] unit in which the [SquircleShape.descriptionText]
@@ -83,8 +81,6 @@ class SquircleShape : PresenterShape {
 
     private var shadowLayerColor = Color.DKGRAY
 
-    override lateinit var buildSelfJob: Deferred<Unit>
-
     private fun setupPaints() {
         mSquircleShapePaint = Paint()
         mSquircleShapePaint.isAntiAlias = true
@@ -96,13 +92,15 @@ class SquircleShape : PresenterShape {
     private fun setupFloats() {
         mViewToPresentBounds = RectF()
         mSquircleShapeRectF = RectF()
-        mDescriptionTextPosition = PointF()
+        mStaticLayoutPosition = PointF()
     }
 
     init {
         setupPaints()
         setupFloats()
     }
+
+    override lateinit var buildSelfJob: Deferred<Unit>
 
     override fun setHasShadowLayer(mBoolean: Boolean) {
         isShadowLayerEnabled = mBoolean
@@ -149,87 +147,151 @@ class SquircleShape : PresenterShape {
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         mainThread {
             if (isShadowLayerEnabled) setShadowLayer(mSquircleShapePaint, shadowLayerColor)
-            // Set up the description text coordinates
-            descriptionText?.let { description ->
-                val mDecorView: ViewGroup = builder.resourceFinder.getDecorView()!!
-                val mDisplayMetrics = mDecorView.resources.displayMetrics
-                val viewToPresent: View = builder.mViewToPresent!!
+            descriptionText?.let {
+                val mDecorView = builder.resourceFinder.getDecorView()!!
+                val displayMetrics = mDecorView.resources.displayMetrics
+                val viewToPresent = builder.mViewToPresent!!
+                // Doing some calculations
                 buildSelfJob = async {
                     mDescriptionTextPaint.textSize =
-                        calculatedTextSize(mDisplayMetrics, mDefaultTextUnit, mDefaultTextSize)
-
+                        calculatedTextSize(displayMetrics, mDefaultTextUnit, mDefaultTextSize)
+                    // Get the exact coordinates of the view to present
                     mViewToPresentBounds = viewToPresent.getBounds()
-                    val desiredShapeWidthLeftToRight =
-                        mViewToPresentBounds.right + (description.length * 3.5).toInt()
-                    val desiredShapeHeightTopToBottom = mViewToPresentBounds.bottom + 250
 
-                    val finalLeftValue: Float
-                    val finalRightValue: Float
-                    val finalTopValue: Float
-                    val finalBottomValue: Float
+                    // Determine description text width
+                    val descTextWidth = mDescriptionTextPaint.measureText(it).toInt()
 
-                    val rightMaxMarginDistance = 44f
-                    // 56, the usual height of bottom bars *2 + rightMaxMarginDistance - 10
-                    val bottomMaxMarginDistance = 154f
-                    val rightSpaceAvailable = mDecorView.width - desiredShapeWidthLeftToRight
-                    val bottomSpaceAvailable = mDecorView.height - desiredShapeHeightTopToBottom
+                    Timber.d("DecorView Width: ${mDecorView.width}")
+                    Timber.d("mViewToPresentBounds.left: ${mViewToPresentBounds.left}")
+                    Timber.d("DecorView height: ${mDecorView.height}")
+                    Timber.d("mViewToPresentBounds.bottom: ${mViewToPresentBounds.bottom}")
 
-                    Timber.d("rightSpaceAvailable: $rightSpaceAvailable")
-                    Timber.d("bottomSpaceAvailable: $bottomSpaceAvailable")
+                    // Remaining Space between View to present's left position and the end of the
+                    // decorView's width
+                    val a = mDecorView.width - mViewToPresentBounds.left
+                    // $a minus description text width
+                    val b = a - descTextWidth
 
-                    if (rightSpaceAvailable >= rightMaxMarginDistance) {
-                        finalLeftValue = mViewToPresentBounds.left
-                        finalRightValue = desiredShapeWidthLeftToRight
-                    } else {
-                        val preferredLeftPosition =
-                            mViewToPresentBounds.left - (description.length * 3.5).toInt()
-                        finalLeftValue =
-                            if (preferredLeftPosition <= mDecorView.width) mViewToPresentBounds.left
-                            else preferredLeftPosition
-                        finalRightValue = mViewToPresentBounds.right
-                    }
-                    if (bottomSpaceAvailable >= bottomMaxMarginDistance) {
-                        finalTopValue = desiredShapeHeightTopToBottom
-                        finalBottomValue = mViewToPresentBounds.bottom
-                    } else {
-                        finalTopValue = mViewToPresentBounds.top
-                        finalBottomValue = mViewToPresentBounds.top - 250
+                    // Space between the vtp bottom and the bottom of the decor view
+                    val c = mDecorView.height - mViewToPresentBounds.bottom
+
+                    val horizontalMargin = 56
+                    var staticLayoutWidth: Int = when {
+                        // The description text's width is larger than the available space
+                        // for it to be laid out horizontally
+                        b <= 0 -> (a - horizontalMargin).toInt()
+                        // The description text's width is large enough to be laid out
+                        b >= horizontalMargin -> descTextWidth + 16
+                        // The description text's width is larger than the horizontalMargin
+                        // but not larger than the remaining space it can be laid out in, inside
+                        // the decorView's width
+                        else -> descTextWidth - horizontalMargin
                     }
 
-                    // Set up the rounded rectangle coordinates
-                    mSquircleShapeRectF.set(
-                        finalLeftValue,
-                        finalTopValue,
-                        finalRightValue,
-                        finalBottomValue
-                    )
-                    val mStaticLayoutWidth = mSquircleShapeRectF.width().toInt() - 16
-                    mStaticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        StaticLayout.Builder.obtain(
-                            description,
-                            0,
-                            description.length,
-                            mDescriptionTextPaint,
-                            mStaticLayoutWidth
-                        )
-                            .build()
+                    // The percentage of the decor view's width occupied by the staticLayoutWidth
+                    val d = staticLayoutWidth * 100 / mDecorView.width
+
+                    Timber.d("Space between View to present and end edge: $a")
+                    Timber.d("Space between the vtp bottom and the bottom of the decor view: $c")
+                    Timber.d("Remaining space minus descriptionText width: $b")
+                    Timber.d("descTextWidth: $descTextWidth")
+                    Timber.d("staticLayoutWidth: $staticLayoutWidth")
+                    Timber.d("staticLayoutWidth % of width: $d%")
+
+                    // Determine DescriptionText position on screen & Build the squircle
+                    val mDescriptionTextPosition = PointF()
+                    // Verifies if the static layout width is more than 45% of the decor view width
+                    val isWidthMoreThan45Percent: Boolean
+                    if (d > 45) {
+                        // Build Static layout as we are satisfied with its current width
+                        staticLayout =
+                            buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
+                        isWidthMoreThan45Percent = true
                     } else {
-                        StaticLayout(
-                            description,
-                            0,
-                            mStaticLayoutWidth,
-                            mDescriptionTextPaint,
-                            description.length,
-                            Layout.Alignment.ALIGN_CENTER,
-                            1f,
-                            1f,
-                            false
-                        )
+                        // let's make staticLayoutWidth 65% of decor view
+                        // StaticLayoutWidth will go from right to left when
+                        // this condition is considered
+                        staticLayoutWidth = (65 * mDecorView.width / 100)
+                        // then build it with new width
+                        staticLayout =
+                            buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
+                        isWidthMoreThan45Percent = false
                     }
-                    mDescriptionTextPosition.x = mSquircleShapeRectF.left + 16
-//                    mDescriptionTextPosition.y =
-//                        mSquircleShapeRectF.centerY() - mStaticLayout.lineCount * textHeight / 2
-                    mDescriptionTextPosition.y = mSquircleShapeRectF.bottom + 16
+
+                    // The position where the height ends on the screen
+                    val staticLayoutHeightPosition =
+                        mViewToPresentBounds.bottom + staticLayout.height
+
+                    // Space between the height of the static layout & the end of the screen
+                    val e = mDecorView.height - staticLayoutHeightPosition
+                    // How much percentage of the decor view height does this distance represent
+                    val eSpacePercentageOnScreen = e * 100 / mDecorView.height
+                    // The static layout position on screen from the top of the vtp
+                    // to its height when put at the top
+                    // So this is the new top coordinate
+                    val f = (mViewToPresentBounds.top - 16) - (staticLayout.height + 20)
+
+                    if (isWidthMoreThan45Percent) {
+                        Timber.d("Static layout height end in position: $staticLayoutHeightPosition")
+                        Timber.d("Space between the height of the static layout & the end of the screen: $e")
+                        Timber.d("eSpacePercentageOnScreen: $eSpacePercentageOnScreen")
+                        // StaticLayout goes from up to down from the bottom of the view to present
+                        if (eSpacePercentageOnScreen >= 15) {
+                            mDescriptionTextPosition.x = mViewToPresentBounds.left + 16
+                            mDescriptionTextPosition.y = mViewToPresentBounds.bottom + 16
+                            mSquircleShapeRectF.set(
+                                mDescriptionTextPosition.x - 16,
+                                mDescriptionTextPosition.y - 16,
+                                mDescriptionTextPosition.x + staticLayoutWidth.toFloat(),
+                                mDescriptionTextPosition.y + (staticLayout.height + 20)
+                            )
+                            mStaticLayoutPosition =
+                                PointF(mDescriptionTextPosition.x, mDescriptionTextPosition.y)
+                        } else {
+                            // StaticLayout goes down to up from the top of the view to present
+                            Timber.d("f position on screen: $f")
+
+                            mDescriptionTextPosition.x = mViewToPresentBounds.left - 16
+                            mDescriptionTextPosition.y = mViewToPresentBounds.top - 16
+
+                            mSquircleShapeRectF.set(
+                                mDescriptionTextPosition.x - 16,
+                                mDescriptionTextPosition.y,
+                                mDescriptionTextPosition.x + staticLayoutWidth.toFloat(),
+                                mDescriptionTextPosition.y - (staticLayout.height + 20)
+                            )
+                            mStaticLayoutPosition =
+                                PointF(mDescriptionTextPosition.x, f)
+                        }
+
+                    } else {
+                        if (eSpacePercentageOnScreen >= 15) {
+                            // the position of the text based on those conditions
+                            mDescriptionTextPosition.x = mViewToPresentBounds.right - 16
+                            mDescriptionTextPosition.y = mViewToPresentBounds.bottom - 16
+
+                            mSquircleShapeRectF.set(
+                                mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
+                                mDescriptionTextPosition.y - 16,
+                                mDescriptionTextPosition.x + 16,
+                                mDescriptionTextPosition.y + (staticLayout.height + 20)
+                            )
+                            mStaticLayoutPosition =
+                                PointF(mSquircleShapeRectF.left + 16, mDescriptionTextPosition.y)
+                        } else {
+                            mDescriptionTextPosition.x = mViewToPresentBounds.right - 16
+                            mDescriptionTextPosition.y = mViewToPresentBounds.top + 16
+
+                            mSquircleShapeRectF.set(
+                                mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
+                                mDescriptionTextPosition.y - 16,
+                                mDescriptionTextPosition.x + 16,
+                                mDescriptionTextPosition.y + (staticLayout.height + 20)
+                            )
+                            mStaticLayoutPosition =
+                                PointF(mSquircleShapeRectF.left + 16, f)
+                        }
+                    }
                 }
                 buildSelfJob.await()
                 buildSelfJob.join()
@@ -246,8 +308,8 @@ class SquircleShape : PresenterShape {
                 mDefaultSquircleRadius,
                 mSquircleShapePaint
             )
-            cv.translate(mDescriptionTextPosition.x, mDescriptionTextPosition.y)
-            mStaticLayout.draw(cv)
+            cv.translate(mStaticLayoutPosition.x, mStaticLayoutPosition.y)
+            staticLayout.draw(cv)
             cv.restore()
         }
     }

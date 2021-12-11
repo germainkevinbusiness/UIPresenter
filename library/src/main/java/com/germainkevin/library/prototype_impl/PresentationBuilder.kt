@@ -10,7 +10,6 @@ import androidx.annotation.IdRes
 import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.R
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
-import com.germainkevin.library.prototype_impl.presentation_shapes.TestShape
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.prototypes.ResourceFinder
 import com.germainkevin.library.utils.*
@@ -82,7 +81,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * The [PresenterShape] by default or set by the user for this [mPresenter]
      * */
-    private var mPresenterShape: PresenterShape = TestShape()
+    private var mPresenterShape: PresenterShape = SquircleShape()
 
     /** Represents what animation to use to animate [mPresenter]
      */
