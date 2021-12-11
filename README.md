@@ -1,5 +1,7 @@
 # UIPresenter
 
+This library is like a tour guide for your app's UI.
+
 A library to present android UI elements. The library is still under development
 
 ## Here is an example of a Squircle-shaped Presenter
@@ -18,13 +20,13 @@ Basic usage is shown below, when you want to present a View with this library.
 In this case, when you want to set a background color, text, text color:
 
 ```kotlin
-private val mFirstColor by lazy { ContextCompat.getColor(this, R.color.purple_700) }
-
-UIPresenter(this)
-    .setViewToPresent(R.id.tvListCounter)
-    .setBackgroundColor(mFirstColor)
-    .setDescriptionText(descriptionText)
-    .setDescriptionTextColor(mThirdColor)
+val descText0 = "This is a TextView. Proceed to explain what the TextView's use is in your UI"
+private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
+UIPresenter(activity = this)
+    .setViewToPresent(R.id.the_view_to_present)
+    .setBackgroundColor(purple700)
+    .setDescriptionText(descText0)
+    .setDescriptionTextColor(whiteColor)
     .setRemoveOnAnyClickEvent(false)
     .setPresenterStateChangeListener { state, removePresenter ->
         // check if the user has pressed on the presenter
@@ -41,19 +43,20 @@ Or if you just want to specify even more values such as text size, typeface,shad
 animation duration, listening to state changes:
 
 ```kotlin
-private val mFirstColor by lazy { ContextCompat.getColor(this, R.color.purple_700) }
-private val mSecondColor by lazy { ContextCompat.getColor(this, R.color.blue_500) }
-private val mThirdColor by lazy { ContextCompat.getColor(this, R.color.white) }
+private val purple200 by lazy { ContextCompat.getColor(this, R.color.purple_200) }
+private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
+private val whiteColor by lazy { ContextCompat.getColor(this, R.color.white) }
+
 
 UIPresenter(fragment = this)
-    .setViewToPresent(binding.mListItemCountTv)
-    .setBackgroundColor(mFirstColor)
-    .setDescriptionText("This text tells you how many animal names are displayed in the below list. There are 7 days in a week, the first one being Monday, the second one is Tuesday, the third one is Wednesday")
-    .setDescriptionTextColor(mThirdColor)
+    .setViewToPresent(R.id.dummyBtn)
+    .setBackgroundColor(purple700)
+    .setDescriptionText("Proceed to explain what the button's role is")
+    .setDescriptionTextColor(whiteColor)
     .setDescriptionTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
     .setDescriptionTypeface(Typeface.DEFAULT)
     .setHasShadowLayer(true)
-    .setShadowLayerColor(mSecondColor)
+    .setShadowLayerColor(purple200)
     .setRevealAnimation(RevealAnimation.ROTATION_Y)
     .setRevealAnimationDuration(1000L)
     .setRemoveOnAnyClickEvent(false)
