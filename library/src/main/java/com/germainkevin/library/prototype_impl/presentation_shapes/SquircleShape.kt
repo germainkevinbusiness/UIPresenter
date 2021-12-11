@@ -207,9 +207,7 @@ class SquircleShape : PresenterShape {
                             buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
                         isWidthMoreThan45Percent = true
                     } else {
-                        // let's make staticLayoutWidth 65% of decor view
-                        // StaticLayoutWidth will go from right to left when
-                        // this condition is considered
+                        // let's make staticLayoutWidth 65% of decor view's width
                         staticLayoutWidth = (65 * mDecorView.width / 100)
                         // then build it with new width
                         staticLayout =
@@ -264,6 +262,7 @@ class SquircleShape : PresenterShape {
                         }
 
                     } else {
+                        // up to down direction for static layout
                         if (eSpacePercentageOnScreen >= 15) {
                             // the position of the text based on those conditions
                             mDescriptionTextPosition.x = mViewToPresentBounds.right - 16
