@@ -22,7 +22,7 @@ fun mainThread(block: suspend CoroutineScope.() -> Unit) {
 }
 
 /**
- * Gets the exact coordinate on the screen of a View
+ * Gets the exact coordinates of a View on the decor view
  *
  * With this data we can do some positioning for the presenter shapes
  * */

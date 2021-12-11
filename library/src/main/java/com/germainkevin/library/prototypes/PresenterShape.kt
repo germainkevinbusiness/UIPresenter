@@ -20,10 +20,10 @@ interface PresenterShape : ShapeLifecycle {
     fun setBackgroundColor(@ColorInt color: Int)
 
     /**
-     * @param mBoolean defines whether the shape should have
+     * @param choice defines whether the shape should have
      * a shadow layer drawn in its background or not
      * */
-    fun setHasShadowLayer(mBoolean: Boolean)
+    fun setHasShadowLayer(choice: Boolean)
 
     /**
      * @param shadowColor The color of the shadow layer

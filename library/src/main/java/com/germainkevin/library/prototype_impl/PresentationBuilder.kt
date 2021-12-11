@@ -362,15 +362,15 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * If you don't want the [presenter][mPresenter] to be removed automatically
-     * when a [click][MotionEvent.ACTION_UP] event is detected on the app screen,
-     * set this to false
-     *
      * Defines whether or not a detected click event on the [mDecorView],
      * should result in the removal of the [mPresenter] from the [mDecorView].
      * It is true by default
+     *
+     * If you don't want the [mPresenter] to be removed automatically
+     * when a [click][MotionEvent.ACTION_UP] event is detected on the app screen,
+     * set this to false
      */
-    open fun setAutoRemoveOnClickEvent(autoRemoveApproval: Boolean): T {
+    open fun setRemoveOnAnyClickEvent(autoRemoveApproval: Boolean): T {
         mAutoRemoveOnClickEvent = autoRemoveApproval
         return this as T
     }

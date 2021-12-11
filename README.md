@@ -25,7 +25,7 @@ UIPresenter(this)
     .setBackgroundColor(mFirstColor)
     .setDescriptionText(descriptionText)
     .setDescriptionTextColor(mThirdColor)
-    .setAutoRemoveOnClickEvent(false)
+    .setRemoveOnAnyClickEvent(false)
     .setPresenterStateChangeListener { state, removePresenter ->
         // check if the user has pressed on the presenter
         if (state == Presenter.STATE_FOCAL_PRESSED) {
@@ -56,7 +56,7 @@ UIPresenter(fragment = this)
     .setShadowLayerColor(mSecondColor)
     .setRevealAnimation(RevealAnimation.ROTATION_Y)
     .setRevealAnimationDuration(1000L)
-    .setAutoRemoveOnClickEvent(false)
+    .setRemoveOnAnyClickEvent(false)
     .setPresenterStateChangeListener { state, removePresenter ->
         if (state == Presenter.STATE_FOCAL_PRESSED) {
             removePresenter(Unit)
