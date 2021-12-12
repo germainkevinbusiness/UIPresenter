@@ -73,14 +73,15 @@ the presenter whenever you want:
 UIPresenter(fragment = this).set(
     removePresenterOnAnyClickEvent = false, // That'll deactivate automatic removal on any click event
     presenterStateChangeListener = { state, removePresenter ->
-        // Here you can choose to remove the presenter whenever you want by calling the below
-        // function
+        // Here you can choose to remove the presenter whenever you want by calling the
+        // removePresenter function like so:
         removePresenter(Unit)
     }
 )
 ````
 
-To create your own animation when the presenter is being added to the decor view, do as follow:
+To create your own animation when the presenter is being added to the decor view
+(called reveal animation), you need to extend the ```RevealAnimation``` interface, like so:
 
 ````kotlin
 class MyRevealAnimation : RevealAnimation {
@@ -96,7 +97,8 @@ class MyRevealAnimation : RevealAnimation {
 }
 ````
 
-To create your own animation when the presenter is being removed from the decor view, do as follow:
+To create your own animation when the presenter is being removed from the decor view
+(called remove animation), you need to extend the ```RemoveAnimation``` interface, like so:
 
 ````kotlin
 class MyRemoveAnimation : RemoveAnimation {
@@ -111,6 +113,15 @@ class MyRemoveAnimation : RemoveAnimation {
     }
 }
 ````
+
+And then you can apply those animations to your presenter like so:
+
+```kotlin
+UIPresenter(activity = this).set(
+    revealAnimation = MyRevealAnimation(),
+    removeAnimation = MyRemoveAnimation()
+)
+```
 
 ## License
 
