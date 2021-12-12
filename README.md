@@ -38,7 +38,7 @@ animation duration, listening to state changes:
 private val purple200 by lazy { ContextCompat.getColor(this, R.color.purple_200) }
 private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
 private val whiteColor by lazy { ContextCompat.getColor(this, R.color.white) }
-private val descriptionText = "Proceed to explain what the button's role is"
+private val descriptionText = "This is an animal name, shown inside this RecyclerView"
 
 UIPresenter(fragment = this).set(
     viewToPresent = R.id.the_view_to_present,
@@ -56,6 +56,10 @@ UIPresenter(fragment = this).set(
     }
 )
 ```
+
+### Here's the output of the above code:
+
+<img src="/screenshots/device-2021-12-12-173755.png" alt="A Squircle-shaped Presenter View" width="360" />
 
 To create your own animation when the presenter is being added to the decor view
 (called reveal animation), you need to extend the ```RevealAnimation``` interface, like so:
