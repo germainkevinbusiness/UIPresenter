@@ -76,7 +76,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
 
     /** Represents what animation to use to animate [mPresenter]
      */
-    private var mPresenterRevealAnimation: RevealAnimation = RevealAnimation.CIRCULAR_REVEAL
+    private var mPresenterRevealAnimation: RevealAnimation = CircularRevealAnimation()
+
+    private var mPresenterRemoveAnimation: RemoveAnimation = FadeOutAnimation()
 
     /**
      * The duration of the animation when revealing the [mPresenter]
@@ -121,6 +123,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     internal var mTypedValueUnit: Int = TypedValue.COMPLEX_UNIT_SP
     internal var mTypeface = Typeface.DEFAULT
 
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
     init {
         mDecorView = resourceFinder.getDecorView()
         mPresenter = resourceFinder.getContext()?.let { Presenter(it) }?.also {
@@ -132,18 +136,30 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                     when (state) {
                         Presenter.STATE_CANVAS_DRAWN -> {
                             when (mPresenterRevealAnimation) {
-                                RevealAnimation.CIRCULAR_REVEAL -> {
-                                    it.circularReveal(mRevealAnimDuration)
+                                is CircularRevealAnimation -> {
+                                    (mPresenterRevealAnimation as CircularRevealAnimation)
+                                        .runAnimation(coroutineScope, it, mRevealAnimDuration) {
+                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
+                                        }
                                 }
-                                RevealAnimation.ROTATION_X -> {
-                                    it.rotationXByImpl(mRevealAnimDuration)
+                                is RotationXByAnimation -> {
+                                    (mPresenterRevealAnimation as RotationXByAnimation)
+                                        .runAnimation(coroutineScope, it, mRevealAnimDuration) {
+                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
+                                        }
                                 }
-                                RevealAnimation.ROTATION_Y -> {
-                                    it.rotationYByImpl(mRevealAnimDuration)
+                                is RotationYByAnimation -> {
+                                    (mPresenterRevealAnimation as RotationYByAnimation)
+                                        .runAnimation(coroutineScope, it, mRevealAnimDuration) {
+                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
+                                        }
                                 }
-                                else -> Unit
+                                is NoRevealAnimation -> onPresenterStateChanged(Presenter.STATE_REVEALED)
+                                else -> mPresenterRevealAnimation
+                                    .runAnimation(coroutineScope, it, mRevealAnimDuration) {
+                                        onPresenterStateChanged(Presenter.STATE_REVEALED)
+                                    }
                             }
-                            onPresenterStateChanged(Presenter.STATE_REVEALED)
                         }
 
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
@@ -186,6 +202,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         typedValueUnit: Int = mTypedValueUnit,
         typeface: Typeface = mTypeface,
         revealAnimation: RevealAnimation = mPresenterRevealAnimation,
+        removeAnimation: RemoveAnimation = mPresenterRemoveAnimation,
         revealAnimDuration: Long = mRevealAnimDuration,
         removalAnimDuration: Long = mRemovingAnimDuration,
         removeOnBackPress: Boolean = mRemoveOnBackPress,
@@ -208,6 +225,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mTypedValueUnit = typedValueUnit
         mTypeface = typeface
         mPresenterRevealAnimation = revealAnimation
+        mPresenterRemoveAnimation = removeAnimation
         mRevealAnimDuration = revealAnimDuration
         mRemovingAnimDuration = removalAnimDuration
         mRemoveOnBackPress = removeOnBackPress
@@ -228,6 +246,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         typedValueUnit: Int = mTypedValueUnit,
         typeface: Typeface = mTypeface,
         revealAnimation: RevealAnimation = mPresenterRevealAnimation,
+        removeAnimation: RemoveAnimation = mPresenterRemoveAnimation,
         revealAnimDuration: Long = mRevealAnimDuration,
         removalAnimDuration: Long = mRemovingAnimDuration,
         removeOnBackPress: Boolean = mRemoveOnBackPress,
@@ -250,6 +269,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mTypedValueUnit = typedValueUnit
         mTypeface = typeface
         mPresenterRevealAnimation = revealAnimation
+        mPresenterRemoveAnimation = removeAnimation
         mRevealAnimDuration = revealAnimDuration
         mRemovingAnimDuration = removalAnimDuration
         mRemoveOnBackPress = removeOnBackPress
@@ -298,11 +318,12 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private fun removePresenterIfPresent() = mainThread {
         mPresenter?.let {
             if (mState == Presenter.STATE_REMOVING && mState != Presenter.STATE_REMOVED) {
-                fadeOut(it, mRemovingAnimDuration) {
-                    mDecorView?.removeView(it)
-                    onPresenterStateChanged(Presenter.STATE_REMOVED)
-                    finish()
-                }
+                mPresenterRemoveAnimation
+                    .runAnimation(coroutineScope, it, mRemovingAnimDuration) {
+                        mDecorView?.removeView(it)
+                        onPresenterStateChanged(Presenter.STATE_REMOVED)
+                        finish()
+                    }
             }
         }
     }

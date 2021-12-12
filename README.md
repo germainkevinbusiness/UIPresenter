@@ -40,7 +40,8 @@ UIPresenter(fragment = this).set(
     backgroundColor = purple700,
     descriptionText = descriptionText,
     descriptionTextColor = whiteColor,
-    revealAnimation = RevealAnimation.CIRCULAR_REVEAL,
+    revealAnimation = RotationYByAnimation(),
+    removeAnimation = FadeOutAnimation(),
     removePresenterOnAnyClickEvent = false,
     shadowLayer = PresenterShadowLayer(shadowColor = purple200, dx = 10f, radius = 10f),
     presenterStateChangeListener = { state, removePresenter ->
