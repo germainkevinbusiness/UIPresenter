@@ -27,7 +27,8 @@ UIPresenter(activity = this).set(
 )
 ```
 
-Here's the output of the above code:
+### Here's the output of the above code:
+
 <img src="/screenshots/device-2021-12-12-182847.png" alt="A Squircle-shaped Presenter View" width="360" />
 
 Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,
