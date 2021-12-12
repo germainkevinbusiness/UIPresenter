@@ -54,32 +54,6 @@ UIPresenter(fragment = this).set(
 )
 ```
 
-If you want your presenter to be removed from the decor view, on any detected click event, just set
-the following parameter in the ````UIPresenter(this).set()```` method to true, like so:
-
-````kotlin
-UIPresenter(fragment = this).set(
-    removePresenterOnAnyClickEvent = true // This parameter is true by default in the API
-)
-````
-
-Or if you want to choose when to remove the presenter from the decor view yourself, you can do that
-by setting ```removePresenterOnAnyClickEvent = false ``` and listen for state change events, as the
-API will give you a ```removePresenter``` function as second parameter in
-```presenterStateChangeListener{state,removePresenter -> }```, you can use this function to remove
-the presenter whenever you want:
-
-````Kotlin
-UIPresenter(fragment = this).set(
-    removePresenterOnAnyClickEvent = false, // That'll deactivate automatic removal on any click event
-    presenterStateChangeListener = { state, removePresenter ->
-        // Here you can choose to remove the presenter whenever you want by calling the
-        // removePresenter function like so:
-        removePresenter(Unit)
-    }
-)
-````
-
 To create your own animation when the presenter is being added to the decor view
 (called reveal animation), you need to extend the ```RevealAnimation``` interface, like so:
 
@@ -122,6 +96,32 @@ UIPresenter(activity = this).set(
     removeAnimation = MyRemoveAnimation()
 )
 ```
+
+If you want your presenter to be removed from the decor view, on any detected click event, just set
+the following parameter in the ````UIPresenter(this).set()```` method to true, like so:
+
+````kotlin
+UIPresenter(fragment = this).set(
+    removePresenterOnAnyClickEvent = true // This parameter is true by default in the API
+)
+````
+
+Or if you want to choose when to remove the presenter from the decor view yourself, you can do that
+by setting ```removePresenterOnAnyClickEvent = false ``` and listen for state change events, as the
+API will give you a ```removePresenter``` function as second parameter in
+```presenterStateChangeListener{state,removePresenter -> }```, you can use this function to remove
+the presenter whenever you want:
+
+````Kotlin
+UIPresenter(fragment = this).set(
+    removePresenterOnAnyClickEvent = false, // That'll deactivate automatic removal on any click event
+    presenterStateChangeListener = { state, removePresenter ->
+        // Here you can choose to remove the presenter whenever you want by calling the
+        // removePresenter function like so:
+        removePresenter(Unit)
+    }
+)
+````
 
 ## License
 
