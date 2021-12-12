@@ -260,9 +260,12 @@ class SquircleShape : PresenterShape {
                                 mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
                                 mViewToPresentBounds.top - 16,
                                 mDescriptionTextPosition.x + 16,
-                                mDescriptionTextPosition.y - (staticLayout.height + 16)
+                                (mDescriptionTextPosition.y - 16) - (staticLayout.height + 16)
                             )
-                            mStaticLayoutPosition = PointF(mSquircleShapeRectF.left + 16, f)
+                            mStaticLayoutPosition = PointF(
+                                mSquircleShapeRectF.left + 16,
+                                (mViewToPresentBounds.top - 16) - (staticLayout.height)
+                            )
                         }
                     }
                 }

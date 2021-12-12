@@ -13,11 +13,10 @@ The purple background rectangle with the text is displayed using this library.
 
 ## Usage (might change in the future)
 
-This library is only functional when called from a class that is either an Activity, a Dialog or a
-Fragment.
+This library is only functional when called from a class that is either an Activity or a Fragment.
 
 Basic usage is shown below, when you want to present a View with this library. Inside your Activity,
-Dialog or Fragment, write this, where you see fit & safe to reference the View you want to present:
+or Fragment, write this, where you see fit & safe to reference the View you want to present:
 
 ```kotlin
 

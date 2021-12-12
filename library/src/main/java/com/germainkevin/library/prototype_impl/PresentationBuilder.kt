@@ -3,6 +3,7 @@ package com.germainkevin.library.prototype_impl
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -346,7 +347,11 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
             removeAndBuildJob.await()
             removeAndBuildJob.join()
             if (removeAndBuildJob.isCompleted) {
-                mPresenter?.let { mDecorView?.addView(it) }
+                mPresenter?.let {
+                    // Transparent color
+                    // it.setBackgroundColor(Color.parseColor("#80000000"))
+                    mDecorView?.addView(it)
+                }
             }
         }
     }
