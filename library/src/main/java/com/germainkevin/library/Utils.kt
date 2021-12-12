@@ -1,4 +1,4 @@
-package com.germainkevin.library.utils
+package com.germainkevin.library
 
 import android.graphics.Color
 import android.graphics.Rect

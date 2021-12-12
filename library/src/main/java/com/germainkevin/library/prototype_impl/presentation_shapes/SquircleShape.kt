@@ -5,9 +5,11 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import com.germainkevin.library.buildStaticLayout
+import com.germainkevin.library.getBounds
+import com.germainkevin.library.mainThread
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
-import com.germainkevin.library.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
 

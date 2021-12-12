@@ -3,25 +3,21 @@ package com.germainkevin.library.prototype_impl
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
 import android.util.TypedValue
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.ComponentActivity
-import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.germainkevin.library.PresenterShadowLayer
+import com.germainkevin.library.mainThread
 import com.germainkevin.library.presenter_view.Presenter
-import com.germainkevin.library.R
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
+import com.germainkevin.library.prototypes.RemoveAnimation
 import com.germainkevin.library.prototypes.ResourceFinder
-import com.germainkevin.library.utils.*
+import com.germainkevin.library.prototypes.RevealAnimation
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 
 /**
@@ -135,6 +131,11 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * */
     internal var mTypeface = Typeface.DEFAULT
 
+    // Created so that click events only get propagated when the reveal animation
+    // is done running
+    // This variable will be accessed from the mPresenter
+    internal var isRevealAnimationDone = false
+
     /**
      * Created to launch animations that need a [CoroutineScope]
      * */
@@ -164,6 +165,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                         Presenter.STATE_CANVAS_DRAWN -> {
                             mPresenterRevealAnimation
                                 .runAnimation(coroutineScope, it, mRevealAnimDuration) {
+                                    isRevealAnimationDone = true
                                     onPresenterStateChanged(Presenter.STATE_REVEALED)
                                 }
                         }

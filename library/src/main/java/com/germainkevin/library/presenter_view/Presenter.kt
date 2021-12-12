@@ -174,14 +174,17 @@ open class Presenter(context: Context) : View(context) {
         val captureEventVTP = presenterShape.viewToPresentContains(x, y)
         val captureEventFocal = presenterShape.shapeContains(x, y)
 
-        if (captureEventVTP) {
-            mPresenterStateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
-        }
-        if (captureEventFocal) {
-            mPresenterStateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
-        }
-        if (!captureEventFocal && !captureEventVTP) {
-            mPresenterStateChangeNotifier.onStateChange(STATE_NON_FOCAL_PRESSED)
+        // Only propagate click events, when the reveal animation is done running
+        if (mPresentationBuilder.isRevealAnimationDone) {
+            if (captureEventVTP) {
+                mPresenterStateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
+            }
+            if (captureEventFocal) {
+                mPresenterStateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
+            }
+            if (!captureEventFocal && !captureEventVTP) {
+                mPresenterStateChangeNotifier.onStateChange(STATE_NON_FOCAL_PRESSED)
+            }
         }
 
         return true
