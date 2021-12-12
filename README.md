@@ -16,7 +16,8 @@ The purple background rectangle with the text is displayed using this library.
 This library is only functional when called from a class that is either an Activity, a Dialog or a
 Fragment.
 
-Basic usage is shown below, when you want to present a View with this library:
+Basic usage is shown below, when you want to present a View with this library. Inside your Activity,
+Dialog or Fragment, write this, where you see fit & safe to reference the View you want to present:
 
 ```kotlin
 
@@ -54,7 +55,7 @@ UIPresenter(fragment = this).set(
 ```
 
 If you want your presenter to be removed from the decor view, on any detected click event, just set
-the following parameter in the ````Builder.set()```` method to true, like so:
+the following parameter in the ````UIPresenter(this).set()```` method to true, like so:
 
 ````kotlin
 UIPresenter(fragment = this).set(
