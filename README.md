@@ -10,7 +10,6 @@ The library is still under development.
 The purple background rectangle with the text is displayed using this library.
 <img src="/screenshots/device-2021-12-12-173610.png" alt="A Squircle-shaped Presenter View" width="360" />
 <img src="/screenshots/device-2021-12-12-173755.png" alt="A Squircle-shaped Presenter View" width="360" />
-<img src="/screenshots/device-2021-12-12-173755.png" alt="A Squircle-shaped Presenter View" width="360" />
 
 ## Usage (might change in the future)
 
