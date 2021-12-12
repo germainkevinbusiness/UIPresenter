@@ -64,9 +64,10 @@ UIPresenter(fragment = this).set(
 ````
 
 Or if you want to choose when to remove the presenter from the decor view yourself, you can do that
-by setting ```removePresenterOnAnyClickEvent = false ``` and listen for state change event, as the
-API will give you a removePresenter function as second parameter, you can use this function to
-remove the presenter whenever you want:
+by setting ```removePresenterOnAnyClickEvent = false ``` and listen for state change events, as the
+API will give you a ```removePresenter``` function as second parameter in
+```presenterStateChangeListener{state,removePresenter -> }```, you can use this function to remove
+the presenter whenever you want:
 
 ````Kotlin
 UIPresenter(fragment = this).set(
