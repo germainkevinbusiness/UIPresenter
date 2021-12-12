@@ -22,10 +22,13 @@ or Fragment, write this, where you see fit & safe to reference the View you want
 
 UIPresenter(activity = this).set(
     viewToPresent = R.id.the_view_to_present,
-    descriptionText = "This is a text explaining what the below list is",
+    descriptionText = "This is an animal name, shown inside this RecyclerView",
     presenterStateChangeListener = { _, _ -> }
 )
 ```
+
+Here's the output of the above code:
+<img src="/screenshots/device-2021-12-12-182847.png" alt="A Squircle-shaped Presenter View" width="360" />
 
 Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,
 animation duration, listening to state changes:
