@@ -53,12 +53,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private var mPresenter: Presenter? = null
 
     /**
-     * Will be assigned by the [mDecorView] in the [removePresenterIfPresent] method
-     * when removing the [mPresenter]
-     * */
-    private var mViewToRemove: Presenter? = null
-
-    /**
      * Exposes the current state of this [mPresenter] to the function [isRemoving] and [isRemoved]
      */
     @Presenter.PresenterState
@@ -93,11 +87,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * The duration of the animation when removing the [mPresenter]
      * */
     private var mRemovingAnimDuration = 600L
-
-    /**
-     * Created to start the reveal animations in a Coroutine
-     * */
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     /**
      * The [PresenterShape] by default or set by the user for this [mPresenter]
@@ -271,24 +260,18 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
 
 
     /**
-     * This method is made to only be called after you've finished
-     * propagating data to a [PresentationBuilder]
-     * It displays a [Presenter] inside a [DecorView][ViewGroup]
+     * This method is called only after you've finished
+     * propagating data for this [PresentationBuilder] through the [PresentationBuilder.set] method
+     * It displays the [mPresenter] inside a [DecorView][ViewGroup]
      */
     private fun present() = mainThread {
-        // By this time, every configuration necessary would have already
-        // been done, we can now pass this builder to the PresenterShape
-        // so it builds a Shape to output to the UI.
         mViewToPresent?.let {
-            val job = async {
-                mPresenterShape.buildSelfWith(this@PresentationBuilder)
-                val job1 = async { removePresenterIfPresent() }
-                job1.await()
-                job1.join()
-            }
+            val job = async { removePresenterIfPresent() }
             job.await()
             job.join()
             if (job.isCompleted) {
+                // This is when the presenter shape builds itself
+                mPresenterShape.buildSelfWith(this@PresentationBuilder)
                 mPresenter?.let { _v ->
                     mDecorView?.addView(_v)
                 }
@@ -305,22 +288,16 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * Never reference [mPresenter] directly, always reference it with findViewById()
      * Removes the [mPresenter] from the [mDecorView],
      * if it's present in the [mDecorView]
      * */
     private fun removePresenterIfPresent() = mainThread {
-        val job = async { mViewToRemove = mDecorView?.findViewById(R.id.android_ui_presenter) }
-        job.await()
-        job.join()
-        if (job.isCompleted) {
-            mViewToRemove?.let {
-                if (mState == Presenter.STATE_REMOVING && mState != Presenter.STATE_REMOVED) {
-                    fadeOut(it, mRemovingAnimDuration) {
-                        mDecorView?.removeView(it)
-                        onPresenterStateChanged(Presenter.STATE_REMOVED)
-                        finish()
-                    }
+        mPresenter?.let {
+            if (mState == Presenter.STATE_REMOVING && mState != Presenter.STATE_REMOVED) {
+                fadeOut(it, mRemovingAnimDuration) {
+                    mDecorView?.removeView(it)
+                    onPresenterStateChanged(Presenter.STATE_REMOVED)
+                    finish()
                 }
             }
         }
@@ -330,7 +307,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private fun finish() {
         mDecorView = null
         mPresenter = null
-        mViewToRemove = null
         mViewToPresent = null
     }
 }
