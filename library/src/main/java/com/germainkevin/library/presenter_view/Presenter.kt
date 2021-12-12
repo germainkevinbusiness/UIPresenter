@@ -18,8 +18,9 @@ import timber.log.Timber
  * or [Fragment][android.app.Fragment]
  *
  * The public variables here are to be set by the
- * [UIPresenter][com.germainkevin.library.UIPresenter] that will create this [Presenter]
- * after the call of [PresentationBuilder.present]
+ * [PresentationBuilder][com.germainkevin.library.prototype_impl.PresentationBuilder]
+ * that will create this [Presenter]
+ * at the call of [PresentationBuilder.present]
  *
  * [Presenters][Presenter] are created at the creation of the constructor of a [PresentationBuilder]
  * It is made visible by your activity, dialog, or fragment's "decorView"
