@@ -8,6 +8,7 @@ The library is still under development.
 ## Here is an example of a Squircle-shaped Presenter
 
 The purple background rectangle with the text is displayed using this library.
+
 <img src="/screenshots/device-2021-12-08-095612.png" alt="A Squircle-shaped Presenter View" width="180" />
 <img src="/screenshots/device-2021-12-08-095720.png" alt="A Squircle-shaped Presenter View" width="180" />
 
