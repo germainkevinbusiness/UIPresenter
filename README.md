@@ -15,32 +15,15 @@ The purple background rectangle with the text is displayed using this library.
 This library is only functional when called from a class that is either an Activity, a Dialog or a
 Fragment.
 
-Basic usage is shown below, when you want to present a View with this library.
-
-In this case, when you want to set a background color, text, text color:
+Basic usage is shown below, when you want to present a View with this library:
 
 ```kotlin
-private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
-private val whiteColor by lazy { ContextCompat.getColor(this, R.color.white) }
 
-private val descriptionText =
-    "This is a TextView. Proceed to explain what the TextView's use is in your UI"
-
-UIPresenter(activity = this)
-    .setViewToPresent(R.id.the_view_to_present)
-    .setBackgroundColor(purple700)
-    .setDescriptionText(descriptionText)
-    .setDescriptionTextColor(whiteColor)
-    .setRemoveOnAnyClickEvent(false)
-    .setPresenterStateChangeListener { state, removePresenter ->
-        // check if the user has pressed on the presenter
-        if (state == Presenter.STATE_FOCAL_PRESSED) {
-            // use this to remove the presenter from the UI
-            removePresenter(Unit)
-            showMenuItem()
-        }
-    }
-    .present()
+UIPresenter(activity = this).set(
+    viewToPresent = R.id.the_view_to_present,
+    descriptionText = "This is a text explaining what the below list is",
+    presenterStateChangeListener = { _, _ -> }
+)
 ```
 
 Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,
@@ -52,24 +35,20 @@ private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700)
 private val whiteColor by lazy { ContextCompat.getColor(this, R.color.white) }
 private val descriptionText = "Proceed to explain what the button's role is"
 
-UIPresenter(fragment = this)
-    .setViewToPresent(R.id.dummyBtn)
-    .setBackgroundColor(purple700)
-    .setDescriptionText(descriptionText)
-    .setDescriptionTextColor(whiteColor)
-    .setDescriptionTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-    .setDescriptionTypeface(Typeface.DEFAULT)
-    .setHasShadowLayer(true)
-    .setShadowLayerColor(purple200)
-    .setRevealAnimation(RevealAnimation.ROTATION_Y)
-    .setRevealAnimationDuration(1000L)
-    .setRemoveOnAnyClickEvent(false)
-    .setPresenterStateChangeListener { state, removePresenter ->
+UIPresenter(fragment = this).set(
+    viewToPresent = R.id.the_view_to_present,
+    backgroundColor = purple700,
+    descriptionText = descriptionText,
+    descriptionTextColor = whiteColor,
+    revealAnimation = RevealAnimation.CIRCULAR_REVEAL,
+    removePresenterOnAnyClickEvent = false,
+    shadowLayer = PresenterShadowLayer(shadowColor = purple200, dx = 10f, radius = 10f),
+    presenterStateChangeListener = { state, removePresenter ->
         if (state == Presenter.STATE_FOCAL_PRESSED) {
             removePresenter(Unit)
         }
     }
-    .present()
+)
 ```
 
 ## License

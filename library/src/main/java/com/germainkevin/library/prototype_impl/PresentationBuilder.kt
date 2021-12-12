@@ -265,7 +265,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * It displays the [mPresenter] inside a [DecorView][ViewGroup]
      */
     private fun present() = mainThread {
-        mViewToPresent?.let {
+        mViewToPresent?.let { _ ->
             val removeAndBuildJob = async {
                 removePresenterIfPresent()
                 val buildJob = async {
@@ -278,9 +278,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
             removeAndBuildJob.await()
             removeAndBuildJob.join()
             if (removeAndBuildJob.isCompleted) {
-                mPresenter?.let { _v ->
-                    mDecorView?.addView(_v)
-                }
+                mPresenter?.let { mDecorView?.addView(it) }
             }
         }
     }
