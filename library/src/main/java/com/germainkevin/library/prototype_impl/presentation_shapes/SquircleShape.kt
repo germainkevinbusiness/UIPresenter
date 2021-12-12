@@ -1,13 +1,10 @@
 package com.germainkevin.library.prototype_impl.presentation_shapes
 
 import android.graphics.*
-import android.os.Build
-import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.View
-import android.view.ViewGroup
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.utils.*
@@ -43,42 +40,18 @@ class SquircleShape : PresenterShape {
     private lateinit var mDescriptionTextPaint: TextPaint
 
     /**
-     * The text description the view to present
-     * */
-    private var descriptionText: String? = null
-
-    /**
      * Position of the [staticLayout] inside this [PresenterShape]
      */
     private lateinit var mStaticLayoutPosition: PointF
 
     /**
-     * Layout to wrap the [SquircleShape.descriptionText]
+     * Layout to wrap the [PresentationBuilder.mDescriptionText]
      * so that the text can be laid out in multiline instead of the
      * default singleLine that the [Canvas.drawText]
      * method puts the text in by default
      */
     private lateinit var staticLayout: StaticLayout
 
-    /**
-     * [TypedValue] unit in which the [SquircleShape.descriptionText]
-     * should be displayed.
-     * Usually a text on android is displayed in the [TypedValue.COMPLEX_UNIT_SP] unit
-     *
-     */
-    private var mDefaultTextUnit = TypedValue.COMPLEX_UNIT_SP
-
-    /**
-     * Desired text size to be displayed in a [TypedValue] unit
-     */
-    private var mDefaultTextSize = 18f
-
-    /**
-     * Defines whether to add a shadow layer or not to the [mSquircleShapePaint]
-     * */
-    private var isShadowLayerEnabled = true
-
-    private var shadowLayerColor = Color.DKGRAY
 
     private fun setupPaints() {
         mSquircleShapePaint = Paint()
@@ -101,29 +74,21 @@ class SquircleShape : PresenterShape {
 
     override lateinit var buildSelfJob: Deferred<Unit>
 
-    override fun setHasShadowLayer(choice: Boolean) {
-        isShadowLayerEnabled = choice
-    }
-
-    override fun setShadowLayerColor(shadowColor: Int) {
-        shadowLayerColor = shadowColor
-    }
-
     override fun setBackgroundColor(color: Int) {
         mSquircleShapePaint.color = color
-    }
-
-    override fun setDescriptionText(text: String) {
-        descriptionText = text
     }
 
     override fun setDescriptionTextColor(textColor: Int) {
         mDescriptionTextPaint.color = textColor
     }
 
-    override fun setDescriptionTextSize(typedValueUnit: Int, textSize: Float) {
-        mDefaultTextUnit = if (typedValueUnit == 0) TypedValue.COMPLEX_UNIT_SP else typedValueUnit
-        mDefaultTextSize = textSize
+    override fun setDescriptionTextSize(
+        typedValueUnit: Int,
+        textSize: Float,
+        displayMetrics: DisplayMetrics
+    ) {
+        mDescriptionTextPaint.textSize =
+            TypedValue.applyDimension(typedValueUnit, textSize, displayMetrics)
     }
 
     override fun setDescriptionTypeface(typeface: Typeface?) {
@@ -145,17 +110,28 @@ class SquircleShape : PresenterShape {
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         mainThread {
-            if (isShadowLayerEnabled) setShadowLayer(mSquircleShapePaint, shadowLayerColor)
-            descriptionText?.let {
+            setBackgroundColor(builder.mBackgroundColor)
+            if (builder.mHasShadowLayer)
+                mSquircleShapePaint.setShadowLayer(
+                    builder.shadowLayerRadius,
+                    builder.shadowLayerDx,
+                    builder.shadowLayerDy,
+                    builder.shadowLayerColor
+                )
+            builder.mDescriptionText?.let {
                 val mDecorView = builder.resourceFinder.getDecorView()!!
-                val displayMetrics = mDecorView.resources.displayMetrics
-                val viewToPresent = builder.mViewToPresent!!
+                setDescriptionTextColor(builder.mDescriptionTextColor)
+                setDescriptionTypeface(builder.mTypeface)
                 // Doing some calculations
                 buildSelfJob = async {
-                    mDescriptionTextPaint.textSize =
-                        calculatedTextSize(displayMetrics, mDefaultTextUnit, mDefaultTextSize)
+                    setDescriptionTextSize(
+                        builder.mTypedValueUnit,
+                        builder.mDescriptionTextSize,
+                        mDecorView.resources.displayMetrics
+                    )
+
                     // Get the exact coordinates of the view to present
-                    mViewToPresentBounds = viewToPresent.getBounds()
+                    mViewToPresentBounds = builder.mViewToPresent!!.getBounds()
 
                     // Determine description text width
                     val descTextWidth = mDescriptionTextPaint.measureText(it).toInt()
@@ -282,9 +258,9 @@ class SquircleShape : PresenterShape {
 
                             mSquircleShapeRectF.set(
                                 mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
-                                mDescriptionTextPosition.y - 16,
+                                mViewToPresentBounds.top - 16,
                                 mDescriptionTextPosition.x + 16,
-                                mDescriptionTextPosition.y + (staticLayout.height + 16)
+                                mDescriptionTextPosition.y - (staticLayout.height + 16)
                             )
                             mStaticLayoutPosition = PointF(mSquircleShapeRectF.left + 16, f)
                         }

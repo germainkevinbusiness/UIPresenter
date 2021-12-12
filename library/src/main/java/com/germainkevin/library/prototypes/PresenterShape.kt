@@ -2,6 +2,7 @@ package com.germainkevin.library.prototypes
 
 import android.graphics.Canvas
 import android.graphics.Typeface
+import android.util.DisplayMetrics
 import androidx.annotation.ColorInt
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.Deferred
@@ -20,22 +21,6 @@ interface PresenterShape : ShapeLifecycle {
     fun setBackgroundColor(@ColorInt color: Int)
 
     /**
-     * @param choice defines whether the shape should have
-     * a shadow layer drawn in its background or not
-     * */
-    fun setHasShadowLayer(choice: Boolean)
-
-    /**
-     * @param shadowColor The color of the shadow layer
-     * */
-    fun setShadowLayerColor(@ColorInt shadowColor: Int)
-
-    /**
-     * Sets the text to be shown inside of a [PresenterShape]
-     * */
-    fun setDescriptionText(text: String)
-
-    /**
      * @param textColor the background color for the [presenter's][PresenterShape] description text
      */
     fun setDescriptionTextColor(@ColorInt textColor: Int)
@@ -46,8 +31,9 @@ interface PresenterShape : ShapeLifecycle {
      * @param textSize       The desired text size wanted for the description text
      * @param typedValueUnit the unit in which the description text should be displayed,
      * e.g. [android.util.TypedValue.COMPLEX_UNIT_SP]
+     * @param displayMetrics Necessary information to calculate the accurate TextSize
      */
-    fun setDescriptionTextSize(typedValueUnit: Int, textSize: Float)
+    fun setDescriptionTextSize(typedValueUnit: Int, textSize: Float, displayMetrics: DisplayMetrics)
 
     /**
      * Sets the [Typeface] for the description text
