@@ -1,7 +1,7 @@
 # UIPresenter
 
-This library is like a tour guide for your app's UI. It helps you to explain to your user, the role
-of the Views in your app's UI.
+This android library is like a tour guide for your app's Views. It helps to explain to your user,
+the role of the Views in your Activity or Fragment.
 
 The library is still under development.
 
