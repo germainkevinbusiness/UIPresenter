@@ -177,6 +177,28 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mPresenterStateChangeListener(state) { removingPresenter() }
     }
 
+    /**
+     * @param viewToPresentId The id of the view you want to present to a user
+     * @param presenterShape The shape you want the [mPresenter] to be in, when added to your [mDecorView]
+     * @param backgroundColor The background color of the [mPresenter]
+     * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
+     * @param shadowLayer Sets a Shadow layer for the [mPresenter]
+     * @param descriptionText The text that describes the view you want to present
+     * @param descriptionTextColor The text color of the description text
+     * @param descriptionTextSize The desired text size of the description text
+     * @param typedValueUnit The unit you want your description text to be in
+     * texts are usually in the [TypedValue.COMPLEX_UNIT_SP] unit on android
+     * @param descriptionTextTypeface The typeface you want your description text to be in
+     * @param revealAnimation The animation that runs when adding the [mPresenter] to the [mDecorView]
+     * @param revealAnimDuration The duration of the reveal animation
+     * @param removeAnimation The animation that runs when removing the [mPresenter] from the [mDecorView]
+     * @param removalAnimDuration The duration of the remove animation
+     * @param removeOnBackPress Sets whether the presenter should be removed from the [mDecorView]
+     * when [android.app.Activity.onBackPressed] is detected or not
+     * @param removePresenterOnAnyClickEvent Sets whether any click event detected anywhere on the screen
+     * or even [android.app.Activity.onBackPressed] should result in the removal of the [mPresenter] or not
+     * @param presenterStateChangeListener This listener, listens for state changes inside the [mPresenter]
+     * */
     open fun set(
         @IdRes viewToPresentId: Int,
         presenterShape: PresenterShape = mPresenterShape,
@@ -187,7 +209,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         descriptionTextColor: Int = mDescriptionTextColor,
         descriptionTextSize: Float = mDescriptionTextSize,
         typedValueUnit: Int = mTypedValueUnit,
-        typeface: Typeface = mTypeface,
+        descriptionTextTypeface: Typeface = mTypeface,
         revealAnimation: RevealAnimation = mPresenterRevealAnimation,
         removeAnimation: RemoveAnimation = mPresenterRemoveAnimation,
         revealAnimDuration: Long = mRevealAnimDuration,
@@ -210,7 +232,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mDescriptionTextColor = descriptionTextColor
         mDescriptionTextSize = descriptionTextSize
         mTypedValueUnit = typedValueUnit
-        mTypeface = typeface
+        mTypeface = descriptionTextTypeface
         mPresenterRevealAnimation = revealAnimation
         mPresenterRemoveAnimation = removeAnimation
         mRevealAnimDuration = revealAnimDuration
@@ -221,6 +243,28 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         return this as T
     }
 
+    /**
+     * @param viewToPresent The view you want to present to a user
+     * @param presenterShape The shape you want the [mPresenter] to be in, when added to your [mDecorView]
+     * @param backgroundColor The background color of the [mPresenter]
+     * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
+     * @param shadowLayer Sets a Shadow layer for the [mPresenter]
+     * @param descriptionText The text that describes the view you want to present
+     * @param descriptionTextColor The text color of the description text
+     * @param descriptionTextSize The desired text size of the description text
+     * @param typedValueUnit The unit you want your description text to be in
+     * texts are usually in the [TypedValue.COMPLEX_UNIT_SP] unit on android
+     * @param descriptionTextTypeface The typeface you want your description text to be in
+     * @param revealAnimation The animation that runs when adding the [mPresenter] to the [mDecorView]
+     * @param revealAnimDuration The duration of the reveal animation
+     * @param removeAnimation The animation that runs when removing the [mPresenter] from the [mDecorView]
+     * @param removalAnimDuration The duration of the remove animation
+     * @param removeOnBackPress Sets whether the presenter should be removed from the [mDecorView]
+     * when [android.app.Activity.onBackPressed] is detected or not
+     * @param removePresenterOnAnyClickEvent Sets whether any click event detected anywhere on the screen
+     * or even [android.app.Activity.onBackPressed] should result in the removal of the [mPresenter] or not
+     * @param presenterStateChangeListener This listener, listens for state changes inside the [mPresenter]
+     * */
     open fun set(
         viewToPresent: View? = mViewToPresent,
         presenterShape: PresenterShape = mPresenterShape,
@@ -231,7 +275,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         descriptionTextColor: Int = mDescriptionTextColor,
         descriptionTextSize: Float = mDescriptionTextSize,
         typedValueUnit: Int = mTypedValueUnit,
-        typeface: Typeface = mTypeface,
+        descriptionTextTypeface: Typeface = mTypeface,
         revealAnimation: RevealAnimation = mPresenterRevealAnimation,
         removeAnimation: RemoveAnimation = mPresenterRemoveAnimation,
         revealAnimDuration: Long = mRevealAnimDuration,
@@ -254,7 +298,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mDescriptionTextColor = descriptionTextColor
         mDescriptionTextSize = descriptionTextSize
         mTypedValueUnit = typedValueUnit
-        mTypeface = typeface
+        mTypeface = descriptionTextTypeface
         mPresenterRevealAnimation = revealAnimation
         mPresenterRemoveAnimation = removeAnimation
         mRevealAnimDuration = revealAnimDuration
