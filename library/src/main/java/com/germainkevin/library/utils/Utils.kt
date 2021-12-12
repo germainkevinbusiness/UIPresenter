@@ -30,7 +30,7 @@ class PresenterShadowLayer(
 )
 
 // Lambda function to launch a coroutine on a Main Dispatcher
-fun mainThread(block: suspend CoroutineScope.() -> Unit) {
+internal fun mainThread(block: suspend CoroutineScope.() -> Unit) {
     val mainScope = CoroutineScope(Dispatchers.Main)
     mainScope.launch { block.invoke(this) }
 }
@@ -39,7 +39,7 @@ fun mainThread(block: suspend CoroutineScope.() -> Unit) {
  * Gets the exact coordinates of a View on the decor view
  * With this data we can do some positioning for the presenter shapes
  * */
-fun View.getBounds(): RectF {
+internal fun View.getBounds(): RectF {
     val rect = Rect()
     val viewBounds = RectF() // Will get the position of the view to present
     this.getGlobalVisibleRect(rect)
@@ -48,7 +48,7 @@ fun View.getBounds(): RectF {
     return viewBounds
 }
 
-fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): StaticLayout {
+internal fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): StaticLayout {
     return when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
             StaticLayout.Builder.obtain(

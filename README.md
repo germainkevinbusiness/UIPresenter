@@ -1,8 +1,9 @@
 # UIPresenter
 
-This library is like a tour guide for your app's UI.
+This library is like a tour guide for your app's UI. It helps you to explain to your user, the role
+of the Views in your app's UI.
 
-A library to present android UI elements. The library is still under development
+The library is still under development.
 
 ## Here is an example of a Squircle-shaped Presenter
 
@@ -51,6 +52,47 @@ UIPresenter(fragment = this).set(
     }
 )
 ```
+
+If you want your presenter to be removed from the decor view, on any detected click event, just set
+the following parameter in the ````Builder.set()```` method to true, like so:
+
+````kotlin
+UIPresenter(fragment = this).set(
+    removePresenterOnAnyClickEvent = true // This parameter is true by default in the API
+)
+````
+
+To create your own animation when the presenter is being added to the decor view, do as follow:
+
+````kotlin
+class MyRevealAnimation : RevealAnimation {
+
+    override fun runAnimation(
+        coroutineScope: CoroutineScope, // A scope to run your animation in, if you want
+        presenter: Presenter, // The presenter the reveal animation will run on
+        revealAnimationDuration: Long, // The duration of the animation
+        afterAnim: () -> Unit // When called that means we can safely consider this animation to be done
+    ) {
+        // write your animation logic here
+    }
+}
+````
+
+To create your own animation when the presenter is being removed from the decor view, do as follow:
+
+````kotlin
+class MyRemoveAnimation : RemoveAnimation {
+
+    override fun runAnimation(
+        coroutineScope: CoroutineScope, // A scope to run your animation in, if you want
+        presenter: Presenter, // The presenter the remove animation will run on
+        removeAnimationDuration: Long, // The duration of the animation
+        afterAnim: () -> Unit // When called that means we can safely consider this animation to be done
+    ) {
+        // write your animation logic here
+    }
+}
+````
 
 ## License
 
