@@ -67,6 +67,7 @@ class RotationXByAnimation : RevealAnimation {
             duration = revealAnimationDuration
             rotationXBy(360f)
         }.start()
+        afterAnim()
     }
 }
 
@@ -94,8 +95,7 @@ class NoRevealAnimation : RevealAnimation {
         presenter: Presenter,
         revealAnimationDuration: Long,
         afterAnim: () -> Unit
-    ) {
-    }
+    ) = afterAnim()
 }
 
 class FadeOutAnimation : RemoveAnimation {

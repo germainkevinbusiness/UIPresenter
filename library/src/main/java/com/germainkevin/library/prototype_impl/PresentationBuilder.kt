@@ -74,10 +74,12 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * */
     private var mAutoRemoveOnClickEvent = true
 
-    /** Represents what animation to use to animate [mPresenter]
+    /** The animation that runs when adding the [mPresenter] to the [mDecorView]
      */
     private var mPresenterRevealAnimation: RevealAnimation = CircularRevealAnimation()
 
+    /** The animation that runs when removing the [mPresenter] from the [mDecorView]
+     */
     private var mPresenterRemoveAnimation: RemoveAnimation = FadeOutAnimation()
 
     /**
@@ -95,15 +97,17 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * */
     private var mPresenterShape: PresenterShape = SquircleShape()
 
-    // Presenter configs
+    // The background color of the mPresenterShape
+    internal var mBackgroundColor = Color.BLACK
+
+    // Should the mPresenterShape contain a shadowLayer
+    internal var mHasShadowLayer = true
+
+    // Shadow layer configs
     internal var shadowLayerRadius = 8f
     internal var shadowLayerDx = 0f
     internal var shadowLayerDy = 1f
     internal var shadowLayerColor = Color.DKGRAY
-
-    // background configs
-    internal var mBackgroundColor = Color.BLACK
-    internal var mHasShadowLayer = true
 
     // description text configs
     internal var mDescriptionText: String? = null
@@ -115,14 +119,19 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     internal var mDescriptionTextColor = Color.WHITE
 
     /**
-     * [TypedValue] unit in which the [PresentationBuilder.mDescriptionText]
-     * should be displayed.
+     * [TypedValue] unit in which the [mDescriptionText] should be displayed.
      * Usually a text on android is displayed in the [TypedValue.COMPLEX_UNIT_SP] unit
-     *
      */
     internal var mTypedValueUnit: Int = TypedValue.COMPLEX_UNIT_SP
+
+    /**
+     * The [Typeface] to use for this [mDescriptionText]
+     * */
     internal var mTypeface = Typeface.DEFAULT
 
+    /**
+     * Created to launch animations that need a [CoroutineScope]
+     * */
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     init {
@@ -135,31 +144,10 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                     onPresenterStateChanged(state)
                     when (state) {
                         Presenter.STATE_CANVAS_DRAWN -> {
-                            when (mPresenterRevealAnimation) {
-                                is CircularRevealAnimation -> {
-                                    (mPresenterRevealAnimation as CircularRevealAnimation)
-                                        .runAnimation(coroutineScope, it, mRevealAnimDuration) {
-                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                        }
+                            mPresenterRevealAnimation
+                                .runAnimation(coroutineScope, it, mRevealAnimDuration) {
+                                    onPresenterStateChanged(Presenter.STATE_REVEALED)
                                 }
-                                is RotationXByAnimation -> {
-                                    (mPresenterRevealAnimation as RotationXByAnimation)
-                                        .runAnimation(coroutineScope, it, mRevealAnimDuration) {
-                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                        }
-                                }
-                                is RotationYByAnimation -> {
-                                    (mPresenterRevealAnimation as RotationYByAnimation)
-                                        .runAnimation(coroutineScope, it, mRevealAnimDuration) {
-                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                        }
-                                }
-                                is NoRevealAnimation -> onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                else -> mPresenterRevealAnimation
-                                    .runAnimation(coroutineScope, it, mRevealAnimDuration) {
-                                        onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                    }
-                            }
                         }
 
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
@@ -182,8 +170,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     }
 
     /**
-     * This method is only called from the [mPresenter] to notify this builder
-     * of its state change
+     * This method propagates state changes from the [mPresenter]
      */
     private fun onPresenterStateChanged(@Presenter.PresenterState state: Int) {
         mState = state
