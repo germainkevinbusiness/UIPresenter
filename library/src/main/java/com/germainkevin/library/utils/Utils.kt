@@ -29,7 +29,10 @@ class PresenterShadowLayer(
     val shadowColor: Int = Color.DKGRAY
 )
 
-// Lambda function to launch a coroutine on a Main Dispatcher
+/**
+ * Lambda function to launch a coroutine on a Main Dispatcher
+ * @param block The coroutine that is launched on the main dispatcher
+ * */
 internal fun mainThread(block: suspend CoroutineScope.() -> Unit) {
     val mainScope = CoroutineScope(Dispatchers.Main)
     mainScope.launch { block.invoke(this) }

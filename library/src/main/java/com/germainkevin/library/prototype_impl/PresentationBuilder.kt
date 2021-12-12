@@ -1,13 +1,18 @@
 package com.germainkevin.library.prototype_impl
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.ComponentActivity
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.R
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
@@ -132,11 +137,23 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * Created to launch animations that need a [CoroutineScope]
      * */
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private lateinit var coroutineScope: CoroutineScope
+
+    private fun provideCoroutineForAnimation(context: Context?) {
+        context?.let {
+            coroutineScope = if (it is LifecycleOwner) {
+                it.lifecycleScope
+            } else {
+                CoroutineScope(Dispatchers.Main)
+            }
+        }
+    }
 
     init {
+        val context = resourceFinder.getContext()
+        provideCoroutineForAnimation(context)
         mDecorView = resourceFinder.getDecorView()
-        mPresenter = resourceFinder.getContext()?.let { Presenter(it) }?.also {
+        mPresenter = context?.let { Presenter(it) }?.also {
             it.presenterShape = mPresenterShape
             it.mPresentationBuilder = this
             it.mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
