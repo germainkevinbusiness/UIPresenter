@@ -81,7 +81,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * The duration of the animation when revealing the [mPresenter]
      * */
-    private var mRevealAnimDuration = 600L
+    private var mRevealAnimDuration = 1000L
 
     /**
      * The duration of the animation when removing the [mPresenter]
@@ -266,12 +266,18 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      */
     private fun present() = mainThread {
         mViewToPresent?.let {
-            val job = async { removePresenterIfPresent() }
-            job.await()
-            job.join()
-            if (job.isCompleted) {
-                // This is when the presenter shape builds itself
-                mPresenterShape.buildSelfWith(this@PresentationBuilder)
+            val removeAndBuildJob = async {
+                removePresenterIfPresent()
+                val buildJob = async {
+                    // This is when the presenter shape builds itself
+                    mPresenterShape.buildSelfWith(this@PresentationBuilder)
+                }
+                buildJob.await()
+                buildJob.join()
+            }
+            removeAndBuildJob.await()
+            removeAndBuildJob.join()
+            if (removeAndBuildJob.isCompleted) {
                 mPresenter?.let { _v ->
                     mDecorView?.addView(_v)
                 }

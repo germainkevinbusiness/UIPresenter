@@ -9,6 +9,7 @@ import androidx.annotation.IntDef
 import com.germainkevin.library.R
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
+import timber.log.Timber
 
 
 /**
@@ -191,6 +192,9 @@ open class Presenter(context: Context) : View(context) {
                 mPresenterStateChangeNotifier.onStateChange(STATE_REVEALING)
                 presenterShape.onDrawInPresenterWith(canvas)
                 mPresenterStateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
+                Timber.d("After state drawn")
+            } else {
+                Timber.d("Build self job not complete")
             }
         }
     }
