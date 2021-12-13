@@ -19,7 +19,6 @@ import com.germainkevin.library.prototypes.ResourceFinder
 import com.germainkevin.library.prototypes.RevealAnimation
 import kotlinx.coroutines.*
 
-
 /**
  * Contains all the methods for presenting a UI element with a [Presenter].
  *
@@ -124,7 +123,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * [TypedValue] unit in which the [mDescriptionText] should be displayed.
      * Usually a text on android is displayed in the [TypedValue.COMPLEX_UNIT_SP] unit
      */
-    internal var mTypedValueUnit: Int = TypedValue.COMPLEX_UNIT_SP
+    internal var mDescriptionTextUnit: Int = TypedValue.COMPLEX_UNIT_SP
 
     /**
      * The [Typeface] to use for this [mDescriptionText]
@@ -206,7 +205,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * @param descriptionText The text that describes the view you want to present
      * @param descriptionTextColor The text color of the description text
      * @param descriptionTextSize The desired text size of the description text
-     * @param typedValueUnit The unit you want your description text to be in
+     * @param descriptionTextUnit The unit you want your description text to be in
      * texts are usually in the [TypedValue.COMPLEX_UNIT_SP] unit on android
      * @param descriptionTextTypeface The typeface you want your description text to be in
      * @param revealAnimation The animation that runs when adding the [mPresenter] to the [mDecorView]
@@ -228,7 +227,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         descriptionText: String,
         descriptionTextColor: Int = mDescriptionTextColor,
         descriptionTextSize: Float = mDescriptionTextSize,
-        typedValueUnit: Int = mTypedValueUnit,
+        descriptionTextUnit: Int = mDescriptionTextUnit,
         descriptionTextTypeface: Typeface = mTypeface,
         revealAnimation: RevealAnimation = mPresenterRevealAnimation,
         removeAnimation: RemoveAnimation = mPresenterRemoveAnimation,
@@ -251,7 +250,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mDescriptionText = descriptionText
         mDescriptionTextColor = descriptionTextColor
         mDescriptionTextSize = descriptionTextSize
-        mTypedValueUnit = typedValueUnit
+        mDescriptionTextUnit = descriptionTextUnit
         mTypeface = descriptionTextTypeface
         mPresenterRevealAnimation = revealAnimation
         mPresenterRemoveAnimation = removeAnimation
@@ -272,7 +271,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * @param descriptionText The text that describes the view you want to present
      * @param descriptionTextColor The text color of the description text
      * @param descriptionTextSize The desired text size of the description text
-     * @param typedValueUnit The unit you want your description text to be in
+     * @param descriptionTextUnit The unit you want your description text to be in
      * texts are usually in the [TypedValue.COMPLEX_UNIT_SP] unit on android
      * @param descriptionTextTypeface The typeface you want your description text to be in
      * @param revealAnimation The animation that runs when adding the [mPresenter] to the [mDecorView]
@@ -294,7 +293,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         descriptionText: String,
         descriptionTextColor: Int = mDescriptionTextColor,
         descriptionTextSize: Float = mDescriptionTextSize,
-        typedValueUnit: Int = mTypedValueUnit,
+        descriptionTextUnit: Int = mDescriptionTextUnit,
         descriptionTextTypeface: Typeface = mTypeface,
         revealAnimation: RevealAnimation = mPresenterRevealAnimation,
         removeAnimation: RemoveAnimation = mPresenterRemoveAnimation,
@@ -317,7 +316,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mDescriptionText = descriptionText
         mDescriptionTextColor = descriptionTextColor
         mDescriptionTextSize = descriptionTextSize
-        mTypedValueUnit = typedValueUnit
+        mDescriptionTextUnit = descriptionTextUnit
         mTypeface = descriptionTextTypeface
         mPresenterRevealAnimation = revealAnimation
         mPresenterRemoveAnimation = removeAnimation

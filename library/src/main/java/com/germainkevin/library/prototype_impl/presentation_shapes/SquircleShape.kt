@@ -127,7 +127,7 @@ class SquircleShape : PresenterShape {
                 // Doing some calculations
                 buildSelfJob = async {
                     setDescriptionTextSize(
-                        builder.mTypedValueUnit,
+                        builder.mDescriptionTextUnit,
                         builder.mDescriptionTextSize,
                         mDecorView.resources.displayMetrics
                     )
