@@ -56,6 +56,11 @@ class SquircleShape : PresenterShape {
      */
     private lateinit var staticLayout: StaticLayout
 
+    /**
+     * When the presenter [staticLayout] draws from down to up
+     * */
+    private var isStaticLayoutDrawnDownToUp = false
+
 
     private fun setupPaints() {
         mSquircleShapePaint = Paint()
@@ -101,11 +106,22 @@ class SquircleShape : PresenterShape {
 
     override fun shapeContains(x: Float, y: Float): Boolean {
         return if (buildSelfJob.isCompleted) {
-            mSquircleShapeRectF.contains(x, y)
+            if (isStaticLayoutDrawnDownToUp) mSquircleShapeRectF.downToUpContains(x, y)
+            else mSquircleShapeRectF.contains(x, y)
         } else {
             Timber.d("BuildSelf job is incomplete")
             false
         }
+    }
+
+    /**
+     * When [staticLayout] is being drawn from down to up
+     * this is how we detect if a click event is done on the [mSquircleShapeRectF]
+     * @author Kevin Germain
+     * */
+    private fun RectF.downToUpContains(x: Float, y: Float): Boolean {
+        return left < right && bottom < top
+                && x >= left && x < right && y <= top && y > bottom
     }
 
     override fun viewToPresentContains(x: Float, y: Float): Boolean {
@@ -230,6 +246,7 @@ class SquircleShape : PresenterShape {
                         } else {
                             // StaticLayout goes down to up from the top of the view to present
                             Timber.d("f position on screen: $f")
+                            isStaticLayoutDrawnDownToUp = true
                             mDefaultSquircleRadius = 15f
                             mDescriptionTextPosition.x = mViewToPresentBounds.left - 16
                             mDescriptionTextPosition.y = mViewToPresentBounds.top - 16
@@ -260,6 +277,7 @@ class SquircleShape : PresenterShape {
                             mStaticLayoutPosition =
                                 PointF(mSquircleShapeRectF.left + 16, mDescriptionTextPosition.y)
                         } else {
+                            isStaticLayoutDrawnDownToUp = true
                             mDescriptionTextPosition.x = mViewToPresentBounds.right - 16
                             mDescriptionTextPosition.y =
                                 mViewToPresentBounds.top + mDefaultSquircleRadius

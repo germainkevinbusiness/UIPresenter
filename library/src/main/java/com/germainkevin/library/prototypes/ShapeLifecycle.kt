@@ -2,6 +2,7 @@ package com.germainkevin.library.prototypes
 
 import android.graphics.Canvas
 import com.germainkevin.library.prototype_impl.PresentationBuilder
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * [buildSelfWith] should always be called before [onDrawInPresenterWith]
