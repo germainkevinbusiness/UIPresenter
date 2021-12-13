@@ -11,7 +11,7 @@ The purple background rectangle with the text is displayed using this library.
 
 <div>
 <img src="/screenshots/device-2021-12-12-173610.png" alt="UIPresenter example 1 screenshot" width="360" />
-<img src="/screenshots/device-2021-12-12-173755.png" alt="UIPresenter example 2 screenshot" width="360" />
+<img src="/screenshots/device-2021-12-13-165229.png" alt="UIPresenter example 2 screenshot" width="360" />
 </div>
 
 ## Usage (might change in the future)
@@ -24,7 +24,7 @@ or Fragment, write this, where you see fit & safe to reference the View you want
 ```kotlin
 
 UIPresenter(activity = this).set(
-    viewToPresentId = R.id.the_view_to_present,
+    viewToPresent = binding.rvAnimals[2], // using view binding here
     descriptionText = "This is an animal name, shown inside this RecyclerView",
     presenterStateChangeListener = { _, _ -> }
 )
@@ -33,8 +33,8 @@ UIPresenter(activity = this).set(
 ### Here's the output of the above code in light and dark mode:
 
 <div>
-<img src="/screenshots/device-2021-12-12-182847.png" alt="Light mode UIPresenter example" width="360" />
-<img src="/screenshots/device-2021-12-13-161738.png" alt="Dark mode UIPresenter example" width="360" />
+<img src="/screenshots/device-2021-12-13-162925.png" alt="Light mode UIPresenter example" width="360" />
+<img src="/screenshots/device-2021-12-13-162633.png" alt="Dark mode UIPresenter example" width="360" />
 </div>
 
 Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,

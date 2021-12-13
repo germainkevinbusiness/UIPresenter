@@ -27,8 +27,6 @@ class SquircleShape : PresenterShape {
 
     /**
      * The radius applied to the [SquircleShape.mSquircleShapeRectF]
-     * Will be 15f for up to down positioning and 15% of [StaticLayout.getWidth]
-     * for down to up cases
      */
     private var mDefaultSquircleRadius = 15f
 
@@ -229,9 +227,7 @@ class SquircleShape : PresenterShape {
                         Timber.d("Space between the height of the static layout & the end of the screen: $e")
                         Timber.d("eSpacePercentageOnScreen: $eSpacePercentageOnScreen")
                         // StaticLayout goes from up to down from the bottom of the view to present
-                        mDefaultSquircleRadius = (15 * staticLayoutWidth / 100).toFloat()
                         if (eSpacePercentageOnScreen >= 15) {
-                            mDefaultSquircleRadius = 15f
                             mDescriptionTextPosition.x = mViewToPresentBounds.left + 16
                             mDescriptionTextPosition.y =
                                 mViewToPresentBounds.bottom + 16
@@ -247,7 +243,6 @@ class SquircleShape : PresenterShape {
                             // StaticLayout goes down to up from the top of the view to present
                             Timber.d("f position on screen: $f")
                             isStaticLayoutDrawnDownToUp = true
-                            mDefaultSquircleRadius = 15f
                             mDescriptionTextPosition.x = mViewToPresentBounds.left - 16
                             mDescriptionTextPosition.y = mViewToPresentBounds.top - 16
 
@@ -255,7 +250,7 @@ class SquircleShape : PresenterShape {
                                 mDescriptionTextPosition.x - 16,
                                 mDescriptionTextPosition.y,
                                 mDescriptionTextPosition.x + staticLayoutWidth.toFloat(),
-                                mDescriptionTextPosition.y - (staticLayout.height + mDefaultSquircleRadius)
+                                mDescriptionTextPosition.y - (staticLayout.height + 16)
                             )
                             mStaticLayoutPosition = PointF(mDescriptionTextPosition.x, f)
                         }
@@ -266,13 +261,13 @@ class SquircleShape : PresenterShape {
                             // the position of the text based on those conditions
                             mDescriptionTextPosition.x = mViewToPresentBounds.right - 16
                             mDescriptionTextPosition.y =
-                                mViewToPresentBounds.bottom - mDefaultSquircleRadius
+                                mViewToPresentBounds.bottom - 16
 
                             mSquircleShapeRectF.set(
                                 mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
                                 mDescriptionTextPosition.y - 16,
                                 mDescriptionTextPosition.x + 16,
-                                mDescriptionTextPosition.y + (staticLayout.height + mDefaultSquircleRadius)
+                                mDescriptionTextPosition.y + (staticLayout.height + 16)
                             )
                             mStaticLayoutPosition =
                                 PointF(mSquircleShapeRectF.left + 16, mDescriptionTextPosition.y)
@@ -280,13 +275,13 @@ class SquircleShape : PresenterShape {
                             isStaticLayoutDrawnDownToUp = true
                             mDescriptionTextPosition.x = mViewToPresentBounds.right - 16
                             mDescriptionTextPosition.y =
-                                mViewToPresentBounds.top + mDefaultSquircleRadius
+                                mViewToPresentBounds.top + 16
 
                             mSquircleShapeRectF.set(
                                 mDescriptionTextPosition.x - staticLayoutWidth.toFloat(),
-                                mViewToPresentBounds.top - mDefaultSquircleRadius,
+                                mViewToPresentBounds.top - 16,
                                 mDescriptionTextPosition.x + 16,
-                                (mDescriptionTextPosition.y - mDefaultSquircleRadius) - (staticLayout.height + mDefaultSquircleRadius)
+                                (mDescriptionTextPosition.y - 16) - (staticLayout.height + 16)
                             )
                             mStaticLayoutPosition = PointF(
                                 mSquircleShapeRectF.left + 16,
