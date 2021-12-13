@@ -112,17 +112,17 @@ class SquircleShape : PresenterShape {
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         mainThread {
-            setBackgroundColor(builder.mBackgroundColor)
+            setBackgroundColor(builder.mBackgroundColor!!)
             if (builder.mHasShadowLayer)
                 mSquircleShapePaint.setShadowLayer(
-                    builder.shadowLayerRadius,
-                    builder.shadowLayerDx,
-                    builder.shadowLayerDy,
-                    builder.shadowLayerColor
+                    builder.presenterShadowLayer.radius,
+                    builder.presenterShadowLayer.dx,
+                    builder.presenterShadowLayer.dy,
+                    builder.presenterShadowLayer.shadowColor
                 )
             builder.mDescriptionText?.let {
                 val mDecorView = builder.resourceFinder.getDecorView()!!
-                setDescriptionTextColor(builder.mDescriptionTextColor)
+                setDescriptionTextColor(builder.mDescriptionTextColor!!)
                 setDescriptionTypeface(builder.mTypeface)
                 // Doing some calculations
                 buildSelfJob = async {

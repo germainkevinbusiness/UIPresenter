@@ -1,6 +1,8 @@
 package com.germainkevin.library.prototype_impl
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.util.TypedValue
@@ -18,6 +20,7 @@ import com.germainkevin.library.prototypes.RemoveAnimation
 import com.germainkevin.library.prototypes.ResourceFinder
 import com.germainkevin.library.prototypes.RevealAnimation
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 /**
  * Contains all the methods for presenting a UI element with a [Presenter].
@@ -99,16 +102,13 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private var mPresenterShape: PresenterShape = SquircleShape()
 
     // The background color of the mPresenterShape
-    internal var mBackgroundColor = Color.BLACK
+    internal var mBackgroundColor: Int? = null
 
     // Should the mPresenterShape contain a shadowLayer
     internal var mHasShadowLayer = true
 
     // Shadow layer configs
-    internal var shadowLayerRadius = 8f
-    internal var shadowLayerDx = 0f
-    internal var shadowLayerDy = 1f
-    internal var shadowLayerColor = Color.DKGRAY
+    internal var presenterShadowLayer = PresenterShadowLayer()
 
     // description text configs
     internal var mDescriptionText: String? = null
@@ -117,7 +117,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * Desired text size to be displayed in a [TypedValue] unit
      * */
     internal var mDescriptionTextSize: Float = 18f
-    internal var mDescriptionTextColor = Color.WHITE
+    internal var mDescriptionTextColor: Int? = null
 
     /**
      * [TypedValue] unit in which the [mDescriptionText] should be displayed.
@@ -140,48 +140,68 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * */
     private lateinit var coroutineScope: CoroutineScope
 
-    private fun provideCoroutineForAnimation(context: Context?) {
-        context?.let {
-            coroutineScope = if (it is LifecycleOwner) {
-                it.lifecycleScope
-            } else {
-                CoroutineScope(Dispatchers.Main)
+    /**
+     * Should the Presenter's whole View have a shadowed background
+     * */
+    private var mPresenterHasShadowedWindow: Boolean = false
+
+    /**
+     * Gives default colors to [mBackgroundColor] and [mDescriptionTextColor]
+     * if they are not set in the [PresentationBuilder.set] method
+     * */
+    private fun Context.provideDefaultColors() {
+        when (this.resources.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                mBackgroundColor = Color.WHITE
+                mDescriptionTextColor = Color.BLACK
+            }
+            else -> {
+                mBackgroundColor = Color.BLACK
+                mDescriptionTextColor = Color.WHITE
             }
         }
     }
 
     init {
-        val context = resourceFinder.getContext()
-        provideCoroutineForAnimation(context)
         mDecorView = resourceFinder.getDecorView()
-        mPresenter = context?.let { Presenter(it) }?.also {
-            it.presenterShape = mPresenterShape
-            it.mPresentationBuilder = this
-            it.mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
-                override fun onStateChange(state: Int) {
-                    onPresenterStateChanged(state)
-                    when (state) {
-                        Presenter.STATE_CANVAS_DRAWN -> {
-                            mPresenterRevealAnimation
-                                .runAnimation(coroutineScope, it, mRevealAnimDuration) {
-                                    isRevealAnimationDone = true
-                                    onPresenterStateChanged(Presenter.STATE_REVEALED)
+        resourceFinder.getContext()?.let { context ->
+            coroutineScope = (context as LifecycleOwner).lifecycleScope
+            if (mBackgroundColor == null && mDescriptionTextColor == null) {
+                context.provideDefaultColors()
+            }
+            mPresenter = Presenter(context).also {
+                it.presenterShape = mPresenterShape
+                it.mPresentationBuilder = this
+                it.mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
+                    override fun onStateChange(state: Int) {
+                        onPresenterStateChanged(state)
+                        when (state) {
+                            Presenter.STATE_CANVAS_DRAWN -> {
+                                mPresenterRevealAnimation
+                                    .runAnimation(coroutineScope, it, mRevealAnimDuration) {
+                                        isRevealAnimationDone = true
+                                        if (mPresenterHasShadowedWindow) {
+                                            // Transparent-like color
+                                            it.setBackgroundColor(Color.parseColor("#80000000"))
+                                        }
+                                        onPresenterStateChanged(Presenter.STATE_REVEALED)
+                                    }
+                            }
+
+                            Presenter.STATE_BACK_BUTTON_PRESSED -> {
+                                if (mAutoRemoveOnClickEvent && mRemoveOnBackPress) {
+                                    removingPresenter()
                                 }
-                        }
-
-                        Presenter.STATE_BACK_BUTTON_PRESSED -> {
-                            if (mAutoRemoveOnClickEvent && mRemoveOnBackPress) {
-                                removingPresenter()
                             }
-                        }
-                        Presenter.STATE_VTP_PRESSED,
-                        Presenter.STATE_FOCAL_PRESSED,
-                        Presenter.STATE_NON_FOCAL_PRESSED -> {
-                            if (mAutoRemoveOnClickEvent) {
-                                removingPresenter()
+                            Presenter.STATE_VTP_PRESSED,
+                            Presenter.STATE_FOCAL_PRESSED,
+                            Presenter.STATE_NON_FOCAL_PRESSED -> {
+                                if (mAutoRemoveOnClickEvent) {
+                                    removingPresenter()
+                                }
                             }
-                        }
 
+                        }
                     }
                 }
             }
@@ -201,6 +221,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * @param presenterShape The shape you want the [mPresenter] to be in, when added to your [mDecorView]
      * @param backgroundColor The background color of the [mPresenter]
      * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
+     * @param presenterHasShadowedWindow Should the [mPresenter]'s whole View on screen have a shadowed background
      * @param shadowLayer Sets a Shadow layer for the [mPresenter]
      * @param descriptionText The text that describes the view you want to present
      * @param descriptionTextColor The text color of the description text
@@ -221,11 +242,12 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     open fun set(
         @IdRes viewToPresentId: Int,
         presenterShape: PresenterShape = mPresenterShape,
-        backgroundColor: Int = mBackgroundColor,
+        backgroundColor: Int = mBackgroundColor!!,
         hasShadowLayer: Boolean = mHasShadowLayer,
-        shadowLayer: PresenterShadowLayer = PresenterShadowLayer(),
+        presenterHasShadowedWindow: Boolean = mPresenterHasShadowedWindow,
+        shadowLayer: PresenterShadowLayer = presenterShadowLayer,
         descriptionText: String,
-        descriptionTextColor: Int = mDescriptionTextColor,
+        descriptionTextColor: Int = mDescriptionTextColor!!,
         descriptionTextSize: Float = mDescriptionTextSize,
         descriptionTextUnit: Int = mDescriptionTextUnit,
         descriptionTextTypeface: Typeface = mTypeface,
@@ -243,10 +265,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mIsViewToPresentSet = mViewToPresent != null
         mBackgroundColor = backgroundColor
         mHasShadowLayer = hasShadowLayer
-        shadowLayerRadius = shadowLayer.radius
-        shadowLayerDx = shadowLayer.dx
-        shadowLayerDy = shadowLayer.dy
-        shadowLayerColor = shadowLayer.shadowColor
+        mPresenterHasShadowedWindow = presenterHasShadowedWindow
+        presenterShadowLayer = shadowLayer
         mDescriptionText = descriptionText
         mDescriptionTextColor = descriptionTextColor
         mDescriptionTextSize = descriptionTextSize
@@ -267,6 +287,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * @param presenterShape The shape you want the [mPresenter] to be in, when added to your [mDecorView]
      * @param backgroundColor The background color of the [mPresenter]
      * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
+     * @param presenterHasShadowedWindow Should the [mPresenter]'s whole View on screen have a shadowed background
      * @param shadowLayer Sets a Shadow layer for the [mPresenter]
      * @param descriptionText The text that describes the view you want to present
      * @param descriptionTextColor The text color of the description text
@@ -287,11 +308,12 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     open fun set(
         viewToPresent: View? = mViewToPresent,
         presenterShape: PresenterShape = mPresenterShape,
-        backgroundColor: Int = mBackgroundColor,
+        backgroundColor: Int = mBackgroundColor!!,
         hasShadowLayer: Boolean = mHasShadowLayer,
-        shadowLayer: PresenterShadowLayer = PresenterShadowLayer(),
+        presenterHasShadowedWindow: Boolean = mPresenterHasShadowedWindow,
+        shadowLayer: PresenterShadowLayer = presenterShadowLayer,
         descriptionText: String,
-        descriptionTextColor: Int = mDescriptionTextColor,
+        descriptionTextColor: Int = mDescriptionTextColor!!,
         descriptionTextSize: Float = mDescriptionTextSize,
         descriptionTextUnit: Int = mDescriptionTextUnit,
         descriptionTextTypeface: Typeface = mTypeface,
@@ -309,10 +331,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mPresenterShape = presenterShape
         mBackgroundColor = backgroundColor
         mHasShadowLayer = hasShadowLayer
-        shadowLayerRadius = shadowLayer.radius
-        shadowLayerDx = shadowLayer.dx
-        shadowLayerDy = shadowLayer.dy
-        shadowLayerColor = shadowLayer.shadowColor
+        mPresenterHasShadowedWindow = presenterHasShadowedWindow
+        presenterShadowLayer = shadowLayer
         mDescriptionText = descriptionText
         mDescriptionTextColor = descriptionTextColor
         mDescriptionTextSize = descriptionTextSize
@@ -349,8 +369,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
             removeAndBuildJob.join()
             if (removeAndBuildJob.isCompleted) {
                 mPresenter?.let {
-                    // Transparent color
-                    // it.setBackgroundColor(Color.parseColor("#80000000"))
                     mDecorView?.addView(it)
                 }
             }

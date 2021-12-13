@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
  *
  * Extend this interface to create your own reveal animation
  * Here's an example: [RotationXByAnimation][com.germainkevin.library.prototype_impl.RotationXByAnimation]
+ * @author Kevin Germain
  * */
 interface RevealAnimation {
     /**
@@ -31,6 +32,7 @@ interface RevealAnimation {
  * This animation runs in a [Presenter] after its state changes to [Presenter.STATE_REMOVING]
  * This is the animation that runs when the [Presenter] is being removed from your UI's decorView
  * Here's an example: [FadeOutAnimation][com.germainkevin.library.prototype_impl.FadeOutAnimation]
+ * @author Kevin Germain
  * */
 interface RemoveAnimation {
     /**
