@@ -136,6 +136,26 @@ UIPresenter(fragment = this).set(
 )
 ````
 
+If you want to remove the Presenter on certain specific click events, here are the click events that
+the UIPresenter library can detect:
+
+```kotlin
+Presenter.STATE_VTP_PRESSED, // When a click is done on the view you want to present
+Presenter.STATE_FOCAL_PRESSED, // when a click is done on the presenter
+Presenter.STATE_NON_FOCAL_PRESSED, // when a click is done outside the present and the view you want to present
+Presenter.STATE_BACK_BUTTON_PRESSED // when the user presses the back button
+
+UIPresenter(fragment = this).set(
+    removePresenterOnAnyClickEvent = false,
+    presenterStateChangeListener = { state, removePresenter ->
+        // this says to remove the presenter when a click is done on it
+        if (state == Presenter.STATE_FOCAL_PRESSED) {
+            removePresenter()
+        }
+    }
+)
+```
+
 ## License
 
 Licenced under the MIT Licence
