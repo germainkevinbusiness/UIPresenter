@@ -29,10 +29,8 @@ UIPresenter(activity = this).set(
 
 ### Here's the output of the above code in light and dark mode:
 
-<div>
-<img src="/screenshots/device-2021-12-12-182847.png" alt="A Squircle-shaped Presenter View" width="360" />
-<img src="/screenshots/device-2021-12-13-161738.png" alt="A Squircle-shaped Presenter View" width="360" />
-</div>
+<img src="/screenshots/device-2021-12-12-182847.png" alt="Light mode UIPresenter example" width="360" />
+<img src="/screenshots/device-2021-12-13-161738.png" alt="Dark mode UIPresenter example" width="360" />
 
 Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,
 animation duration, listening to state changes:
