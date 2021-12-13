@@ -9,6 +9,9 @@ import com.germainkevin.library.prototypes.PresenterShape
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 
+/**
+ * To be implemented
+ * */
 class PointerShape : PresenterShape {
 
     override lateinit var buildSelfJob: Deferred<Unit>

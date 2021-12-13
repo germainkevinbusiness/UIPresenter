@@ -21,15 +21,18 @@ or Fragment, write this, where you see fit & safe to reference the View you want
 ```kotlin
 
 UIPresenter(activity = this).set(
-    viewToPresent = R.id.the_view_to_present,
+    viewToPresentId = R.id.the_view_to_present,
     descriptionText = "This is an animal name, shown inside this RecyclerView",
     presenterStateChangeListener = { _, _ -> }
 )
 ```
 
-### Here's the output of the above code:
+### Here's the output of the above code in light and dark mode:
 
+<div>
 <img src="/screenshots/device-2021-12-12-182847.png" alt="A Squircle-shaped Presenter View" width="360" />
+<img src="/screenshots/device-2021-12-13-161738.png" alt="A Squircle-shaped Presenter View" width="360" />
+</div>
 
 Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,
 animation duration, listening to state changes:
@@ -41,7 +44,7 @@ private val whiteColor by lazy { ContextCompat.getColor(this, R.color.white) }
 private val descriptionText = "This is an animal name, shown inside this RecyclerView"
 
 UIPresenter(fragment = this).set(
-    viewToPresent = R.id.the_view_to_present,
+    viewToPresentId = R.id.the_view_to_present,
     backgroundColor = purple700,
     descriptionText = descriptionText,
     descriptionTextColor = whiteColor,
