@@ -27,6 +27,7 @@ import timber.log.Timber
  * at the call of [PresentationBuilder.present]
  *
  * Made visible means that the "decorView" adds it with [android.view.ViewGroup.addView]
+ * @author Kevin Germain
  * */
 open class Presenter(context: Context) : View(context) {
 
