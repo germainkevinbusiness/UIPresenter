@@ -51,7 +51,7 @@ UIPresenter(fragment = this).set(
     shadowLayer = PresenterShadowLayer(shadowColor = purple200, dx = 10f, radius = 10f),
     presenterStateChangeListener = { state, removePresenter ->
         if (state == Presenter.STATE_FOCAL_PRESSED) {
-            removePresenter(Unit)
+            removePresenter()
         }
     }
 )
@@ -125,7 +125,7 @@ UIPresenter(fragment = this).set(
     presenterStateChangeListener = { state, removePresenter ->
         // Here you can choose to remove the presenter whenever you want by calling the
         // removePresenter function like so:
-        removePresenter(Unit)
+        removePresenter()
     }
 )
 ````

@@ -63,8 +63,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * Exposes state changes from the [mPresenter] to the user of this library
      */
-    private var mPresenterStateChangeListener: (Int, (Unit) -> Unit) -> Unit =
-        { _: Int, _: (Unit) -> Unit -> }
+    private var mPresenterStateChangeListener: (Int, () -> Unit) -> Unit =
+        { _: Int, _: () -> Unit -> }
 
     /**
      * Should the back button press remove the [mPresenter].
@@ -236,7 +236,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         removalAnimDuration: Long = mRemovingAnimDuration,
         removeOnBackPress: Boolean = mRemoveOnBackPress,
         removePresenterOnAnyClickEvent: Boolean = mAutoRemoveOnClickEvent,
-        presenterStateChangeListener: (Int, (Unit) -> Unit) -> Unit
+        presenterStateChangeListener: (Int, () -> Unit) -> Unit
     ): T {
         mPresenterStateChangeListener = presenterStateChangeListener
         mPresenterShape = presenterShape
@@ -302,7 +302,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         removalAnimDuration: Long = mRemovingAnimDuration,
         removeOnBackPress: Boolean = mRemoveOnBackPress,
         removePresenterOnAnyClickEvent: Boolean = mAutoRemoveOnClickEvent,
-        presenterStateChangeListener: (Int, (Unit) -> Unit) -> Unit
+        presenterStateChangeListener: (Int, () -> Unit) -> Unit
     ): T {
         mPresenterStateChangeListener = presenterStateChangeListener
         mViewToPresent = viewToPresent
