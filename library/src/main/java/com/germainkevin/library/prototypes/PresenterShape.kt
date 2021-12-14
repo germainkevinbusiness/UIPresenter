@@ -1,9 +1,11 @@
 package com.germainkevin.library.prototypes
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.util.DisplayMetrics
 import androidx.annotation.ColorInt
+import com.germainkevin.library.presenter_view.Presenter
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.Deferred
 

@@ -13,20 +13,29 @@ import timber.log.Timber
 
 
 /**
- * The [Presenter] is a [View] that presents a [View]
- * in your [Activity][android.app.Activity], [Dialog][android.app.Dialog]
- * or [Fragment][android.app.Fragment]
+ * A [Presenter] is like a tour guide for your app's Views. You use it to explain what is the
+ * role of a [View] in your UI.
  *
- * The public variables here are to be set by the
+ * The [Presenter] is a [View] that presents a [View] in your
+ * [Activity][android.app.Activity] or [Fragment][android.app.Fragment]
+ *
+ * This [View] is created at the creation of the constructor of a [PresentationBuilder].
+ * It is added and made visible inside your [Activity][android.app.Activity]
+ * or [Fragment][android.app.Fragment] by your app's "decorView",
+ * at the call of [PresentationBuilder.set]
+ *
+ * For Example:
+ *
+ *  UIPresenter(activity = this).set(
+ *  viewToPresentId = R.id.the_view_to_present,
+ *  descriptionText = "The role of this view is to help you with....",
+ *  presenterStateChangeListener = { _, _ -> }
+ *  )
+ *
+ * The internal variables here are to be set by the
  * [PresentationBuilder][com.germainkevin.library.prototype_impl.PresentationBuilder]
  * that will create this [Presenter]
- * at the call of [PresentationBuilder.present]
  *
- * [Presenters][Presenter] are created at the creation of the constructor of a [PresentationBuilder]
- * It is made visible by your activity, dialog, or fragment's "decorView"
- * at the call of [PresentationBuilder.present]
- *
- * Made visible means that the "decorView" adds it with [android.view.ViewGroup.addView]
  * @author Kevin Germain
  * */
 open class Presenter(context: Context) : View(context) {
@@ -119,12 +128,6 @@ open class Presenter(context: Context) : View(context) {
     internal lateinit var mPresentationBuilder: PresentationBuilder<*>
 
     /**
-     * The default presenter shape in the [mPresentationBuilder]
-     * Will be set by the [PresentationBuilder] that will create this [Presenter]
-     * */
-    internal lateinit var presenterShape: PresenterShape
-
-    /**
      * Interface definition for a callback to be invoked when a
      * [presenter's][Presenter] [state][PresenterState] has changed.
      */
@@ -172,8 +175,8 @@ open class Presenter(context: Context) : View(context) {
         super.performClick()
         val x = motionEvent!!.x
         val y = motionEvent!!.y
-        val captureEventVTP = presenterShape.viewToPresentContains(x, y)
-        val captureEventFocal = presenterShape.shapeContains(x, y)
+        val captureEventVTP = mPresentationBuilder.mPresenterShape.viewToPresentContains(x, y)
+        val captureEventFocal = mPresentationBuilder.mPresenterShape.shapeContains(x, y)
 
         // Only propagate click events, when the reveal animation is done running
         if (mPresentationBuilder.isRevealAnimationDone) {
@@ -193,9 +196,9 @@ open class Presenter(context: Context) : View(context) {
 
     override fun onDraw(canvas: Canvas?) {
         if (mPresentationBuilder.mIsViewToPresentSet) {
-            if (presenterShape.buildSelfJob.isCompleted) {
+            if (mPresentationBuilder.mPresenterShape.buildSelfJob.isCompleted) {
                 mPresenterStateChangeNotifier.onStateChange(STATE_REVEALING)
-                presenterShape.onDrawInPresenterWith(canvas)
+                mPresentationBuilder.mPresenterShape.onDrawInPresenterWith(canvas)
                 mPresenterStateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
             }
         }

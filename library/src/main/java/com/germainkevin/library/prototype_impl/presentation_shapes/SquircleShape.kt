@@ -5,9 +5,11 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import android.view.View
 import com.germainkevin.library.buildStaticLayout
 import com.germainkevin.library.getBounds
 import com.germainkevin.library.mainThread
+import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 import kotlinx.coroutines.*
@@ -128,36 +130,35 @@ class SquircleShape : PresenterShape {
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         mainThread {
-            setBackgroundColor(builder.mBackgroundColor!!)
-            if (builder.mHasShadowLayer)
-                mSquircleShapePaint.setShadowLayer(
-                    builder.presenterShadowLayer.radius,
-                    builder.presenterShadowLayer.dx,
-                    builder.presenterShadowLayer.dy,
-                    builder.presenterShadowLayer.shadowColor
-                )
             builder.mDescriptionText?.let {
                 val mDecorView = builder.resourceFinder.getDecorView()!!
+                setBackgroundColor(builder.mBackgroundColor!!)
+                if (builder.mHasShadowLayer) {
+                    mSquircleShapePaint.setShadowLayer(
+                        builder.presenterShadowLayer.radius,
+                        builder.presenterShadowLayer.dx,
+                        builder.presenterShadowLayer.dy,
+                        builder.presenterShadowLayer.shadowColor
+                    )
+                }
                 setDescriptionTextColor(builder.mDescriptionTextColor!!)
                 setDescriptionTypeface(builder.mTypeface)
-                // Doing some calculations
+                setDescriptionTextSize(
+                    builder.mDescriptionTextUnit,
+                    builder.mDescriptionTextSize,
+                    mDecorView.resources.displayMetrics
+                )
                 buildSelfJob = async {
-                    setDescriptionTextSize(
-                        builder.mDescriptionTextUnit,
-                        builder.mDescriptionTextSize,
-                        mDecorView.resources.displayMetrics
-                    )
-
                     // Get the exact coordinates of the view to present
                     mViewToPresentBounds = builder.mViewToPresent!!.getBounds()
 
                     // Determine description text width
                     val descTextWidth = mDescriptionTextPaint.measureText(it).toInt()
 
-                    Timber.d("DecorView Width: ${mDecorView.width}")
-                    Timber.d("mViewToPresentBounds.left: ${mViewToPresentBounds.left}")
-                    Timber.d("DecorView height: ${mDecorView.height}")
-                    Timber.d("mViewToPresentBounds.bottom: ${mViewToPresentBounds.bottom}")
+//                    Timber.d("DecorView Width: ${mDecorView.width}")
+//                    Timber.d("mViewToPresentBounds.left: ${mViewToPresentBounds.left}")
+//                    Timber.d("DecorView height: ${mDecorView.height}")
+//                    Timber.d("mViewToPresentBounds.bottom: ${mViewToPresentBounds.bottom}")
 
                     // Remaining Space between View to present's left position and the end of the
                     // decorView's width
@@ -184,12 +185,12 @@ class SquircleShape : PresenterShape {
                     // The percentage of the decor view's width occupied by the staticLayoutWidth
                     val d = staticLayoutWidth * 100 / mDecorView.width
 
-                    Timber.d("Space between View to present and end edge: $a")
-                    Timber.d("Space between the vtp bottom and the bottom of the decor view: $c")
-                    Timber.d("Remaining space minus descriptionText width: $b")
-                    Timber.d("descTextWidth: $descTextWidth")
-                    Timber.d("staticLayoutWidth: $staticLayoutWidth")
-                    Timber.d("staticLayoutWidth % of width: $d%")
+//                    Timber.d("Space between View to present and end edge: $a")
+//                    Timber.d("Space between the vtp bottom and the bottom of the decor view: $c")
+//                    Timber.d("Remaining space minus descriptionText width: $b")
+//                    Timber.d("descTextWidth: $descTextWidth")
+//                    Timber.d("staticLayoutWidth: $staticLayoutWidth")
+//                    Timber.d("staticLayoutWidth % of width: $d%")
 
                     // Determine DescriptionText position on screen & Build the squircle
                     val mDescriptionTextPosition = PointF()
@@ -223,9 +224,9 @@ class SquircleShape : PresenterShape {
                     val f = (mViewToPresentBounds.top - 16) - (staticLayout.height + 16)
 
                     if (isWidthMoreThan45Percent) {
-                        Timber.d("Static layout height end in position: $staticLayoutHeightPosition")
-                        Timber.d("Space between the height of the static layout & the end of the screen: $e")
-                        Timber.d("eSpacePercentageOnScreen: $eSpacePercentageOnScreen")
+//                        Timber.d("Static layout height end in position: $staticLayoutHeightPosition")
+//                        Timber.d("Space between the height of the static layout & the end of the screen: $e")
+//                        Timber.d("eSpacePercentageOnScreen: $eSpacePercentageOnScreen")
                         // StaticLayout goes from up to down from the bottom of the view to present
                         if (eSpacePercentageOnScreen >= 15) {
                             mDescriptionTextPosition.x = mViewToPresentBounds.left + 16

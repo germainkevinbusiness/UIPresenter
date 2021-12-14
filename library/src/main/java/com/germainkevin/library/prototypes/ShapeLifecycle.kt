@@ -5,6 +5,7 @@ import com.germainkevin.library.prototype_impl.PresentationBuilder
 import kotlinx.coroutines.CoroutineScope
 
 /**
+ * The lifecycle of a [PresenterShape]
  * [buildSelfWith] should always be called before [onDrawInPresenterWith]
  *
  * [buildSelfWith] will be populated from a [PresentationBuilder]'s [PresentationBuilder.present]
@@ -13,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
  * [onDrawInPresenterWith] will be called from the
  * [Presenter][com.germainkevin.library.presenter_view.Presenter]'s
  * [onDraw][com.germainkevin.library.presenter_view.Presenter.onDraw] method
+ * @author Kevin Germain
  * */
 interface ShapeLifecycle {
     /**

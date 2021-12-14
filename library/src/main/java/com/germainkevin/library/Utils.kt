@@ -52,29 +52,25 @@ internal fun View.getBounds(): RectF {
 }
 
 internal fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): StaticLayout {
-    return when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-            StaticLayout.Builder.obtain(
-                text,
-                0,
-                text.length,
-                textPaint,
-                textWidth
-            )
-                .build()
-        }
-        else -> {
-            StaticLayout(
-                text,
-                0,
-                textWidth,
-                textPaint,
-                text.length,
-                Layout.Alignment.ALIGN_NORMAL,
-                1f,
-                1f,
-                false
-            )
-        }
-    }
+    return StaticLayout.Builder.obtain(
+        text,
+        0,
+        text.length,
+        textPaint,
+        textWidth
+    )
+        .build()
 }
+
+// buildStaticLayout() function declaration if one day it supports <23
+//StaticLayout(
+//text,
+//0,
+//textWidth,
+//textPaint,
+//text.length,
+//Layout.Alignment.ALIGN_NORMAL,
+//1f,
+//0f,
+//false
+//)

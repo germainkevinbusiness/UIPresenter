@@ -85,3 +85,14 @@ class FadeOutAnimation : RemoveAnimation {
         }
     }
 }
+
+class NoRemoveAnimation : RemoveAnimation {
+    override fun runAnimation(
+        coroutineScope: CoroutineScope,
+        presenter: Presenter,
+        removeAnimationDuration: Long,
+        afterAnim: () -> Unit
+    ) {
+        afterAnim()
+    }
+}

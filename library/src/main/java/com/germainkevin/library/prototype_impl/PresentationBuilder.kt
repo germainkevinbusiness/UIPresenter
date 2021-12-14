@@ -57,7 +57,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private var mPresenter: Presenter? = null
 
     /**
-     * Exposes the current state of this [mPresenter] to the function [isRemoving] and [isRemoved]
+     * Exposes the current state of this [mPresenter]
      */
     @Presenter.PresenterState
     private var mState = Presenter.STATE_NOT_SHOWN
@@ -99,7 +99,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     /**
      * The [PresenterShape] by default or set by the user for this [mPresenter]
      * */
-    private var mPresenterShape: PresenterShape = SquircleShape()
+    internal var mPresenterShape: PresenterShape = SquircleShape()
 
     // The background color of the mPresenterShape
     internal var mBackgroundColor: Int? = null
@@ -130,9 +130,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * */
     internal var mTypeface = Typeface.DEFAULT
 
-    // Created so that click events only get propagated when the reveal animation
-    // is done running
-    // This variable will be accessed from the mPresenter
+    // Created so that click events inside the [mPresenter] only get propagated
+    // when the reveal animation is done running
+    // This variable will be accessed from the [mPresenter]
     internal var isRevealAnimationDone = false
 
     /**
@@ -169,22 +169,31 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
             if (mBackgroundColor == null && mDescriptionTextColor == null) {
                 context.provideDefaultColors()
             }
-            mPresenter = Presenter(context).also {
-                it.presenterShape = mPresenterShape
-                it.mPresentationBuilder = this
-                it.mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
+            mPresenter = Presenter(context)
+            with(mPresenter!!) {
+                mPresentationBuilder = this@PresentationBuilder
+                mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
                     override fun onStateChange(state: Int) {
                         onPresenterStateChanged(state)
                         when (state) {
                             Presenter.STATE_CANVAS_DRAWN -> {
                                 mPresenterRevealAnimation
-                                    .runAnimation(coroutineScope, it, mRevealAnimDuration) {
+                                    .runAnimation(coroutineScope, this@with, mRevealAnimDuration) {
                                         isRevealAnimationDone = true
                                         if (mPresenterHasShadowedWindow) {
-                                            // Transparent-like color
-                                            it.setBackgroundColor(Color.parseColor("#80000000"))
+                                            mPresenterRevealAnimation = NoRevealAnimation()
+                                            mPresenterRevealAnimation.runAnimation(
+                                                coroutineScope,
+                                                this@with,
+                                                mRevealAnimDuration
+                                            ) {
+                                                // Transparent-like color
+                                                setBackgroundColor(Color.parseColor("#80000000"))
+                                                onPresenterStateChanged(Presenter.STATE_REVEALED)
+                                            }
+                                        } else {
+                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
                                         }
-                                        onPresenterStateChanged(Presenter.STATE_REVEALED)
                                     }
                             }
 
@@ -288,7 +297,8 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * @param backgroundColor The background color of the [mPresenter]
      * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
      * @param presenterHasShadowedWindow Should the [mPresenter]'s whole View on screen have a shadowed background
-     * @param shadowLayer Sets a Shadow layer for the [mPresenter]
+     * @param shadowLayer Sets a Shadow layer for the [mPresenter]. The shadowLayer only works if
+     * hardware acceleration is disabled on a device
      * @param descriptionText The text that describes the view you want to present
      * @param descriptionTextColor The text color of the description text
      * @param descriptionTextSize The desired text size of the description text
@@ -347,7 +357,6 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         present()
         return this as T
     }
-
 
     /**
      * This method is called only after you've finished

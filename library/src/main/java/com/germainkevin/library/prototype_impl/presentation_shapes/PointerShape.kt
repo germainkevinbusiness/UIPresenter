@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Typeface
 import android.util.DisplayMetrics
 import com.germainkevin.library.mainThread
+import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 import kotlinx.coroutines.Deferred

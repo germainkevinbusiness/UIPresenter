@@ -17,7 +17,6 @@ import com.germainkevin.library.prototypes.ResourceFinder
  * @author Kevin Germain
  * */
 class UIPresenter : PresentationBuilder<UIPresenter> {
-    constructor(resourceFinder: ResourceFinder) : super(resourceFinder = resourceFinder)
 
     constructor(activity: Activity) : super(resourceFinder = ActivityResourceFinder(activity))
 
