@@ -2,18 +2,15 @@ package com.germainkevin.library.prototype_impl
 
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
-import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.germainkevin.library.PresenterShadowLayer
-import com.germainkevin.library.mainThread
 import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
@@ -21,7 +18,6 @@ import com.germainkevin.library.prototypes.RemoveAnimation
 import com.germainkevin.library.prototypes.ResourceFinder
 import com.germainkevin.library.prototypes.RevealAnimation
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 /**
  * Contains all the methods for presenting a UI element with a [Presenter].
@@ -30,6 +26,7 @@ import timber.log.Timber
  * @param resourceFinder is an interface that gives access to an Activity or
  * a fragment's environment
  * @param T whatever [PresentationBuilder] class that implements this class
+ * @author Kevin Germain
  */
 abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinder: ResourceFinder) {
 
@@ -183,7 +180,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                                         isRevealAnimationDone = true
                                         if (mPresenterHasShadowedWindow) {
                                             mPresenterRevealAnimation = NoRevealAnimation()
-                                            // Transparent-like color
+                                            // Transparent-like black color
                                             setBackgroundColor(Color.parseColor("#80000000"))
                                             onPresenterStateChanged(Presenter.STATE_REVEALED)
                                         } else {
@@ -358,7 +355,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * propagating data for this [PresentationBuilder] through the [PresentationBuilder.set] method
      * It displays the [mPresenter] inside a [DecorView][ViewGroup]
      */
-    private fun present() = mainThread {
+    private fun present() = coroutineScope.launch {
         mViewToPresent?.let { _ ->
             val removeAndBuildJob = async {
                 removePresenterIfPresent()
@@ -391,7 +388,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
      * Removes the [mPresenter] from the [mDecorView],
      * if it's present in the [mDecorView]
      * */
-    private fun removePresenterIfPresent() = mainThread {
+    private fun removePresenterIfPresent() = coroutineScope.launch {
         mPresenter?.let {
             if (mState == Presenter.STATE_REMOVING && mState != Presenter.STATE_REMOVED) {
                 mPresenterRemoveAnimation

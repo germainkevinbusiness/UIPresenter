@@ -5,8 +5,9 @@ import com.germainkevin.library.prototype_impl.PresentationBuilder
 import kotlinx.coroutines.CoroutineScope
 
 /**
- * The lifecycle of a [PresenterShape]
- * [buildSelfWith] should always be called before [onDrawInPresenterWith]
+ * The lifecycle of a [PresenterShape].
+ * [buildSelfWith] is always called before [onDrawInPresenterWith] when presenting
+ * a [PresentationBuilder.mPresenter] inside the DecorView.
  *
  * [buildSelfWith] will be populated from a [PresentationBuilder]'s [PresentationBuilder.present]
  * method
@@ -14,6 +15,8 @@ import kotlinx.coroutines.CoroutineScope
  * [onDrawInPresenterWith] will be called from the
  * [Presenter][com.germainkevin.library.presenter_view.Presenter]'s
  * [onDraw][com.germainkevin.library.presenter_view.Presenter.onDraw] method
+ *
+ * @see [com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape] for example
  * @author Kevin Germain
  * */
 interface ShapeLifecycle {
@@ -31,15 +34,21 @@ interface ShapeLifecycle {
      *
      * @param builder The builder that will create this [PresenterShape]
      * by calling its [PresentationBuilder.present] method
+     * @see [com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape.buildSelfWith]
+     * for example
      */
     fun buildSelfWith(builder: PresentationBuilder<*>)
 
     /**
-     * Made to be called from the [Presenter's][com.germainkevin.library.presenter_view.Presenter]
-     * [onDraw][com.germainkevin.library.presenter_view.Presenter.onDraw] method
-     * @param canvas The canvas that will come from
-     * the [Presenter's][com.germainkevin.library.presenter_view.Presenter]
-     * [onDraw][com.germainkevin.library.presenter_view.Presenter.onDraw] method
+     * Will be called by the [Presenter][PresentationBuilder.mPresenter] added
+     * to the decorView, right after the call of the [PresentationBuilder.present] method
+     *
+     * The [presenter][PresentationBuilder.mPresenter] will call this through its
+     * [onDraw(canvas: Canvas)][com.germainkevin.library.presenter_view.Presenter.onDraw] method
+     * @param canvas The canvas coming from the [presenter's][PresentationBuilder.mPresenter]
+     * [com.germainkevin.library.presenter_view.Presenter.onDraw] method
+     * @see [com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape.onDrawInPresenterWith]
+     * for example
      */
     fun onDrawInPresenterWith(canvas: Canvas?)
 }

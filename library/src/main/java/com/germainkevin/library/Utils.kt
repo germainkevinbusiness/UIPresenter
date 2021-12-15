@@ -21,6 +21,7 @@ import kotlinx.coroutines.*
  * @param dx The shadow layer dx position
  * @param dy The shadow layer dy position
  * @param shadowColor The color of the shadow layer
+ * @author Kevin Germain
  * */
 class PresenterShadowLayer(
     val radius: Float = 8f,
@@ -28,15 +29,6 @@ class PresenterShadowLayer(
     val dy: Float = 1f,
     val shadowColor: Int = Color.DKGRAY
 )
-
-/**
- * Lambda function to launch a coroutine on a Main Dispatcher
- * @param block The coroutine that is launched on the main dispatcher
- * */
-internal fun mainThread(block: suspend CoroutineScope.() -> Unit) {
-    val mainScope = CoroutineScope(Dispatchers.Main)
-    mainScope.launch { block.invoke(this) }
-}
 
 internal fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): StaticLayout {
     return StaticLayout.Builder.obtain(
@@ -48,16 +40,3 @@ internal fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: In
     )
         .build()
 }
-
-// buildStaticLayout() function declaration if one day it supports <23
-//StaticLayout(
-//text,
-//0,
-//textWidth,
-//textPaint,
-//text.length,
-//Layout.Alignment.ALIGN_NORMAL,
-//1f,
-//0f,
-//false
-//)

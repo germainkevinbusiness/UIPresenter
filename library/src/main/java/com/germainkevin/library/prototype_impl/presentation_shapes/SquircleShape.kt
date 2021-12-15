@@ -2,74 +2,65 @@ package com.germainkevin.library.prototype_impl.presentation_shapes
 
 import android.graphics.*
 import android.text.StaticLayout
-import android.text.TextPaint
-import android.util.DisplayMetrics
-import android.util.TypedValue
 import com.germainkevin.library.buildStaticLayout
-import com.germainkevin.library.mainThread
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
-import kotlinx.coroutines.*
-import timber.log.Timber
 
-class SquircleShape : PresenterShape {
+/**
+ * This is a [PresenterShape] that has the shape of a Squircle
+ * @author Kevin Germain
+ * */
+class SquircleShape : PresenterShape() {
     /**
-     * The background to draw on the SquircleShape
+     * The first layer of the [SquircleShape], a rectangle that we will later on be the Squircle
+     *
+     * It's the background of the [SquircleShape]
      */
     private lateinit var mSquircleShapeRectF: RectF
 
     /**
+     * The radius applied to the [mSquircleShapeRectF]
+     */
+    private var mSquircleRadius = 15f
+
+    /**
      * Will hold the coordinates of the [PresentationBuilder.mViewToPresent] on the decorView
-     * through the [android.view.View.getGlobalVisibleRect] method
+     * through the [android.view.View.getGlobalVisibleRect] method, which gives the accurate
+     * positioning of a View on a screen
      * */
     private lateinit var vTPCoordinates: Rect
 
     /**
      * The left,top,right and bottom position, of the
-     * [view to present][PresentationBuilder.mViewToPresent] in [Float] type
+     * [view to present][PresentationBuilder.mViewToPresent] in [Float]
      * This variable will hold the [vTPCoordinates] in [RectF]
      */
     private lateinit var mViewToPresentBounds: RectF
 
     /**
-     * The radius applied to the [SquircleShape.mSquircleShapeRectF]
-     */
-    private var mSquircleRadius = 15f
-
-    /**
-     * The [Paint] to use to draw the [SquircleShape.mSquircleShapeRectF]
+     * The [Paint] to use to draw the [mSquircleShapeRectF]
      */
     private lateinit var mSquircleShapePaint: Paint
 
     /**
-     * The [Paint] to use to draw the Description text inside the
-     * [SquircleShape.mSquircleShapeRectF]
-     */
-    private lateinit var mDescriptionTextPaint: TextPaint
-
-    /**
-     * Position of the [staticLayout] inside this [PresenterShape]
-     */
-    private lateinit var mStaticLayoutPosition: PointF
-
-    /**
      * Layout to wrap the [PresentationBuilder.mDescriptionText]
      * so that the text can be laid out in multiline instead of the
-     * default singleLine that the [Canvas.drawText]
-     * method puts the text in by default
+     * default singleLine that the [Canvas.drawText] method puts the text in, by default
      */
     private lateinit var staticLayout: StaticLayout
 
+    /**
+     * Position of the [staticLayout] inside this [mSquircleShapeRectF]
+     */
+    private lateinit var mStaticLayoutPosition: PointF
 
-    private fun setupPaints() {
+    private fun initPaint() {
         mSquircleShapePaint = Paint()
         mSquircleShapePaint.isAntiAlias = true
         mSquircleShapePaint.style = Paint.Style.FILL
-        mDescriptionTextPaint = TextPaint()
-        mDescriptionTextPaint.isAntiAlias = true
     }
 
-    private fun setupFloats() {
+    private fun initFloats() {
         mViewToPresentBounds = RectF()
         mSquircleShapeRectF = RectF()
         mStaticLayoutPosition = PointF()
@@ -77,29 +68,12 @@ class SquircleShape : PresenterShape {
     }
 
     init {
-        setupPaints()
-        setupFloats()
+        initPaint()
+        initFloats()
     }
 
     override fun setBackgroundColor(color: Int) {
         mSquircleShapePaint.color = color
-    }
-
-    override fun setDescriptionTextColor(textColor: Int) {
-        mDescriptionTextPaint.color = textColor
-    }
-
-    override fun setDescriptionTextSize(
-        typedValueUnit: Int,
-        textSize: Float,
-        displayMetrics: DisplayMetrics
-    ) {
-        mDescriptionTextPaint.textSize =
-            TypedValue.applyDimension(typedValueUnit, textSize, displayMetrics)
-    }
-
-    override fun setDescriptionTypeface(typeface: Typeface?) {
-        mDescriptionTextPaint.typeface = typeface
     }
 
     override fun shapeContains(x: Float, y: Float): Boolean {
