@@ -58,9 +58,11 @@ private fun presentEditText() {
         shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f, shadowColor = Color.DKGRAY),
         removePresenterOnAnyClickEvent = false,
         presenterStateChangeListener = { state, removePresenter ->
+            // This condition says to remove the presenter when a click is done on the presenter
+            // and to go to the presentMenuItem() function
             if (state == Presenter.STATE_FOCAL_PRESSED) {
                 removePresenter()
-                presentBtn1()
+                presentMenuItem()
             }
         }
     )
