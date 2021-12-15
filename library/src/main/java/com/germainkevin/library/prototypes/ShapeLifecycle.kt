@@ -18,6 +18,10 @@ import kotlinx.coroutines.CoroutineScope
  * */
 interface ShapeLifecycle {
     /**
+     * This method is executed asynchronously on a [kotlinx.coroutines.Dispatchers.Main] inside the
+     * [com.germainkevin.library.prototype_impl.PresentationBuilder.present] method
+     * Right after you call the [PresentationBuilder.set]
+     *
      * Builds the [PresenterShape] that will be drawn on the call of [onDrawInPresenterWith]
      * Some information necessary for positioning are available in the [builder][PresentationBuilder]
      * Which is why it is put there as a parameter, and will be assigned from the

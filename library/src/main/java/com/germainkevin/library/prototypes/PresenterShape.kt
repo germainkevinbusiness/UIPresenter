@@ -15,8 +15,6 @@ import kotlinx.coroutines.Deferred
  */
 interface PresenterShape : ShapeLifecycle {
 
-    var buildSelfJob: Deferred<Unit>
-
     /**
      * @param color the background color for the [PresenterShape]
      */

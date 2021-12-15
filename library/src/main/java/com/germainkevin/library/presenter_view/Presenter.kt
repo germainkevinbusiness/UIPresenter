@@ -194,9 +194,7 @@ open class Presenter(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas?) {
-        if ((mPresentationBuilder.mIsViewToPresentSet
-                    && mPresentationBuilder.mPresenterShape.buildSelfJob.isCompleted)
-        ) {
+        if (mPresentationBuilder.mIsViewToPresentSet) {
             mPresenterStateChangeNotifier.onStateChange(STATE_REVEALING)
             mPresentationBuilder.mPresenterShape.onDrawInPresenterWith(canvas)
             mPresenterStateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
