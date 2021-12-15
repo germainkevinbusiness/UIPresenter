@@ -24,8 +24,8 @@ or Fragment, write this, where you see fit & safe to reference the View you want
 ```kotlin
 
 UIPresenter(activity = this).set(
-    viewToPresent = binding.rvAnimals[2], // using view binding here
-    descriptionText = "This is an animal name, shown inside this RecyclerView",
+    viewToPresent = binding.recyclerView[2], // using view binding here
+    descriptionText = "This is a row inside the RecyclerView with an animal image and name",
     presenterStateChangeListener = { _, _ -> }
 )
 ```
@@ -41,31 +41,32 @@ Or if you just want to specify even more values such as text size, typeface,shad
 animation duration, listening to state changes:
 
 ```kotlin
-private val purple200 by lazy { ContextCompat.getColor(this, R.color.purple_200) }
-private val purple700 by lazy { ContextCompat.getColor(this, R.color.purple_700) }
-private val whiteColor by lazy { ContextCompat.getColor(this, R.color.white) }
-private val descriptionText = "This is an animal name, shown inside this RecyclerView"
+private val teal200 = ContextCompat.getColor(this, R.color.teal200)
 
-UIPresenter(fragment = this).set(
-    viewToPresentId = R.id.the_view_to_present,
-    backgroundColor = purple700,
-    descriptionText = descriptionText,
-    descriptionTextColor = whiteColor,
-    revealAnimation = RotationYByAnimation(),
-    removeAnimation = FadeOutAnimation(),
+private val descText0 =
+    "This is the EditText. Here you can write Animal names and add them to the RecyclerView"
+UIPresenter(this).set(
+    viewToPresent = binding.addEditText,
+    backgroundColor = teal200,
+    descriptionTextColor = Color.BLACK,
+    descriptionText = descText0,
+    revealAnimation = CircularRevealAnimation(),
+    presenterHasShadowedWindow = true,
+    shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f, shadowColor = Color.DKGRAY),
     removePresenterOnAnyClickEvent = false,
-    shadowLayer = PresenterShadowLayer(shadowColor = purple200, dx = 10f, radius = 10f),
     presenterStateChangeListener = { state, removePresenter ->
         if (state == Presenter.STATE_FOCAL_PRESSED) {
             removePresenter()
+            presentBtn1()
         }
     }
+)
 )
 ```
 
 ### Here's the output of the above code:
 
-<img src="/screenshots/device-2021-12-12-173755.png" alt="A Squircle-shaped Presenter View" width="360" />
+<img src="/screenshots/device-2021-12-15-175954.png" alt="A Squircle-shaped Presenter View" width="360" />
 
 To create your own animation when the presenter is being added to the decor view
 (called reveal animation), you need to extend the ```RevealAnimation``` interface, like so:
