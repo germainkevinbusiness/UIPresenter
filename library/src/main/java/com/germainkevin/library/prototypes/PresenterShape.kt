@@ -43,8 +43,10 @@ abstract class PresenterShape : ShapeLifecycle {
      * Checks [PresentationBuilder.mPresenterHasShadowedWindow] to know whether the developer
      * wants a [shadowedWindow] drawn on the canvas through the
      * [PresenterShape.onDrawInPresenterWith] method
+     *
+     * It is true by default in the [PresentationBuilder]
      * */
-    protected var hasShadowedWindow = false
+    protected var hasShadowedWindow = true
 
     /**
      * A [TextPaint] for the description text that will be drawn by a [PresenterShape]

@@ -95,6 +95,11 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private var mRemovingAnimDuration = 600L
 
     /**
+     * Created to launch animations that need a [CoroutineScope]
+     * */
+    private lateinit var coroutineScope: CoroutineScope
+
+    /**
      * The [PresenterShape] by default or set by the user for this [mPresenter]
      * */
     internal var mPresenterShape: PresenterShape = SquircleShape()
@@ -134,15 +139,10 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     internal var isRevealAnimationDone = false
 
     /**
-     * Created to launch animations that need a [CoroutineScope]
-     * */
-    private lateinit var coroutineScope: CoroutineScope
-
-    /**
      * Should the Presenter's whole View have a shadowed Rect()
      * Will be accessed from the [mPresenterShape]
      * */
-    internal var mPresenterHasShadowedWindow: Boolean = false
+    internal var mPresenterHasShadowedWindow: Boolean = true
 
     /**
      * Gives default colors to [mBackgroundColor] and [mDescriptionTextColor]

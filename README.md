@@ -7,7 +7,7 @@ The library is still under development.
 
 ## Here is an example of a Squircle-shaped Presenter
 
-The purple background rectangle with the text is displayed using this library.
+The layer on thop of the below app is displayed using this library.
 
 <div>
 <img src="/screenshots/device-2021-12-15-175804.png" alt="UIPresenter example 1 screenshot" width="360" />
@@ -33,8 +33,8 @@ UIPresenter(activity = this).set(
 ### Here's the output of the above code in light and dark mode:
 
 <div>
-<img src="/screenshots/device-2021-12-13-162925.png" alt="Light mode UIPresenter example" width="360" />
-<img src="/screenshots/device-2021-12-13-162633.png" alt="Dark mode UIPresenter example" width="360" />
+<img src="/screenshots/device-2021-12-15-180757.png" alt="Light mode UIPresenter example" width="360" />
+<img src="/screenshots/device-2021-12-15-180840.png" alt="Dark mode UIPresenter example" width="360" />
 </div>
 
 Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,
