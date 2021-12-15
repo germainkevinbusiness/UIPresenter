@@ -18,8 +18,32 @@ import kotlinx.coroutines.Deferred
  */
 abstract class PresenterShape : ShapeLifecycle {
 
+    /**
+     * The shadowed window, is just a [Rect] that's the same size as the decorView and is given
+     * a black shadowed color.
+     *
+     * It is drawn on top of a clipped out view to present on the canvas
+     * in the [PresenterShape.onDrawInPresenterWith] method in [SquircleShape]
+     *
+     * To make it the same size as the decorView, you should do that in the
+     * [PresenterShape.buildSelfWith] like so:
+     *
+     * val rect = Rect()
+     * builder.resourceFinder.getDecorView()!!.getGlobalVisibleRect(rect)
+     * shadowedWindow.set(rect) // takes the coordinates of the decorView
+     * */
     protected var shadowedWindow = Rect()
+
+    /**
+     * The color of the [shadowedWindow] which is a [Rect]
+     * */
     protected var shadowedWindowPaint = Paint()
+
+    /**
+     * Checks [PresentationBuilder.mPresenterHasShadowedWindow] to know whether the developer
+     * wants a [shadowedWindow] drawn on the canvas through the
+     * [PresenterShape.onDrawInPresenterWith] method
+     * */
     protected var hasShadowedWindow = false
 
     /**
@@ -33,6 +57,10 @@ abstract class PresenterShape : ShapeLifecycle {
         shadowedWindowPaint.style = Paint.Style.FILL
     }
 
+    /**
+     * Sets the color of the [shadowedWindow], it is made Shadowed in black by default
+     * with the "Color.parseColor("#80000000")" color
+     * */
     open fun setShadowedWindowColor(@ColorInt color: Int) {
         shadowedWindowPaint.color = color
     }
@@ -101,6 +129,5 @@ abstract class PresenterShape : ShapeLifecycle {
     open fun viewToPresentContains(x: Float, y: Float): Boolean = false
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
-        hasShadowedWindow = builder.mPresenterHasShadowedWindow
     }
 }

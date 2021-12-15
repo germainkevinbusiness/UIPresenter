@@ -88,8 +88,14 @@ class SquircleShape : PresenterShape() {
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         builder.mDescriptionText?.let {
             setShapeBackgroundColor(builder.mBackgroundColor!!)
+            val mDecorView = builder.resourceFinder.getDecorView()!!
             hasShadowedWindow = builder.mPresenterHasShadowedWindow
-            if (hasShadowedWindow) setShadowedWindowColor(Color.parseColor("#80000000"))
+            if (hasShadowedWindow) {
+                val rect = Rect()
+                mDecorView.getGlobalVisibleRect(rect)
+                shadowedWindow.set(rect) // takes the coordinates of the decorView
+                setShadowedWindowColor(Color.parseColor("#80000000"))
+            }
             if (builder.mHasShadowLayer) {
                 mSquircleShapePaint.setShadowLayer(
                     builder.presenterShadowLayer.radius,
@@ -100,8 +106,6 @@ class SquircleShape : PresenterShape() {
             }
             setDescriptionTextColor(builder.mDescriptionTextColor!!)
             setDescriptionTypeface(builder.mTypeface)
-
-            val mDecorView = builder.resourceFinder.getDecorView()!!
             setDescriptionTextSize(
                 builder.mDescriptionTextUnit,
                 builder.mDescriptionTextSize,
@@ -226,9 +230,6 @@ class SquircleShape : PresenterShape() {
                     mStaticLayoutPosition = PointF(mSquircleShapeRectF.left + 16, sLTextPosition.y)
                 }
             }
-            val rect = Rect()
-            mDecorView.getGlobalVisibleRect(rect)
-            shadowedWindow.set(rect)
         }
     }
 

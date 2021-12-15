@@ -139,7 +139,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
     private lateinit var coroutineScope: CoroutineScope
 
     /**
-     * Should the Presenter's whole View have a shadowed background
+     * Should the Presenter's whole View have a shadowed Rect()
      * Will be accessed from the [mPresenterShape]
      * */
     internal var mPresenterHasShadowedWindow: Boolean = false
