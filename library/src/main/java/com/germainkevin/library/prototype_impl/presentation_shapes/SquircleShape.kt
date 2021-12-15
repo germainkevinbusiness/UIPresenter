@@ -5,11 +5,8 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.View
 import com.germainkevin.library.buildStaticLayout
-import com.germainkevin.library.getBounds
 import com.germainkevin.library.mainThread
-import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 import kotlinx.coroutines.*
@@ -22,8 +19,15 @@ class SquircleShape : PresenterShape {
     private lateinit var mSquircleShapeRectF: RectF
 
     /**
+     * Will hold the coordinates of the [PresentationBuilder.mViewToPresent] on the decorView
+     * through the [android.view.View.getGlobalVisibleRect] method
+     * */
+    private lateinit var vTPCoordinates: Rect
+
+    /**
      * The left,top,right and bottom position, of the
-     * [view to present][PresentationBuilder.mViewToPresent]
+     * [view to present][PresentationBuilder.mViewToPresent] in [Float] type
+     * This variable will hold the [vTPCoordinates] in [RectF]
      */
     private lateinit var mViewToPresentBounds: RectF
 
@@ -74,6 +78,7 @@ class SquircleShape : PresenterShape {
         mViewToPresentBounds = RectF()
         mSquircleShapeRectF = RectF()
         mStaticLayoutPosition = PointF()
+        vTPCoordinates = Rect()
     }
 
     init {
@@ -150,15 +155,16 @@ class SquircleShape : PresenterShape {
                 )
                 buildSelfJob = async {
                     // Get the exact coordinates of the view to present
-                    mViewToPresentBounds = builder.mViewToPresent!!.getBounds()
+                    builder.mViewToPresent!!.getGlobalVisibleRect(vTPCoordinates)
+                    mViewToPresentBounds.set(vTPCoordinates)
 
                     // Determine description text width
                     val descTextWidth = mDescriptionTextPaint.measureText(it).toInt()
 
-//                    Timber.d("DecorView Width: ${mDecorView.width}")
-//                    Timber.d("mViewToPresentBounds.left: ${mViewToPresentBounds.left}")
-//                    Timber.d("DecorView height: ${mDecorView.height}")
-//                    Timber.d("mViewToPresentBounds.bottom: ${mViewToPresentBounds.bottom}")
+                    Timber.d("DecorView Width: ${mDecorView.width}")
+                    Timber.d("mViewToPresentBounds.left: ${mViewToPresentBounds.left}")
+                    Timber.d("DecorView height: ${mDecorView.height}")
+                    Timber.d("mViewToPresentBounds.bottom: ${mViewToPresentBounds.bottom}")
 
                     // Remaining Space between View to present's left position and the end of the
                     // decorView's width
@@ -167,7 +173,7 @@ class SquircleShape : PresenterShape {
                     val b = a - descTextWidth
 
                     // Space between the vtp bottom and the bottom of the decor view
-                    val c = mDecorView.height - mViewToPresentBounds.bottom
+//                val c = mDecorView.height - mViewToPresentBounds.bottom
 
                     val horizontalMargin = 56
                     var staticLayoutWidth: Int = when {
@@ -298,17 +304,15 @@ class SquircleShape : PresenterShape {
     }
 
     override fun onDrawInPresenterWith(canvas: Canvas?) {
-        canvas?.let { cv ->
-            cv.save()
-            cv.drawRoundRect(
-                mSquircleShapeRectF,
-                mDefaultSquircleRadius,
-                mDefaultSquircleRadius,
-                mSquircleShapePaint
-            )
-            cv.translate(mStaticLayoutPosition.x, mStaticLayoutPosition.y)
-            staticLayout.draw(cv)
-            cv.restore()
-        }
+        canvas!!.save()
+        canvas.drawRoundRect(
+            mSquircleShapeRectF,
+            mDefaultSquircleRadius,
+            mDefaultSquircleRadius,
+            mSquircleShapePaint
+        )
+        canvas.translate(mStaticLayoutPosition.x, mStaticLayoutPosition.y)
+        staticLayout.draw(canvas)
+        canvas.restore()
     }
 }

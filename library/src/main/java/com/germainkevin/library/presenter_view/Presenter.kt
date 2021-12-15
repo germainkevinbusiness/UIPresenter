@@ -71,7 +71,8 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_REVEALING = 1
 
         /**
-         * The [presenterShape]'s [PresenterShape.onDrawInPresenterWith] method has been executed
+         * The [PresentationBuilder.mPresenterShape]'s
+         * [PresenterShape.onDrawInPresenterWith] method has been executed
          * and the [presenter's][Presenter] reveal animation is running.
          * */
         const val STATE_CANVAS_DRAWN = 2
@@ -82,14 +83,12 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_REVEALED = 3
 
         /**
-         * The [PresentationBuilder.isRemoving] method has been called and
-         * the [Presenter] is being removed from the UI.
+         * The [Presenter] is being removed from the decorView.
          */
         const val STATE_REMOVING = 4
 
         /**
-         * The [Presenter] has been removed from view
-         * after it has been pressed in the focal area.
+         * The [Presenter] has been removed from the decorView.
          */
         const val STATE_REMOVED = 5
 
@@ -195,12 +194,12 @@ open class Presenter(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas?) {
-        if (mPresentationBuilder.mIsViewToPresentSet) {
-            if (mPresentationBuilder.mPresenterShape.buildSelfJob.isCompleted) {
-                mPresenterStateChangeNotifier.onStateChange(STATE_REVEALING)
-                mPresentationBuilder.mPresenterShape.onDrawInPresenterWith(canvas)
-                mPresenterStateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
-            }
+        if ((mPresentationBuilder.mIsViewToPresentSet
+                    && mPresentationBuilder.mPresenterShape.buildSelfJob.isCompleted)
+        ) {
+            mPresenterStateChangeNotifier.onStateChange(STATE_REVEALING)
+            mPresentationBuilder.mPresenterShape.onDrawInPresenterWith(canvas)
+            mPresenterStateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
         }
     }
 }

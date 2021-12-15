@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.germainkevin.library.PresenterShadowLayer
@@ -182,15 +183,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                                         isRevealAnimationDone = true
                                         if (mPresenterHasShadowedWindow) {
                                             mPresenterRevealAnimation = NoRevealAnimation()
-                                            mPresenterRevealAnimation.runAnimation(
-                                                coroutineScope,
-                                                this@with,
-                                                mRevealAnimDuration
-                                            ) {
-                                                // Transparent-like color
-                                                setBackgroundColor(Color.parseColor("#80000000"))
-                                                onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                            }
+                                            // Transparent-like color
+                                            setBackgroundColor(Color.parseColor("#80000000"))
+                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
                                         } else {
                                             onPresenterStateChanged(Presenter.STATE_REVEALED)
                                         }

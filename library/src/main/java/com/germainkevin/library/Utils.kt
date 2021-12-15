@@ -38,19 +38,6 @@ internal fun mainThread(block: suspend CoroutineScope.() -> Unit) {
     mainScope.launch { block.invoke(this) }
 }
 
-/**
- * Gets the exact coordinates of a View on the decor view
- * With this data we can do some positioning for the presenter shapes
- * */
-internal fun View.getBounds(): RectF {
-    val rect = Rect()
-    val viewBounds = RectF() // Will get the position of the view to present
-    this.getGlobalVisibleRect(rect)
-    // We now have the exact left,top,right,bottom position of the view on the screen
-    viewBounds.set(rect)
-    return viewBounds
-}
-
 internal fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): StaticLayout {
     return StaticLayout.Builder.obtain(
         text,
