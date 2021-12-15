@@ -42,31 +42,58 @@ animation duration, listening to state changes:
 
 ```kotlin
 private val teal200 = ContextCompat.getColor(this, R.color.teal200)
-
+private val purple700 = ContextCompat.getColor(this, R.color.purple700)
+private val whiteColor = ContextCompat.getColor(this, R.color.whiteColor)
 private val descText0 =
     "This is the EditText. Here you can write Animal names and add them to the RecyclerView"
-UIPresenter(this).set(
-    viewToPresent = binding.addEditText,
-    backgroundColor = teal200,
-    descriptionTextColor = Color.BLACK,
-    descriptionText = descText0,
-    revealAnimation = CircularRevealAnimation(),
-    presenterHasShadowedWindow = true,
-    shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f, shadowColor = Color.DKGRAY),
-    removePresenterOnAnyClickEvent = false,
-    presenterStateChangeListener = { state, removePresenter ->
-        if (state == Presenter.STATE_FOCAL_PRESSED) {
-            removePresenter()
-            presentBtn1()
+
+private fun presentEditText() {
+    UIPresenter(this).set(
+        viewToPresent = binding.addEditText,
+        backgroundColor = teal200,
+        descriptionTextColor = Color.BLACK,
+        descriptionText = descText0,
+        revealAnimation = CircularRevealAnimation(),
+        presenterHasShadowedWindow = true,
+        shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f, shadowColor = Color.DKGRAY),
+        removePresenterOnAnyClickEvent = false,
+        presenterStateChangeListener = { state, removePresenter ->
+            if (state == Presenter.STATE_FOCAL_PRESSED) {
+                removePresenter()
+                presentBtn1()
+            }
         }
-    }
-)
-)
+    )
+}
+
+// Or for a Menu item in your toolbar
+private fun presentMenuItem() {
+    val descText0 = "This is a play button, placed on a Toolbar"
+    UIPresenter(this).set(
+        viewToPresentId = R.id.menu_item_play_btn,
+        backgroundColor = purple700,
+        descriptionText = descText0,
+        descriptionTextColor = whiteColor,
+        revealAnimation = RotationYByAnimation(),
+        presenterHasShadowedWindow = true,
+        removePresenterOnAnyClickEvent = false,
+        shadowLayer = PresenterShadowLayer(shadowColor = blue500),
+        presenterStateChangeListener = { state, removePresenter ->
+            if (state == Presenter.STATE_FOCAL_PRESSED) {
+                removePresenter()
+                Toast.makeText(this, "Done presenting UI!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+}
 ```
 
-### Here's the output of the above code:
+### Here's the output function by function of the above code:
 
-<img src="/screenshots/device-2021-12-15-175954.png" alt="A Squircle-shaped Presenter View" width="360" />
+<div>
+<img src="/screenshots/device-2021-12-15-175954.png" alt="An EditText being presented by the library" width="360" />
+<img src="/screenshots/device-2021-12-15-182506.png" alt="A Menu item being presented by the library" width="360" />
+</div>
 
 To create your own animation when the presenter is being added to the decor view
 (called reveal animation), you need to extend the ```RevealAnimation``` interface, like so:
