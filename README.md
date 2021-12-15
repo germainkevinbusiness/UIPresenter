@@ -33,8 +33,8 @@ UIPresenter(activity = this).set(
 ### Here's the output of the above code in light and dark mode:
 
 <div>
-<img src="/screenshots/device-2021-12-15-180757.png" alt="Light mode UIPresenter example" width="360" />
-<img src="/screenshots/device-2021-12-15-180840.png" alt="Dark mode UIPresenter example" width="360" />
+<img src="/screenshots/ddevice-2021-12-15-181310.png" alt="Light mode UIPresenter example" width="360" />
+<img src="/screenshots/device-2021-12-15-181210.png" alt="Dark mode UIPresenter example" width="360" />
 </div>
 
 Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,
