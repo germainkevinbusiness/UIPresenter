@@ -10,8 +10,8 @@ The library is still under development.
 The purple background rectangle with the text is displayed using this library.
 
 <div>
-<img src="/screenshots/device-2021-12-12-173610.png" alt="UIPresenter example 1 screenshot" width="360" />
-<img src="/screenshots/device-2021-12-13-165229.png" alt="UIPresenter example 2 screenshot" width="360" />
+<img src="/screenshots/device-2021-12-15-175804.png" alt="UIPresenter example 1 screenshot" width="360" />
+<img src="/screenshots/device-2021-12-15-175858.png" alt="UIPresenter example 2 screenshot" width="360" />
 </div>
 
 ## Usage (might change in the future)
