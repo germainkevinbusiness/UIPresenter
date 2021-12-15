@@ -1,13 +1,12 @@
 package com.germainkevin.library.prototypes
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.*
 import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.ColorInt
 import com.germainkevin.library.presenter_view.Presenter
+import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.Deferred
@@ -19,6 +18,10 @@ import kotlinx.coroutines.Deferred
  */
 abstract class PresenterShape : ShapeLifecycle {
 
+    protected var shadowedWindow = Rect()
+    protected var shadowedWindowPaint = Paint()
+    protected var hasShadowedWindow = false
+
     /**
      * A [TextPaint] for the description text that will be drawn by a [PresenterShape]
      */
@@ -26,12 +29,18 @@ abstract class PresenterShape : ShapeLifecycle {
 
     init {
         mDescriptionTextPaint.isAntiAlias = true
+        shadowedWindowPaint.isAntiAlias = true
+        shadowedWindowPaint.style = Paint.Style.FILL
+    }
+
+    open fun setShadowedWindowColor(@ColorInt color: Int) {
+        shadowedWindowPaint.color = color
     }
 
     /**
      * @param color the background color for the [PresenterShape]
      */
-    open fun setBackgroundColor(@ColorInt color: Int) {}
+    open fun setShapeBackgroundColor(@ColorInt color: Int) {}
 
     /**
      * @param textColor the background color for the [presenter's][PresenterShape] description text
@@ -90,4 +99,8 @@ abstract class PresenterShape : ShapeLifecycle {
      * @return True if the [view to present][android.view.View] contains the point, false otherwise.
      */
     open fun viewToPresentContains(x: Float, y: Float): Boolean = false
+
+    override fun buildSelfWith(builder: PresentationBuilder<*>) {
+        hasShadowedWindow = builder.mPresenterHasShadowedWindow
+    }
 }

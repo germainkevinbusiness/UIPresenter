@@ -1,6 +1,7 @@
 package com.germainkevin.library.prototype_impl.presentation_shapes
 
 import android.graphics.*
+import android.os.Build
 import android.text.StaticLayout
 import com.germainkevin.library.buildStaticLayout
 import com.germainkevin.library.prototype_impl.PresentationBuilder
@@ -72,7 +73,7 @@ class SquircleShape : PresenterShape() {
         initFloats()
     }
 
-    override fun setBackgroundColor(color: Int) {
+    override fun setShapeBackgroundColor(color: Int) {
         mSquircleShapePaint.color = color
     }
 
@@ -86,8 +87,9 @@ class SquircleShape : PresenterShape() {
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         builder.mDescriptionText?.let {
-            val mDecorView = builder.resourceFinder.getDecorView()!!
-            setBackgroundColor(builder.mBackgroundColor!!)
+            setShapeBackgroundColor(builder.mBackgroundColor!!)
+            hasShadowedWindow = builder.mPresenterHasShadowedWindow
+            if (hasShadowedWindow) setShadowedWindowColor(Color.parseColor("#80000000"))
             if (builder.mHasShadowLayer) {
                 mSquircleShapePaint.setShadowLayer(
                     builder.presenterShadowLayer.radius,
@@ -98,6 +100,8 @@ class SquircleShape : PresenterShape() {
             }
             setDescriptionTextColor(builder.mDescriptionTextColor!!)
             setDescriptionTypeface(builder.mTypeface)
+
+            val mDecorView = builder.resourceFinder.getDecorView()!!
             setDescriptionTextSize(
                 builder.mDescriptionTextUnit,
                 builder.mDescriptionTextSize,
@@ -169,7 +173,7 @@ class SquircleShape : PresenterShape() {
                 // if statement
                 if (ePercentage >= 15) {
                     sLTextPosition.x = mViewToPresentBounds.left + 16
-                    sLTextPosition.y = mViewToPresentBounds.bottom + 16
+                    sLTextPosition.y = mViewToPresentBounds.bottom + 32
                     mSquircleShapeRectF.set(
                         sLTextPosition.x - 16,
                         sLTextPosition.y - 16,
@@ -197,7 +201,7 @@ class SquircleShape : PresenterShape() {
                 if (ePercentage >= 15) {
                     // the position of the text based on those conditions
                     sLTextPosition.x = mViewToPresentBounds.right - 16
-                    sLTextPosition.y = mViewToPresentBounds.bottom - 16
+                    sLTextPosition.y = mViewToPresentBounds.bottom + 32
 
                     mSquircleShapeRectF.set(
                         sLTextPosition.x - staticLayoutWidth.toFloat(),
@@ -222,11 +226,24 @@ class SquircleShape : PresenterShape() {
                     mStaticLayoutPosition = PointF(mSquircleShapeRectF.left + 16, sLTextPosition.y)
                 }
             }
+            val rect = Rect()
+            mDecorView.getGlobalVisibleRect(rect)
+            shadowedWindow.set(rect)
         }
     }
 
     override fun onDrawInPresenterWith(canvas: Canvas?) {
         canvas!!.save()
+        // Draws the shadowed window first, then draws the presenter shape
+        if (hasShadowedWindow) {
+            mViewToPresentBounds.inset(-4f, -4f)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas.clipOutRect(mViewToPresentBounds)
+            } else {
+                canvas.clipRect(mViewToPresentBounds, Region.Op.DIFFERENCE)
+            }
+            canvas.drawRect(shadowedWindow, shadowedWindowPaint)
+        }
         canvas.drawRoundRect(
             mSquircleShapeRectF,
             mSquircleRadius,

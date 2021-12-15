@@ -140,8 +140,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
 
     /**
      * Should the Presenter's whole View have a shadowed background
+     * Will be accessed from the [mPresenterShape]
      * */
-    private var mPresenterHasShadowedWindow: Boolean = false
+    internal var mPresenterHasShadowedWindow: Boolean = false
 
     /**
      * Gives default colors to [mBackgroundColor] and [mDescriptionTextColor]
@@ -178,14 +179,7 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
                                 mPresenterRevealAnimation
                                     .runAnimation(coroutineScope, this@with, mRevealAnimDuration) {
                                         isRevealAnimationDone = true
-                                        if (mPresenterHasShadowedWindow) {
-                                            mPresenterRevealAnimation = NoRevealAnimation()
-                                            // Transparent-like black color
-                                            setBackgroundColor(Color.parseColor("#80000000"))
-                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                        } else {
-                                            onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                        }
+                                        onPresenterStateChanged(Presenter.STATE_REVEALED)
                                     }
                             }
 
