@@ -30,13 +30,18 @@ class PresenterShadowLayer(
     val shadowColor: Int = Color.DKGRAY
 )
 
-internal fun buildStaticLayout(text: String, textPaint: TextPaint, textWidth: Int): StaticLayout {
+/**
+ * This method creates a [StaticLayout]
+ * @param text The text you want to be laid out in the [StaticLayout]
+ * @param textPaint The [TextPaint] of the [text]
+ * @param sLWidth The desired with you want for your [StaticLayout]
+ * */
+internal fun buildStaticLayout(text: String, textPaint: TextPaint, sLWidth: Int): StaticLayout {
     return StaticLayout.Builder.obtain(
         text,
         0,
         text.length,
         textPaint,
-        textWidth
-    )
-        .build()
+        sLWidth
+    ).build()
 }

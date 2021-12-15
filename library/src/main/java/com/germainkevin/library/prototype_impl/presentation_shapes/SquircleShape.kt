@@ -235,7 +235,7 @@ class SquircleShape : PresenterShape() {
 
     override fun onDrawInPresenterWith(canvas: Canvas?) {
         canvas!!.save()
-        // Draws the shadowed window first, then draws the presenter shape
+        // Draws the shadowed window first, if true
         if (hasShadowedWindow) {
             mViewToPresentBounds.inset(-4f, -4f)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -245,6 +245,7 @@ class SquircleShape : PresenterShape() {
             }
             canvas.drawRect(shadowedWindow, shadowedWindowPaint)
         }
+        // then draws the presenter shape
         canvas.drawRoundRect(
             mSquircleShapeRectF,
             mSquircleRadius,

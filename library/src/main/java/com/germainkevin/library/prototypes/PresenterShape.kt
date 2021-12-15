@@ -25,7 +25,7 @@ abstract class PresenterShape : ShapeLifecycle {
      * It is drawn on top of a clipped out view to present on the canvas
      * in the [PresenterShape.onDrawInPresenterWith] method in [SquircleShape]
      *
-     * To make it the same size as the decorView, you should do that in the
+     * To make it the same size as the decorView, you should do that in the implemented
      * [PresenterShape.buildSelfWith] like so:
      *
      * val rect = Rect()
@@ -129,5 +129,6 @@ abstract class PresenterShape : ShapeLifecycle {
     open fun viewToPresentContains(x: Float, y: Float): Boolean = false
 
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
+        // Don't try to set shadowedWindow here, it won't work
     }
 }
