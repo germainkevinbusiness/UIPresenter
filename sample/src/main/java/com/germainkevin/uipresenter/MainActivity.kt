@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         UIPresenter(this).set(
             viewToPresent = binding.firstTextView,
             backgroundColor = blue500,
-            descriptionText = "This is a text explaining what the below list is",
+            descriptionText = getString(R.string.textView_desc),
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
             removePresenterOnAnyClickEvent = false,
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         UIPresenter(this).set(
             viewToPresent = viewHolder.itemView.findViewById<ImageView>(R.id.animalImage),
             backgroundColor = blue500,
-            descriptionText = "This is the image of the animal, shown inside this RecyclerView",
+            descriptionText = getString(R.string.animal_image_desc),
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
             removePresenterOnAnyClickEvent = false,
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         UIPresenter(this).set(
             viewToPresent = viewHolder.itemView.findViewById<TextView>(R.id.animalName),
             backgroundColor = blue500,
-            descriptionText = "This is the name of the animal, shown inside this RecyclerView",
+            descriptionText = getString(R.string.animal_name_desc),
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
             revealAnimation = RotationYByAnimation(),
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
         UIPresenter(this).set(
             viewToPresent = binding.recyclerView[2],
             backgroundColor = blue500,
-            descriptionText = "This is a row inside the RecyclerView with animal image and name",
+            descriptionText = getString(R.string.animal_row_desc),
             descriptionTextColor = Color.BLACK,
             revealAnimation = RotationXByAnimation(),
             presenterHasShadowedWindow = true,
@@ -124,13 +124,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun presentEditText() {
-        val descText0 =
-            "This is the EditText. Here you can write Animal names and add them to the RecyclerView"
         UIPresenter(this).set(
             viewToPresent = binding.addEditText,
             backgroundColor = teal200,
             descriptionTextColor = Color.BLACK,
-            descriptionText = descText0,
+            descriptionText = getString(R.string.editText_desc),
             presenterHasShadowedWindow = true,
             shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f),
             removePresenterOnAnyClickEvent = false,
@@ -144,15 +142,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun presentBtn1() {
-        val descText0 =
-            "This is the add button. You can use it to add as many animals as you want " +
-                    "inside the RecyclerView. All you have to do to add the item is to click on that " +
-                    "button"
         UIPresenter(this).set(
             viewToPresent = binding.fab1,
             backgroundColor = teal200,
             descriptionTextColor = Color.BLACK,
-            descriptionText = descText0,
+            descriptionText = getString(R.string.fab1_desc),
             presenterHasShadowedWindow = true,
             shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f),
             revealAnimation = NoRevealAnimation(),
@@ -167,11 +161,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun presentMenuItem() {
-        val descText0 = "This is a play button, placed on a Toolbar"
         UIPresenter(this).set(
             viewToPresentId = R.id.action_present_view,
             backgroundColor = purple700,
-            descriptionText = descText0,
+            descriptionText = getString(R.string.menu_play_desc),
             descriptionTextColor = whiteColor,
             revealAnimation = RotationYByAnimation(),
             presenterHasShadowedWindow = true,

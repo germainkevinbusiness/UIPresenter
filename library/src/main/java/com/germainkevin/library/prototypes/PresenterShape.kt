@@ -5,12 +5,12 @@ import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.ColorInt
-import com.germainkevin.library.PresentationBuilder
+import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 
 /**
  * A [PresenterShape] represents the shape in which a
- * [com.germainkevin.library.presenter_view.Presenter] is
+ * [com.germainkevin.library.presenter_view.Presenter] is drawn
  * @author Kevin Germain
  */
 abstract class PresenterShape : ShapeLifecycle {
@@ -37,11 +37,11 @@ abstract class PresenterShape : ShapeLifecycle {
     protected var shadowedWindowPaint = Paint()
 
     /**
-     * Checks [PresentationBuilder.mPresenterHasShadowedWindow] to know whether the developer
-     * wants a [shadowedWindow] drawn on the canvas through the
+     * Checks [com.germainkevin.library.UIPresenter.mPresenterHasShadowedWindow] to
+     * know whether the developer wants a [shadowedWindow] drawn on the canvas through the
      * [PresenterShape.onDrawInPresenterWith] method
      *
-     * It is true by default in the [PresentationBuilder]
+     * It is true by default in the [com.germainkevin.library.UIPresenter]
      * */
     protected var hasShadowedWindow = true
 
@@ -127,7 +127,7 @@ abstract class PresenterShape : ShapeLifecycle {
      */
     open fun viewToPresentContains(x: Float, y: Float): Boolean = false
 
-    override fun buildSelfWith(builder: PresentationBuilder<*>) {
+    override fun buildSelfWith(builder: UIPresenter) {
         // Don't try to set shadowedWindow here, it won't work
     }
 }

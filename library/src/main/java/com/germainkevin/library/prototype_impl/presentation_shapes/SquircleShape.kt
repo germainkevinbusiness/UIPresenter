@@ -4,7 +4,7 @@ import android.graphics.*
 import android.os.Build
 import android.text.StaticLayout
 import com.germainkevin.library.buildStaticLayout
-import com.germainkevin.library.PresentationBuilder
+import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototypes.PresenterShape
 import timber.log.Timber
 
@@ -26,7 +26,7 @@ class SquircleShape : PresenterShape() {
     private var mSquircleRadius = 15f
 
     /**
-     * Will hold the coordinates of the [PresentationBuilder.mViewToPresent] on the decorView
+     * Will hold the coordinates of the [com.germainkevin.library.UIPresenter.mViewToPresent] on the decorView
      * through the [android.view.View.getGlobalVisibleRect] method, which gives the accurate
      * positioning of a View on a screen
      * */
@@ -41,7 +41,7 @@ class SquircleShape : PresenterShape() {
 
     /**
      * The left,top,right and bottom position, of the
-     * [view to present][PresentationBuilder.mViewToPresent] in [Float]
+     * [view to present][com.germainkevin.library.UIPresenter.mViewToPresent] in [Float]
      * This variable will hold the [vTPCoordinates] in [RectF]
      */
     private lateinit var mViewToPresentBounds: RectF
@@ -52,7 +52,7 @@ class SquircleShape : PresenterShape() {
     private lateinit var mSquircleShapePaint: Paint
 
     /**
-     * Layout to wrap the [PresentationBuilder.mDescriptionText]
+     * Layout to wrap the [com.germainkevin.library.UIPresenter.mDescriptionText]
      * so that the text can be laid out in multiline instead of the
      * default singleLine that the [Canvas.drawText] method puts the text in, by default
      */
@@ -94,7 +94,7 @@ class SquircleShape : PresenterShape() {
         return mViewToPresentBounds.contains(x, y)
     }
 
-    override fun buildSelfWith(builder: PresentationBuilder<*>) {
+    override fun buildSelfWith(builder: UIPresenter) {
         builder.mDescriptionText?.let {
             setShapeBackgroundColor(builder.mBackgroundColor!!)
             val mDecorView = builder.resourceFinder.getDecorView()!!

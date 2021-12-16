@@ -19,8 +19,8 @@ interface RevealAnimation {
      * @param afterAnim When called that means we can safely consider this animation to be done
      *
      * If you do not call [afterAnim] when the animation is done, no click event will be propagated from
-     * the [presenter] to the [com.germainkevin.library.prototype_impl.PresentationBuilder], making
-     * it impossible for this library and you to remove the [presenter]
+     * the [presenter] to the [com.germainkevin.library.UIPresenter], making it impossible for
+     * this library and you to remove the [presenter]
      * */
     fun runAnimation(
         coroutineScope: CoroutineScope, presenter: Presenter, revealAnimationDuration: Long,

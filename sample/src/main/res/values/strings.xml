@@ -1,3 +1,36 @@
 <resources>
     <string name="app_name">UIPresenter</string>
+    <string name="textView_desc">
+        This is a text explaining what the below list is
+    </string>
+
+    <string name="animal_image_desc">
+        This is the image of the animal, shown inside this RecyclerView.\n\n
+        Tap here to continue
+    </string>
+
+    <string name="animal_name_desc">
+        This is the name of the animal, shown inside this RecyclerView.\n\n
+        Tap here to continue
+    </string>
+
+    <string name="animal_row_desc">
+        This is a row inside the RecyclerView with animal image and name.\n\n
+        Tap here to continue
+    </string>
+
+    <string name="editText_desc">
+        This is the EditText. Here you can write Animal names and add them to the RecyclerView.\n\n
+        Tap here to continue
+    </string>
+
+    <string name="fab1_desc">
+        This is the add button. You can use it to add as many animals as you want inside the RecyclerView.
+        All you have to do to add the item is to click on that button.\n\n
+        Tap here to continue
+    </string>
+    <string name="menu_play_desc">
+        This is a play button, placed on a Toolbar.\n\n
+        Tap here to finish
+    </string>
 </resources>

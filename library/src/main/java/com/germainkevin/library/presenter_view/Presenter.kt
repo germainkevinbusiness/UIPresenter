@@ -7,7 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.IntDef
 import com.germainkevin.library.R
-import com.germainkevin.library.PresentationBuilder
+import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototypes.PresenterShape
 
 
@@ -18,10 +18,10 @@ import com.germainkevin.library.prototypes.PresenterShape
  * The [Presenter] is a [View] that presents a [View] in your
  * [Activity][android.app.Activity] or [Fragment][android.app.Fragment]
  *
- * This [View] is created at the creation of the constructor of a [PresentationBuilder].
+ * This [View] is created at the creation of the constructor of a [UIPresenter].
  * It is added and made visible inside your [Activity][android.app.Activity]
  * or [Fragment][android.app.Fragment] by your app's "decorView",
- * at the call of [PresentationBuilder.set]
+ * at the call of [UIPresenter.set]
  *
  * For Example:
  *
@@ -31,8 +31,7 @@ import com.germainkevin.library.prototypes.PresenterShape
  *  presenterStateChangeListener = { _, _ -> }
  *  )
  *
- * The internal variables here are to be set by the
- * [PresentationBuilder][com.germainkevin.library.prototype_impl.PresentationBuilder]
+ * The internal variables here are to be set by the [UIPresenter][UIPresenter]
  * that will create this [Presenter]
  *
  * @author Kevin Germain
@@ -70,7 +69,7 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_REVEALING = 1
 
         /**
-         * The [PresentationBuilder.mPresenterShape]'s
+         * The [UIPresenter.mPresenterShape]'s
          * [PresenterShape.onDrawInPresenterWith] method has been executed
          * and the [presenter's][Presenter] reveal animation is running.
          * */
@@ -97,12 +96,12 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_VTP_PRESSED = 6
 
         /**
-         * The [Presenter]'s [PresentationBuilder.mPresenterShape] has been pressed
+         * The [Presenter]'s [UIPresenter.mPresenterShape] has been pressed
          */
         const val STATE_FOCAL_PRESSED = 7
 
         /**
-         * The [Presenter] has been pressed outside the [PresentationBuilder.mPresenterShape]
+         * The [Presenter] has been pressed outside the [UIPresenter.mPresenterShape]
          * and not on the view to present
          */
         const val STATE_NON_FOCAL_PRESSED = 8
@@ -120,10 +119,10 @@ open class Presenter(context: Context) : View(context) {
     private var motionEvent: MotionEvent? = null
 
     /**
-     * Here to know if the [PresentationBuilder.mIsViewToPresentSet]
-     * Will be set by the [PresentationBuilder] that will create this [Presenter]
+     * Here to know if the [UIPresenter.mIsViewToPresentSet]
+     * Will be set by the [UIPresenter] that will create this [Presenter]
      * */
-    internal lateinit var mPresentationBuilder: PresentationBuilder<*>
+    internal lateinit var mUIPresenter: UIPresenter
 
     /**
      * Interface definition for a callback to be invoked when a
@@ -134,7 +133,7 @@ open class Presenter(context: Context) : View(context) {
     }
 
     /**
-     * Exposed to the [PresentationBuilder] that will create this [Presenter]
+     * Exposed to the [UIPresenter] that will create this [Presenter]
      * so that it can notify this builder of state changes in this [Presenter]
      * */
     internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
@@ -173,11 +172,11 @@ open class Presenter(context: Context) : View(context) {
         super.performClick()
         val x = motionEvent!!.x
         val y = motionEvent!!.y
-        val captureEventVTP = mPresentationBuilder.mPresenterShape.viewToPresentContains(x, y)
-        val captureEventFocal = mPresentationBuilder.mPresenterShape.shapeContains(x, y)
+        val captureEventVTP = mUIPresenter.mPresenterShape.viewToPresentContains(x, y)
+        val captureEventFocal = mUIPresenter.mPresenterShape.shapeContains(x, y)
 
         // Only propagate click events, when the reveal animation is done running
-        if (mPresentationBuilder.isRevealAnimationDone) {
+        if (mUIPresenter.isRevealAnimationDone) {
             if (captureEventVTP) {
                 mPresenterStateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
             }
@@ -193,9 +192,9 @@ open class Presenter(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas?) {
-        if (mPresentationBuilder.mIsViewToPresentSet) {
+        if (mUIPresenter.mIsViewToPresentSet) {
             mPresenterStateChangeNotifier.onStateChange(STATE_REVEALING)
-            mPresentationBuilder.mPresenterShape.onDrawInPresenterWith(canvas)
+            mUIPresenter.mPresenterShape.onDrawInPresenterWith(canvas)
             mPresenterStateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
         }
     }
