@@ -1,4 +1,4 @@
-package com.germainkevin.library.presenter_view
+package com.germainkevin.library
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,8 +6,6 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.IntDef
-import com.germainkevin.library.R
-import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototypes.PresenterShape
 
 
@@ -187,7 +185,6 @@ open class Presenter(context: Context) : View(context) {
                 mPresenterStateChangeNotifier.onStateChange(STATE_NON_FOCAL_PRESSED)
             }
         }
-
         return true
     }
 

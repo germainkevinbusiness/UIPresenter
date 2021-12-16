@@ -8,11 +8,11 @@ import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.germainkevin.library.presenter_view.Presenter
 import com.germainkevin.library.prototype_impl.CircularRevealAnimation
 import com.germainkevin.library.prototype_impl.FadeOutAnimation
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
@@ -30,7 +30,7 @@ import kotlinx.coroutines.*
  *
  * Provides data for [mPresenter] and [mPresenterShape] that are marked as internal variables.
  *
- * @param resourceFinder is an interface implemented in the two next constructors.
+ * @param resourceFinder is an interface implemented in the next two constructors.
  * @author Kevin Germain
  */
 open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
@@ -105,7 +105,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     /**
      * Created to launch animations that need a [CoroutineScope]
      * */
-    private lateinit var coroutineScope: CoroutineScope
+    private var coroutineScope: CoroutineScope
 
     /**
      * The [PresenterShape] by default or set by the user for this [mPresenter]
@@ -182,36 +182,35 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
 
     init {
         mDecorView = resourceFinder.getDecorView()
-        resourceFinder.getContext()?.let { context ->
-            coroutineScope = (context as LifecycleOwner).lifecycleScope
-            if (mBackgroundColor == null && mDescriptionTextColor == null) {
-                context.provideDefaultColors()
-            }
-            mPresenter = Presenter(context)
-            with(mPresenter!!) {
-                mUIPresenter = this@UIPresenter
-                mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
-                    override fun onStateChange(state: Int) {
-                        onPresenterStateChanged(state)
-                        when (state) {
-                            Presenter.STATE_CANVAS_DRAWN -> {
-                                mPresenterRevealAnimation
-                                    .runAnimation(coroutineScope, this@with, mRevealAnimDuration) {
-                                        isRevealAnimationDone = true
-                                        onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                    }
-                            }
-                            Presenter.STATE_BACK_BUTTON_PRESSED -> {
-                                if (mAutoRemoveOnClickEvent && mRemoveOnBackPress) {
-                                    removingPresenter()
+        val context = resourceFinder.getContext()
+        coroutineScope = (context as LifecycleOwner).lifecycleScope
+        if (mBackgroundColor == null && mDescriptionTextColor == null) {
+            context.provideDefaultColors()
+        }
+        mPresenter = Presenter(context)
+        with(mPresenter!!) {
+            mUIPresenter = this@UIPresenter
+            mPresenterStateChangeNotifier = object : Presenter.StateChangeNotifier {
+                override fun onStateChange(state: Int) {
+                    onPresenterStateChanged(state)
+                    when (state) {
+                        Presenter.STATE_CANVAS_DRAWN -> {
+                            mPresenterRevealAnimation
+                                .runAnimation(coroutineScope, this@with, mRevealAnimDuration) {
+                                    isRevealAnimationDone = true
+                                    onPresenterStateChanged(Presenter.STATE_REVEALED)
                                 }
+                        }
+                        Presenter.STATE_BACK_BUTTON_PRESSED -> {
+                            if (mAutoRemoveOnClickEvent && mRemoveOnBackPress) {
+                                removingPresenter()
                             }
-                            Presenter.STATE_VTP_PRESSED,
-                            Presenter.STATE_FOCAL_PRESSED,
-                            Presenter.STATE_NON_FOCAL_PRESSED -> {
-                                if (mAutoRemoveOnClickEvent) {
-                                    removingPresenter()
-                                }
+                        }
+                        Presenter.STATE_VTP_PRESSED,
+                        Presenter.STATE_FOCAL_PRESSED,
+                        Presenter.STATE_NON_FOCAL_PRESSED -> {
+                            if (mAutoRemoveOnClickEvent) {
+                                removingPresenter()
                             }
                         }
                     }
@@ -254,12 +253,12 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     open fun set(
         @IdRes viewToPresentId: Int,
         presenterShape: PresenterShape = mPresenterShape,
-        backgroundColor: Int = mBackgroundColor!!,
+        @ColorInt backgroundColor: Int = mBackgroundColor!!,
         hasShadowLayer: Boolean = mHasShadowLayer,
         presenterHasShadowedWindow: Boolean = mPresenterHasShadowedWindow,
         shadowLayer: PresenterShadowLayer = presenterShadowLayer,
         descriptionText: String,
-        descriptionTextColor: Int = mDescriptionTextColor!!,
+        @ColorInt descriptionTextColor: Int = mDescriptionTextColor!!,
         descriptionTextSize: Float = mDescriptionTextSize,
         descriptionTextUnit: Int = mDescriptionTextUnit,
         descriptionTextTypeface: Typeface = mTypeface,
@@ -321,12 +320,12 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     open fun set(
         viewToPresent: View? = mViewToPresent,
         presenterShape: PresenterShape = mPresenterShape,
-        backgroundColor: Int = mBackgroundColor!!,
+        @ColorInt backgroundColor: Int = mBackgroundColor!!,
         hasShadowLayer: Boolean = mHasShadowLayer,
         presenterHasShadowedWindow: Boolean = mPresenterHasShadowedWindow,
         shadowLayer: PresenterShadowLayer = presenterShadowLayer,
         descriptionText: String,
-        descriptionTextColor: Int = mDescriptionTextColor!!,
+        @ColorInt descriptionTextColor: Int = mDescriptionTextColor!!,
         descriptionTextSize: Float = mDescriptionTextSize,
         descriptionTextUnit: Int = mDescriptionTextUnit,
         descriptionTextTypeface: Typeface = mTypeface,
@@ -381,9 +380,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
             removeAndBuildJob.await()
             removeAndBuildJob.join()
             if (removeAndBuildJob.isCompleted) {
-                mPresenter?.let {
-                    mDecorView?.addView(it)
-                }
+                mPresenter?.let { mDecorView?.addView(it) }
             }
         }
     }

@@ -17,7 +17,7 @@ internal class ActivityResourceFinder(private val activity: Activity) : Resource
 
     override fun findViewById(id: Int): View? = activity.findViewById(id)
 
-    override fun getContext(): Context? = activity
+    override fun getContext(): Context = activity
 
     override fun getResources(): Resources? = activity.resources
 }

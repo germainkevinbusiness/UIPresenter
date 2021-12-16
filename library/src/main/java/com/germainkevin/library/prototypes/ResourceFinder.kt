@@ -21,7 +21,7 @@ interface ResourceFinder {
     /** The context will always be of a LifecycleOwner as both an Activity and a Fragment are
      * LifecycleOwners
      * */
-    fun getContext(): Context?
+    fun getContext(): Context
 
     fun getResources(): Resources?
 }

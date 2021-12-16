@@ -16,7 +16,7 @@ internal class FragmentResourceFinder(private val fragment: Fragment) : Resource
 
     override fun findViewById(id: Int): View? = fragment.activity?.findViewById(id)
 
-    override fun getContext(): Context? = fragment.requireContext()
+    override fun getContext(): Context = fragment.requireContext()
 
     override fun getResources(): Resources = fragment.resources
 }

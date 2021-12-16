@@ -12,8 +12,8 @@ import com.germainkevin.library.UIPresenter
  * method
  *
  * [onDrawInPresenterWith] will be called from the
- * [Presenter][com.germainkevin.library.presenter_view.Presenter]'s
- * [onDraw][com.germainkevin.library.presenter_view.Presenter.onDraw] method
+ * [Presenter][com.germainkevin.library.Presenter]'s
+ * [onDraw][com.germainkevin.library.Presenter.onDraw] method
  *
  * @see [com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape] for example
  * @author Kevin Germain
@@ -21,7 +21,7 @@ import com.germainkevin.library.UIPresenter
 interface ShapeLifecycle {
     /**
      * This method is executed asynchronously on a [kotlinx.coroutines.Dispatchers.Main] inside the
-     * [com.germainkevin.library.prototype_impl.UIPresenter.present] method
+     * [com.germainkevin.library.UIPresenter.present] method
      * Right after you call the [UIPresenter.set]
      *
      * Builds the [PresenterShape] that will be drawn on the call of [onDrawInPresenterWith]
@@ -43,9 +43,9 @@ interface ShapeLifecycle {
      * to the decorView, right after the call of the [UIPresenter.present] method
      *
      * The [presenter][UIPresenter.mPresenter] will call this through its
-     * [onDraw(canvas: Canvas)][com.germainkevin.library.presenter_view.Presenter.onDraw] method
+     * [onDraw(canvas: Canvas)][com.germainkevin.library.Presenter.onDraw] method
      * @param canvas The canvas coming from the [presenter's][UIPresenter.mPresenter]
-     * [com.germainkevin.library.presenter_view.Presenter.onDraw] method
+     * [com.germainkevin.library.Presenter.onDraw] method
      * @see [com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape.onDrawInPresenterWith]
      * for example
      */

@@ -11,7 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import com.germainkevin.library.PresenterShadowLayer
-import com.germainkevin.library.presenter_view.Presenter
+import com.germainkevin.library.Presenter
 import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.NoRevealAnimation
 import com.germainkevin.library.prototype_impl.RotationXByAnimation

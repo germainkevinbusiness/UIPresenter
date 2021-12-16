@@ -1,6 +1,6 @@
 package com.germainkevin.library.prototypes
 
-import com.germainkevin.library.presenter_view.Presenter
+import com.germainkevin.library.Presenter
 import kotlinx.coroutines.CoroutineScope
 
 /**

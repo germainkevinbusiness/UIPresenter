@@ -2,7 +2,7 @@ package com.germainkevin.library.prototype_impl
 
 import android.view.ViewAnimationUtils
 import androidx.core.view.isVisible
-import com.germainkevin.library.presenter_view.Presenter
+import com.germainkevin.library.Presenter
 import com.germainkevin.library.prototypes.RemoveAnimation
 import com.germainkevin.library.prototypes.RevealAnimation
 import kotlinx.coroutines.CoroutineScope

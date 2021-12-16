@@ -5,12 +5,10 @@ import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.ColorInt
-import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 
 /**
- * A [PresenterShape] represents the shape in which a
- * [com.germainkevin.library.presenter_view.Presenter] is drawn
+ * A [PresenterShape] represents the shape in which a [com.germainkevin.library.Presenter] is drawn
  * @author Kevin Germain
  */
 abstract class PresenterShape : ShapeLifecycle {
@@ -126,8 +124,4 @@ abstract class PresenterShape : ShapeLifecycle {
      * @return True if the [view to present][android.view.View] contains the point, false otherwise.
      */
     open fun viewToPresentContains(x: Float, y: Float): Boolean = false
-
-    override fun buildSelfWith(builder: UIPresenter) {
-        // Don't try to set shadowedWindow here, it won't work
-    }
 }
