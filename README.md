@@ -4,6 +4,7 @@
 
 This android library is like a tour guide for your app's Views. It helps to explain to your user,
 the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` and up.
+
 <img src="/screenshots/device-2021-12-15-184659.png" alt="UIPresenter example 2 screenshot"/>
 
 ## Here is an example
