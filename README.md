@@ -7,9 +7,7 @@ the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` 
 
 <img src="/screenshots/device-2021-12-15-184659.png" alt="UIPresenter example 2 screenshot"/>
 
-## Here is an example
-
-The layer on top of the below app is displayed using this library.
+## The layer on top of the below app is displayed using this library
 
 <div>
 <img src="/screenshots/device-2021-12-15-175804.png" alt="UIPresenter example 1 screenshot" width="360" />
