@@ -7,19 +7,61 @@ The library is still under development.
 
 ## Here is an example of a Squircle-shaped Presenter
 
-The layer on thop of the below app is displayed using this library.
+The layer on top of the below app is displayed using this library.
 
 <div>
 <img src="/screenshots/device-2021-12-15-175804.png" alt="UIPresenter example 1 screenshot" width="360" />
 <img src="/screenshots/device-2021-12-15-175858.png" alt="UIPresenter example 2 screenshot" width="360" />
 </div>
 
-## Usage (might change in the future)
+# How to get this project
+
+**Step 1.** Add the jitpack repository to your ```project build.gradle``` file, like so:
+
+```groovy
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext {
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+// Place the jitpack repository inside this, like so:
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+
+**Step 2.** Add the dependency in your ``` module build.gradle ``` file, like so:
+
+```groovy
+dependencies {
+    implementation 'com.github.germainkevinbusiness:UIPresente:1.0.0-beta04'
+}
+```
+
+**That's it!**
+
+## Usage
 
 This library is only functional when called from a class that is either an Activity or a Fragment.
 
-Basic usage is shown below, when you want to present a View with this library. Inside your Activity,
-or Fragment, write this, where you see fit & safe to reference the View you want to present:
+Basic usage is shown below, there's a more elaborate example in
+the [sample app](https://github.com/germainkevinbusiness/UIPresenter/tree/master/sample). Inside
+your Activity or Fragment, write this, where you see fit & safe to reference the View you want to
+present:
 
 ```kotlin
 
