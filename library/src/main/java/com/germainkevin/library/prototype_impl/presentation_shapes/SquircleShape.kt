@@ -6,6 +6,7 @@ import android.text.StaticLayout
 import com.germainkevin.library.buildStaticLayout
 import com.germainkevin.library.prototype_impl.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
+import timber.log.Timber
 
 /**
  * This is a [PresenterShape] that has the shape of a Squircle
@@ -30,6 +31,13 @@ class SquircleShape : PresenterShape() {
      * positioning of a View on a screen
      * */
     private lateinit var vTPCoordinates: Rect
+
+    /**
+     * Will hold the coordinates of the decorView through
+     * the [android.view.View.getGlobalVisibleRect] method, which gives the accurate
+     * positioning of a View on a screen
+     * */
+    private lateinit var decorViewCoordinates: Rect
 
     /**
      * The left,top,right and bottom position, of the
@@ -66,6 +74,7 @@ class SquircleShape : PresenterShape() {
         mSquircleShapeRectF = RectF()
         mStaticLayoutPosition = PointF()
         vTPCoordinates = Rect()
+        decorViewCoordinates = Rect()
     }
 
     init {
@@ -85,15 +94,23 @@ class SquircleShape : PresenterShape() {
         return mViewToPresentBounds.contains(x, y)
     }
 
+    enum class SLWidthConstraints {
+        NOT_CALCULATED_YET,
+        LARGER_THAN_SPACE,
+        LARGE_ENOUGH,
+        LARGE_ENOUGH_OVER_MARGIN
+    }
+
+    private var slWidthConstraints = SLWidthConstraints.NOT_CALCULATED_YET
+
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         builder.mDescriptionText?.let {
             setShapeBackgroundColor(builder.mBackgroundColor!!)
             val mDecorView = builder.resourceFinder.getDecorView()!!
             hasShadowedWindow = builder.mPresenterHasShadowedWindow
             if (hasShadowedWindow) {
-                val rect = Rect()
-                mDecorView.getGlobalVisibleRect(rect)
-                shadowedWindow.set(rect) // takes the coordinates of the decorView
+                mDecorView.getGlobalVisibleRect(decorViewCoordinates)
+                shadowedWindow.set(decorViewCoordinates) // takes the coordinates of the decorView
                 setShadowedWindowColor(Color.parseColor("#80000000"))
             }
             if (builder.mHasShadowLayer) {
@@ -125,16 +142,26 @@ class SquircleShape : PresenterShape() {
             val b = a - descTextWidth
 
             val horizontalMargin = 56
-            var staticLayoutWidth: Int = when {
+            var staticLayoutWidth: Int
+            when {
                 // The description text's width is larger than the available space
                 // for it to be laid out horizontally
-                b <= 0 -> (a - horizontalMargin).toInt()
+                b <= 0 -> {
+                    staticLayoutWidth = (a - horizontalMargin).toInt()
+                    slWidthConstraints = SLWidthConstraints.LARGER_THAN_SPACE
+                }
                 // The description text's width is large enough to be laid out
-                b >= horizontalMargin -> descTextWidth + 16
+                b >= horizontalMargin -> {
+                    staticLayoutWidth = descTextWidth + 16
+                    slWidthConstraints = SLWidthConstraints.LARGE_ENOUGH
+                }
                 // The description text's width is larger than the horizontalMargin
                 // but not larger than the remaining space it can be laid out in, inside
                 // the decorView's width
-                else -> descTextWidth - horizontalMargin
+                else -> {
+                    staticLayoutWidth = descTextWidth - horizontalMargin
+                    slWidthConstraints = SLWidthConstraints.LARGE_ENOUGH_OVER_MARGIN
+                }
             }
 
             // The percentage of the decor view's width occupied by the staticLayoutWidth
@@ -168,12 +195,17 @@ class SquircleShape : PresenterShape() {
             // we lay out the StaticLayout vertically from up to down
             val ePercentage = e * 100 / mDecorView.height
 
+            // How close is the view to present to the start of the screen
+            // Percentage of the screen that the distance occupies
+            val f = mViewToPresentBounds.left * 100 / mDecorView.width
+            Timber.d("f: $f%")
+
             if (isWidthOver45Percent) {
                 // StaticLayout goes: up to down, start to end
 
                 // If the DecorView's Height has a remaining of 15% space available
                 // still at its bottom even after the StaticLayout gets laid out
-                // vertically from up to down, then execute the condition inisde the
+                // vertically from up to down, then execute the condition inside the
                 // if statement
                 if (ePercentage >= 15) {
                     sLTextPosition.x = mViewToPresentBounds.left + 16
