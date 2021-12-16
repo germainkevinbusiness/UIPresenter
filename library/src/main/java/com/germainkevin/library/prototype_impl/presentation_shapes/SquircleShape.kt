@@ -153,7 +153,7 @@ class SquircleShape : PresenterShape() {
                                 staticLayoutWidth -= horizontalMargin
                                 shouldLayoutFromStartToEnd = true
                             } else if (percentageFromStart <= 45
-                                && staticLayoutWidth >= mDecorView.width - horizontalMargin
+                                && staticLayoutWidth > mDecorView.width - horizontalMargin
                             ) {
                                 shouldLayoutFromStartToEnd = true
                             } else {
