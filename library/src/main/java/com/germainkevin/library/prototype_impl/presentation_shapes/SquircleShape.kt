@@ -94,15 +94,6 @@ class SquircleShape : PresenterShape() {
         return mViewToPresentBounds.contains(x, y)
     }
 
-    enum class SLWidthConstraints {
-        NOT_CALCULATED_YET,
-        LARGER_THAN_SPACE,
-        LARGE_ENOUGH,
-        LARGE_ENOUGH_OVER_MARGIN
-    }
-
-    private var slWidthConstraints = SLWidthConstraints.NOT_CALCULATED_YET
-
     override fun buildSelfWith(builder: PresentationBuilder<*>) {
         builder.mDescriptionText?.let {
             setShapeBackgroundColor(builder.mBackgroundColor!!)
@@ -135,54 +126,71 @@ class SquircleShape : PresenterShape() {
 
             val descTextWidth = mDescriptionTextPaint.measureText(it).toInt()
 
+            // How much space is left when you place the description text from end to start
+            val textWidthRemainingSpace1 = mViewToPresentBounds.left - descTextWidth
+
+            val percentageFromStart = mViewToPresentBounds.left * 100 / mDecorView.width
+            Timber.d("percentageFromStart: $percentageFromStart%")
+
             // Remaining Space between View to present's left position and the end of the
             // decorView's width
-            val a = mDecorView.width - mViewToPresentBounds.left
-            // $a minus description text width
-            val b = a - descTextWidth
+            val vtpStartToDecorEnd = mDecorView.width - mViewToPresentBounds.left
+
+            val textWidthRemainingSpace2 = vtpStartToDecorEnd - descTextWidth
 
             val horizontalMargin = 56
-            var staticLayoutWidth: Int
+            val shouldLayoutFromStartToEnd: Boolean
+            // set to that for now
+            var staticLayoutWidth: Int = (vtpStartToDecorEnd - horizontalMargin).toInt()
+
             when {
-                // The description text's width is larger than the available space
-                // for it to be laid out horizontally
-                b <= 0 -> {
-                    staticLayoutWidth = (a - horizontalMargin).toInt()
-                    slWidthConstraints = SLWidthConstraints.LARGER_THAN_SPACE
+                textWidthRemainingSpace1 <= 0 -> {
+                    when {
+                        textWidthRemainingSpace2 <= 0 -> {
+                            if (percentageFromStart <= 45
+                                && staticLayoutWidth <= mDecorView.width - horizontalMargin
+                            ) {
+                                staticLayoutWidth -= horizontalMargin
+                                shouldLayoutFromStartToEnd = true
+                            } else if (percentageFromStart <= 45
+                                && staticLayoutWidth >= mDecorView.width - horizontalMargin
+                            ) {
+                                shouldLayoutFromStartToEnd = true
+                            } else {
+                                // The percentage of the decor view's width occupied by
+                                // the staticLayoutWidth
+                                val c = staticLayoutWidth * 100 / mDecorView.width
+                                if (c <= 45) {
+                                    // let's make staticLayoutWidth 65% of decor view's width
+                                    staticLayoutWidth = (65 * mDecorView.width / 100)
+                                    shouldLayoutFromStartToEnd = false
+                                } else {
+                                    staticLayoutWidth -= horizontalMargin
+                                    shouldLayoutFromStartToEnd = false
+                                }
+                            }
+                        }
+                        else -> {
+                            staticLayoutWidth -= horizontalMargin
+                            shouldLayoutFromStartToEnd = true
+                        }
+                    }
                 }
-                // The description text's width is large enough to be laid out
-                b >= horizontalMargin -> {
+                textWidthRemainingSpace1 >= horizontalMargin -> {
                     staticLayoutWidth = descTextWidth + 16
-                    slWidthConstraints = SLWidthConstraints.LARGE_ENOUGH
+                    shouldLayoutFromStartToEnd = false
                 }
-                // The description text's width is larger than the horizontalMargin
-                // but not larger than the remaining space it can be laid out in, inside
-                // the decorView's width
                 else -> {
-                    staticLayoutWidth = descTextWidth - horizontalMargin
-                    slWidthConstraints = SLWidthConstraints.LARGE_ENOUGH_OVER_MARGIN
+                    staticLayoutWidth = descTextWidth + 16
+                    shouldLayoutFromStartToEnd = false
                 }
             }
-
-            // The percentage of the decor view's width occupied by the staticLayoutWidth
-            val c = staticLayoutWidth * 100 / mDecorView.width
+            // Build Static layout as we are satisfied with its current width
+            staticLayout = buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
 
             // Registers the position the text inside the StaticLayout should be placed
             // inside the canvas
             val sLTextPosition = PointF()
-            // Verifies if the static layout width is more than 45% of the decor view width
-            val isWidthOver45Percent: Boolean
-            if (c > 45) {
-                // Build Static layout as we are satisfied with its current width
-                staticLayout = buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
-                isWidthOver45Percent = true
-            } else {
-                // let's make staticLayoutWidth 65% of decor view's width
-                staticLayoutWidth = (65 * mDecorView.width / 100)
-                // then build it with new width
-                staticLayout = buildStaticLayout(it, mDescriptionTextPaint, staticLayoutWidth)
-                isWidthOver45Percent = false
-            }
 
             // The amount of space in px that the StaticLayout needs to lay itself out
             // vertically
@@ -195,12 +203,7 @@ class SquircleShape : PresenterShape() {
             // we lay out the StaticLayout vertically from up to down
             val ePercentage = e * 100 / mDecorView.height
 
-            // How close is the view to present to the start of the screen
-            // Percentage of the screen that the distance occupies
-            val f = mViewToPresentBounds.left * 100 / mDecorView.width
-            Timber.d("f: $f%")
-
-            if (isWidthOver45Percent) {
+            if (shouldLayoutFromStartToEnd) {
                 // StaticLayout goes: up to down, start to end
 
                 // If the DecorView's Height has a remaining of 15% space available
@@ -228,10 +231,8 @@ class SquircleShape : PresenterShape() {
                         sLTextPosition.x + (staticLayoutWidth + 16).toFloat(),
                         sLTextPosition.y + staticLayout.height + 16
                     )
-
                     mStaticLayoutPosition = PointF(mSquircleShapeRectF.left + 16, sLTextPosition.y)
                 }
-
             } else {
                 // StaticLayout goes: up to down, end to start
                 if (ePercentage >= 15) {
@@ -240,7 +241,7 @@ class SquircleShape : PresenterShape() {
                     sLTextPosition.y = mViewToPresentBounds.bottom + 32
 
                     mSquircleShapeRectF.set(
-                        sLTextPosition.x - staticLayoutWidth.toFloat(),
+                        mViewToPresentBounds.right - (staticLayoutWidth.toFloat() + 32),
                         sLTextPosition.y - 16,
                         sLTextPosition.x + 16,
                         sLTextPosition.y + (staticLayout.height + 16)
@@ -249,16 +250,14 @@ class SquircleShape : PresenterShape() {
                 } else {
                     // StaticLayout goes: down to up, end to start
                     sLTextPosition.x = mViewToPresentBounds.right
-                    sLTextPosition.y =
-                        mViewToPresentBounds.top - (staticLayout.height + 32)
+                    sLTextPosition.y = mViewToPresentBounds.top - (staticLayout.height + 32)
 
                     mSquircleShapeRectF.set(
-                        sLTextPosition.x - (staticLayoutWidth + 16).toFloat(),
+                        sLTextPosition.x - (staticLayoutWidth + 32).toFloat(),
                         sLTextPosition.y - 16,
                         sLTextPosition.x,
                         sLTextPosition.y + staticLayout.height + 16
                     )
-
                     mStaticLayoutPosition = PointF(mSquircleShapeRectF.left + 16, sLTextPosition.y)
                 }
             }
