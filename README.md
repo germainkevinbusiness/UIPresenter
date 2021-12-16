@@ -1,10 +1,12 @@
 # UIPresenter
+
 [![](https://jitpack.io/v/germainkevinbusiness/UIPresenter.svg)](https://jitpack.io/#germainkevinbusiness/UIPresenter)
 
 This android library is like a tour guide for your app's Views. It helps to explain to your user,
-the role of the Views in your Activity or Fragment.
+the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` and up.
+<img src="/screenshots/device-2021-12-15-184659.png" alt="UIPresenter example 2 screenshot" height="480" />
 
-## Here is an example of a Squircle-shaped Presenter
+## Here is an example
 
 The layer on top of the below app is displayed using this library.
 
@@ -13,7 +15,7 @@ The layer on top of the below app is displayed using this library.
 <img src="/screenshots/device-2021-12-15-175858.png" alt="UIPresenter example 2 screenshot" width="360" />
 </div>
 
-# How to get this project
+# How to get this library in your android app
 
 **Step 1.** Add the jitpack repository to your ```project build.gradle``` file, like so:
 
