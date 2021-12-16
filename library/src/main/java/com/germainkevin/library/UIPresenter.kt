@@ -10,10 +10,8 @@ import com.germainkevin.library.prototype_impl.resource_finders.FragmentResource
 import com.germainkevin.library.prototypes.ResourceFinder
 
 /**
- * [Builder class][PresentationBuilder] which has the purpose of constructing needed
- * information to display a
- * [com.germainkevin.library.presenter_view.Presenter] that helps
- * explain a [View]'s role in the UI.
+ * [Builder class][PresentationBuilder] that sets all the needed information to display a
+ * [Presenter][com.germainkevin.library.presenter_view.Presenter].
  * @author Kevin Germain
  * */
 class UIPresenter : PresentationBuilder<UIPresenter> {

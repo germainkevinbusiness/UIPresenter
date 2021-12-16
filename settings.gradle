@@ -6,5 +6,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "UIPresenter"
-include ':app'
+include ':sample'
 include ':library'

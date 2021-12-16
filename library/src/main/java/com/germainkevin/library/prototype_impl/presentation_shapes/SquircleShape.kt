@@ -143,6 +143,11 @@ class SquircleShape : PresenterShape() {
             // set to that for now
             var staticLayoutWidth: Int = (vtpStartToDecorEnd - horizontalMargin).toInt()
 
+            Timber.d("staticLayoutWidth: $staticLayoutWidth")
+            Timber.d("mDecorView.width - horizontalMargin: ${mDecorView.width - horizontalMargin}")
+            val difference = (mDecorView.width - horizontalMargin) - staticLayoutWidth
+            Timber.d("difference : $difference")
+
             when {
                 textWidthRemainingSpace1 <= 0 -> {
                     when {
