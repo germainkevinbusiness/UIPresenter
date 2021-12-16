@@ -48,7 +48,7 @@ task clean(type: Delete) {
 
 ```groovy
 dependencies {
-    implementation 'com.github.germainkevinbusiness:UIPresenter:1.0.0-beta05'
+    implementation 'com.github.germainkevinbusiness:UIPresenter:1.0.0-beta06'
 }
 ```
 
