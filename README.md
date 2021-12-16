@@ -1,6 +1,5 @@
 # UIPresenter
-[![](https://jitpack.io/v/kevingermainbusiness/ItemDecorator.svg)](https://jitpack.io/#germainkevinbusiness/UIPresenter)
-
+[![](https://jitpack.io/v/germainkevinbusiness/UIPresenter.svg)](https://jitpack.io/#germainkevinbusiness/UIPresenter)
 This android library is like a tour guide for your app's Views. It helps to explain to your user,
 the role of the Views in your Activity or Fragment.
 
