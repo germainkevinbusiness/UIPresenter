@@ -1,4 +1,5 @@
 # UIPresenter
+[![](https://jitpack.io/v/kevingermainbusiness/ItemDecorator.svg)](https://jitpack.io/#germainkevinbusiness/UIPresenter)
 
 This android library is like a tour guide for your app's Views. It helps to explain to your user,
 the role of the Views in your Activity or Fragment.
@@ -48,7 +49,7 @@ task clean(type: Delete) {
 
 ```groovy
 dependencies {
-    implementation 'com.github.germainkevinbusiness:UIPresente:1.0.0-beta04'
+    implementation 'com.github.germainkevinbusiness:UIPresente:1.0.0-beta05'
 }
 ```
 
