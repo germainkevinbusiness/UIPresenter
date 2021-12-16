@@ -5,11 +5,8 @@ import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.annotation.ColorInt
-import com.germainkevin.library.presenter_view.Presenter
-import com.germainkevin.library.prototype_impl.PresentationBuilder
+import com.germainkevin.library.PresentationBuilder
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
-import kotlinx.coroutines.CompletableJob
-import kotlinx.coroutines.Deferred
 
 /**
  * A [PresenterShape] represents the shape in which a

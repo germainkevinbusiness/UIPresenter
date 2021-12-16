@@ -4,7 +4,7 @@ import android.graphics.*
 import android.os.Build
 import android.text.StaticLayout
 import com.germainkevin.library.buildStaticLayout
-import com.germainkevin.library.prototype_impl.PresentationBuilder
+import com.germainkevin.library.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
 import timber.log.Timber
 

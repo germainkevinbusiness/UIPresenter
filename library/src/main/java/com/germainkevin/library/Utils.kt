@@ -37,11 +37,18 @@ class PresenterShadowLayer(
  * @param sLWidth The desired with you want for your [StaticLayout]
  * */
 internal fun buildStaticLayout(text: String, textPaint: TextPaint, sLWidth: Int): StaticLayout {
-    return StaticLayout.Builder.obtain(
-        text,
-        0,
-        text.length,
-        textPaint,
-        sLWidth
-    ).build()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        StaticLayout.Builder.obtain(
+            text,
+            0,
+            text.length,
+            textPaint,
+            sLWidth
+        ).build()
+    } else {
+        StaticLayout(
+            text, textPaint, sLWidth,
+            Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false
+        )
+    }
 }

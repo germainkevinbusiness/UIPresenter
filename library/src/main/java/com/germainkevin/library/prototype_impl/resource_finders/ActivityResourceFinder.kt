@@ -11,7 +11,7 @@ import com.germainkevin.library.prototypes.ResourceFinder
  * Gives access to an [Activity]'s environment
  * the dialog's ownerActivity might return null, thus we need to prepare for that
  * */
-open class ActivityResourceFinder(private val activity: Activity) : ResourceFinder {
+internal class ActivityResourceFinder(private val activity: Activity) : ResourceFinder {
 
     override fun getDecorView(): ViewGroup? = activity.window?.decorView as ViewGroup?
 

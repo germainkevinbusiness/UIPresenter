@@ -1,8 +1,7 @@
 package com.germainkevin.library.prototypes
 
 import android.graphics.Canvas
-import com.germainkevin.library.prototype_impl.PresentationBuilder
-import kotlinx.coroutines.CoroutineScope
+import com.germainkevin.library.PresentationBuilder
 
 /**
  * The lifecycle of a [PresenterShape].

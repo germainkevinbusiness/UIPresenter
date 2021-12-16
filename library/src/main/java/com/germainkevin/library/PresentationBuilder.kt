@@ -1,4 +1,4 @@
-package com.germainkevin.library.prototype_impl
+package com.germainkevin.library
 
 import android.content.Context
 import android.content.res.Configuration
@@ -10,8 +10,9 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.germainkevin.library.PresenterShadowLayer
 import com.germainkevin.library.presenter_view.Presenter
+import com.germainkevin.library.prototype_impl.CircularRevealAnimation
+import com.germainkevin.library.prototype_impl.FadeOutAnimation
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototypes.PresenterShape
 import com.germainkevin.library.prototypes.RemoveAnimation
@@ -400,5 +401,9 @@ abstract class PresentationBuilder<T : PresentationBuilder<T>>(val resourceFinde
         mDecorView = null
         mPresenter = null
         mViewToPresent = null
+        mBackgroundColor = null
+        mDescriptionText = null
+        mDescriptionTextColor = null
+        mPresenterStateChangeListener = { _: Int, _: () -> Unit -> }
     }
 }

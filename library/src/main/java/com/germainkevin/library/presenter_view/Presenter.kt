@@ -7,9 +7,8 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.IntDef
 import com.germainkevin.library.R
-import com.germainkevin.library.prototype_impl.PresentationBuilder
+import com.germainkevin.library.PresentationBuilder
 import com.germainkevin.library.prototypes.PresenterShape
-import timber.log.Timber
 
 
 /**

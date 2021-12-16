@@ -10,7 +10,7 @@ import com.germainkevin.library.prototypes.ResourceFinder
 /**
  * Gives access to an [Fragment]'s environment
  * */
-class FragmentResourceFinder(private val fragment: Fragment) : ResourceFinder {
+internal class FragmentResourceFinder(private val fragment: Fragment) : ResourceFinder {
 
     override fun getDecorView(): ViewGroup? = fragment.activity?.window?.decorView as ViewGroup?
 
