@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.germainkevin.library.Presenter
 import com.germainkevin.library.PresenterShadowLayer
 import com.germainkevin.library.UIPresenter
+import com.germainkevin.library.prototype_impl.FadeOutAnimation
 import com.germainkevin.library.prototype_impl.NoRevealAnimation
 import com.germainkevin.library.prototype_impl.RotationXByAnimation
 import com.germainkevin.library.prototype_impl.RotationYByAnimation
@@ -67,6 +68,9 @@ class MainFragment : Fragment() {
             removeOnBackPress = true,
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
+                // Removes the presenter when a click is done on the
+                // presenter's PresenterShape which is the presenter's visible part
+                // with the description text, background & shadow layer
                 if (state == Presenter.STATE_FOCAL_PRESSED) {
                     removePresenter()
                     presentAnimalImage()
@@ -80,8 +84,9 @@ class MainFragment : Fragment() {
             binding.recyclerView.layoutManager?.findViewByPosition(0) as ConstraintLayout
         val viewHolder =
             binding.recyclerView.getChildViewHolder(vHParentView) as AnimalRVAdapter.AnimalViewHolder
+        val mViewToPresent = viewHolder.itemView.findViewById<ImageView>(R.id.animalImage)
         UIPresenter(this).set(
-            viewToPresent = viewHolder.itemView.findViewById<ImageView>(R.id.animalImage),
+            viewToPresent = mViewToPresent,
             backgroundColor = blue500,
             descriptionText = getString(R.string.animal_image_desc),
             descriptionTextColor = Color.BLACK,
@@ -89,7 +94,8 @@ class MainFragment : Fragment() {
             removeOnBackPress = true,
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
-                if (state == Presenter.STATE_FOCAL_PRESSED) {
+                // Removes the presenter when a click is detected on $mViewToPresent
+                if (state == Presenter.STATE_VTP_PRESSED) {
                     removePresenter()
                     presentAnimalName()
                 }
@@ -102,8 +108,9 @@ class MainFragment : Fragment() {
             binding.recyclerView.layoutManager?.findViewByPosition(0) as ConstraintLayout
         val viewHolder =
             binding.recyclerView.getChildViewHolder(vHParentView) as AnimalRVAdapter.AnimalViewHolder
+        val mViewToPresent = viewHolder.itemView.findViewById<TextView>(R.id.animalName)
         UIPresenter(this).set(
-            viewToPresent = viewHolder.itemView.findViewById<TextView>(R.id.animalName),
+            viewToPresent = mViewToPresent,
             backgroundColor = blue500,
             descriptionText = getString(R.string.animal_name_desc),
             descriptionTextColor = Color.BLACK,
@@ -112,7 +119,9 @@ class MainFragment : Fragment() {
             removeOnBackPress = true,
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
-                if (state == Presenter.STATE_FOCAL_PRESSED) {
+                // Removes the presenter when a click is done outside the
+                // $mViewToPresent bounds and outside the visible part of the presenter
+                if (state == Presenter.STATE_NON_FOCAL_PRESSED) {
                     removePresenter()
                     presentAnimalRow()
                 }
@@ -146,7 +155,6 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             descriptionText = getString(R.string.editText_desc),
             presenterHasShadowedWindow = true,
-            removeOnBackPress = true,
             shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f),
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->

@@ -38,6 +38,13 @@ dependencies {
 <img src="/screenshots/device-2021-12-15-175858.png" alt="UIPresenter example 2 screenshot" width="360" />
 </div>
 
+## Presenting EditText & a menu item in toolbar
+
+<div>
+<img src="/screenshots/device-2021-12-15-175954.png" alt="An EditText being presented by the library" width="360" />
+<img src="/screenshots/device-2021-12-15-182506.png" alt="A Menu item being presented by the library" width="360" />
+</div>
+
 ## Usage
 
 This library is only functional when called from a class that is either an Activity or a Fragment.
@@ -56,6 +63,10 @@ UIPresenter(activity = this).set(
 )
 ```
 
+Only those three parameters in the ```UIPresenter.set()``` method are required, to display
+a ```Presenter``` on your ```Activity``` or ```Fragment```'s UI. The rest of the parameters in
+the ```UIPresenter.set()``` method are optional, but great for customization!
+
 ### Here's the output of the above code in light and dark mode:
 
 <div>
@@ -71,37 +82,21 @@ private val teal200 = ContextCompat.getColor(this, R.color.teal200)
 private val purple700 = ContextCompat.getColor(this, R.color.purple700)
 private val whiteColor = ContextCompat.getColor(this, R.color.whiteColor)
 
-private fun presentEditText() {
-    UIPresenter(this).set(
-        viewToPresent = binding.addEditText,
-        backgroundColor = teal200,
-        descriptionTextColor = Color.BLACK,
-        descriptionText = getString(R.string.editText_desc),
-        revealAnimation = CircularRevealAnimation(),
-        presenterHasShadowedWindow = true,
-        shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f, shadowColor = Color.DKGRAY),
-        removePresenterOnAnyClickEvent = false,
-        presenterStateChangeListener = { state, removePresenter ->
-            // This condition says to remove the presenter when a click is done on the presenter
-            // and to go to the presentMenuItem() function
-            if (state == Presenter.STATE_FOCAL_PRESSED) {
-                removePresenter()
-                presentMenuItem()
-            }
-        }
-    )
-}
-
 // Or for a Menu item in your toolbar
 private fun presentMenuItem() {
-    UIPresenter(this).set(
+    UIPresenter(fragment = this).set(
         viewToPresentId = R.id.action_present_view,
         backgroundColor = purple700,
         descriptionText = getString(R.string.menu_play_desc),
         descriptionTextColor = whiteColor,
+        presenterShape = SquircleShape(),
         revealAnimation = RotationYByAnimation(),
+        removeAnimation = FadeOutAnimation(),
+        revealAnimDuration = 600L,
+        removalAnimDuration = 600L,
         presenterHasShadowedWindow = true,
         removePresenterOnAnyClickEvent = false,
+        removeOnBackPress = true,
         shadowLayer = PresenterShadowLayer(shadowColor = blue500),
         presenterStateChangeListener = { state, removePresenter ->
             if (state == Presenter.STATE_FOCAL_PRESSED) {
@@ -112,15 +107,17 @@ private fun presentMenuItem() {
 }
 ```
 
-### Here's the output function by function of the above code:
+You can apply your own animations to the presenter like so:
 
-<div>
-<img src="/screenshots/device-2021-12-15-175954.png" alt="An EditText being presented by the library" width="360" />
-<img src="/screenshots/device-2021-12-15-182506.png" alt="A Menu item being presented by the library" width="360" />
-</div>
+```kotlin
+UIPresenter(activity = this).set(
+    revealAnimation = MyRevealAnimation(),
+    removeAnimation = MyRemoveAnimation()
+)
+```
 
 To create your own animation when the presenter is being added to the decor view
-(called reveal animation), you need to extend the ```RevealAnimation``` interface, like so:
+(called reveal animation), you need to implement the ```RevealAnimation``` interface, like so:
 
 ````kotlin
 class MyRevealAnimation : RevealAnimation {
@@ -137,7 +134,7 @@ class MyRevealAnimation : RevealAnimation {
 ````
 
 To create your own animation when the presenter is being removed from the decor view
-(called remove animation), you need to extend the ```RemoveAnimation``` interface, like so:
+(called remove animation), you need to implement the ```RemoveAnimation``` interface, like so:
 
 ````kotlin
 class MyRemoveAnimation : RemoveAnimation {
@@ -153,54 +150,28 @@ class MyRemoveAnimation : RemoveAnimation {
 }
 ````
 
-And then you can apply those animations to your presenter like so:
-
-```kotlin
-UIPresenter(activity = this).set(
-    revealAnimation = MyRevealAnimation(),
-    removeAnimation = MyRemoveAnimation()
-)
-```
-
-If you want your presenter to be removed from the decor view, on any detected click event, just set
-the following parameter in the ````UIPresenter(this).set()```` method to true, like so:
-
-````kotlin
-UIPresenter(fragment = this).set(
-    removePresenterOnAnyClickEvent = true // This parameter is true by default in the API
-)
-````
-
-Or if you want to choose when to remove the presenter from the decor view yourself, you can do that
-by setting ```removePresenterOnAnyClickEvent = false ``` and listen for state change events, as the
-API will give you a ```removePresenter``` function as second parameter in
-```presenterStateChangeListener{state,removePresenter -> }```, you can use this function to remove
-the presenter whenever you want:
-
-````Kotlin
-UIPresenter(fragment = this).set(
-    removePresenterOnAnyClickEvent = false, // That'll deactivate automatic removal on any click event
-    presenterStateChangeListener = { state, removePresenter ->
-        // Here you can choose to remove the presenter whenever you want by calling the
-        // removePresenter function like so:
-        removePresenter()
-    }
-)
-````
-
 If you want to remove the Presenter on certain specific click events, here are the click events that
 the UIPresenter library can detect:
 
 ```kotlin
-Presenter.STATE_VTP_PRESSED, // When a click is done on the view you want to present
-Presenter.STATE_FOCAL_PRESSED, // when a click is done on the presenter
-Presenter.STATE_NON_FOCAL_PRESSED, // when a click is done outside the present and the view you want to present
-Presenter.STATE_BACK_BUTTON_PRESSED // when the user presses the back button
+// When a click is done on the view you want to present
+Presenter.STATE_VTP_PRESSED
+// When a click is done on the presenter's PresenterShape which is the presenter's visible part
+// with the description text, background & shadow layer
+Presenter.STATE_FOCAL_PRESSED
+// When a click is done outside the presenter's PresenterShape 
+// and outside the view you want to present
+Presenter.STATE_NON_FOCAL_PRESSED
+// When a press on the back button is detected
+Presenter.STATE_BACK_BUTTON_PRESSED
 
 UIPresenter(fragment = this).set(
+    // Now the library won't removes the presenter on any detected click event
     removePresenterOnAnyClickEvent = false,
     presenterStateChangeListener = { state, removePresenter ->
-        // this says to remove the presenter when a click is done on it
+        // Removes the presenter when a click is done on the presenter's PresenterShape 
+        // which is the presenter's visible part with the description text, 
+        // background & shadow layer
         if (state == Presenter.STATE_FOCAL_PRESSED) {
             removePresenter()
         }

@@ -204,6 +204,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
                             if (mAutoRemoveOnClickEvent && mRemoveOnBackPress) {
                                 removingPresenter()
+                            } else if (!mAutoRemoveOnClickEvent && mRemoveOnBackPress) {
+                                removingPresenter()
                             }
                         }
                         Presenter.STATE_VTP_PRESSED,

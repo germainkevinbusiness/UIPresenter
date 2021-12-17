@@ -99,13 +99,13 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_FOCAL_PRESSED = 7
 
         /**
-         * The [Presenter] has been pressed outside the [UIPresenter.mPresenterShape]
-         * and not on the view to present
+         * The [Presenter] has been pressed outside both the [UIPresenter.mPresenterShape]
+         * and the view to present
          */
         const val STATE_NON_FOCAL_PRESSED = 8
 
         /**
-         * The [Presenter] has been dismissed by the system back button being pressed.
+         * When a press on the back button is detected
          */
         const val STATE_BACK_BUTTON_PRESSED = 9
     }

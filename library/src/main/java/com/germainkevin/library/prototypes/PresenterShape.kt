@@ -9,6 +9,7 @@ import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 
 /**
  * A [PresenterShape] represents the shape in which a [com.germainkevin.library.Presenter] is drawn
+ * Extend this class when you want to create your own [PresenterShape]
  * @author Kevin Germain
  */
 abstract class PresenterShape : ShapeLifecycle {
