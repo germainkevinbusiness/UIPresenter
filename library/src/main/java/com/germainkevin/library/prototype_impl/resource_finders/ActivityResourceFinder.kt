@@ -9,7 +9,6 @@ import com.germainkevin.library.prototypes.ResourceFinder
 
 /**
  * Gives access to an [Activity]'s environment
- * the dialog's ownerActivity might return null, thus we need to prepare for that
  * */
 internal class ActivityResourceFinder(private val activity: Activity) : ResourceFinder {
 

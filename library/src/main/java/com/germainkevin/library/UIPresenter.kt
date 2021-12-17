@@ -107,6 +107,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     /**
      * The [PresenterShape] for this [mPresenter]
      *
+     * You can create your own by extending this class: [PresenterShape]
+     *
      * Will be accessed by the [mPresenter] to call the [mPresenterShape]'s
      * [onDrawInPresenterWith][PresenterShape.onDrawInPresenterWith] method on
      * its [onDraw(canvas: Canvas)][Presenter.onDraw] function
@@ -247,7 +249,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     }
 
     /**
-     * @param viewToPresentId The id of the view you want to present to a user
+     * @param viewToPresentId The id of the [View] you want to present to a user
      * @param presenterShape The shape you want the [mPresenter] to be in, when added to your [mDecorView]
      * @param backgroundColor The background color of the [mPresenter]
      * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
@@ -313,7 +315,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     }
 
     /**
-     * @param viewToPresent The view you want to present to a user
+     * @param viewToPresent The [View] you want to present to a user
      * @param presenterShape The shape you want the [mPresenter] to be in, when added to your [mDecorView]
      * @param backgroundColor The background color of the [mPresenter]
      * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
@@ -337,7 +339,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * @param presenterStateChangeListener This listener, listens for state changes inside the [mPresenter]
      * */
     open fun set(
-        viewToPresent: View? = mViewToPresent,
+        viewToPresent: View?,
         presenterShape: PresenterShape = mPresenterShape,
         @ColorInt backgroundColor: Int = mBackgroundColor!!,
         hasShadowLayer: Boolean = mHasShadowLayer,

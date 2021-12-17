@@ -8,8 +8,27 @@ import androidx.annotation.ColorInt
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 
 /**
- * A [PresenterShape] represents the shape in which a [com.germainkevin.library.Presenter] is drawn
+ * A [PresenterShape] represents the shape in which a
+ * [Presenter][com.germainkevin.library.Presenter] is drawn
+ *
  * Extend this class when you want to create your own [PresenterShape]
+ *
+ * Then if you want your own created [PresenterShape] to be used instead, pass it
+ * inside the [UIPresenter.set][com.germainkevin.library.UIPresenter.set] method like so:
+ *
+ * UIPresenter.set(presenterShape = YouPresenterShape())
+ *
+ * When creating your own [PresenterShape], take example of the [SquircleShape]
+ *
+ * When you're doing positioning around the view you want to present, or you want to
+ * set text size, typeface, background color, shadow layer logic,
+ * do it inside [PresenterShape.buildSelfWith]
+ *
+ * Once you want any object to be draw inside the [Presenter][com.germainkevin.library.Presenter]
+ * do it inside [PresenterShape.onDrawInPresenterWith]
+ *
+ * @see SquircleShape for example
+ *
  * @author Kevin Germain
  */
 abstract class PresenterShape : ShapeLifecycle {

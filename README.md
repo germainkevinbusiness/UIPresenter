@@ -5,7 +5,7 @@
 This android library is like a tour guide for your app's Views. It helps to explain to your user,
 the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` and up.
 
-<img src="/screenshots/device-2021-12-15-184659.png" alt="UIPresenter example 2 screenshot"/>
+<img src="/screenshots/device-2021-12-17-140025.png" alt="UIPresenter example 2 screenshot"/>
 
 # How to get this library in your android app
 
@@ -34,15 +34,15 @@ dependencies {
 ## Presenting items in your RecyclerView (example)
 
 <div>
-<img src="/screenshots/device-2021-12-15-175804.png" alt="UIPresenter example 1 screenshot" width="360" />
-<img src="/screenshots/device-2021-12-15-175858.png" alt="UIPresenter example 2 screenshot" width="360" />
+<img src="/screenshots/device-2021-12-17-134910.png" alt="UIPresenter example 1 screenshot" width="360" />
+<img src="/screenshots/device-2021-12-17-135021.png" alt="UIPresenter example 2 screenshot" width="360" />
 </div>
 
 ## Presenting EditText & a menu item on a toolbar
 
 <div>
-<img src="/screenshots/device-2021-12-15-175954.png" alt="An EditText being presented by the library" width="360" />
-<img src="/screenshots/device-2021-12-15-182506.png" alt="A Menu item being presented by the library" width="360" />
+<img src="/screenshots/device-2021-12-17-135046.png" alt="An EditText being presented by the library" width="360" />
+<img src="/screenshots/device-2021-12-17-135123.png" alt="A Menu item being presented by the library" width="360" />
 </div>
 
 ## Usage
