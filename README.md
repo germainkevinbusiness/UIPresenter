@@ -33,9 +33,9 @@ dependencies {
 
 ## Presenting items in your RecyclerView (example)
 
-<div>
-<img src="/screenshots/device-2021-12-17-134910.png" alt="UIPresenter example 1 screenshot" width="360" />
-<img src="/screenshots/device-2021-12-17-135021.png" alt="UIPresenter example 2 screenshot" width="360" />
+<div style="overflow:hidden;width:auto;display:inline;">
+<img style="float:right;margin-left:10px;" src="/screenshots/device-2021-12-17-134910.png" alt="UIPresenter example 1 screenshot" width="360" />
+<img style="float:right;" src="/screenshots/device-2021-12-17-135021.png" alt="UIPresenter example 2 screenshot" width="360" />
 </div>
 
 ## Presenting EditText & a menu item on a toolbar

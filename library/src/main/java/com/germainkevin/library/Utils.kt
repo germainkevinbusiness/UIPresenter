@@ -10,8 +10,9 @@ import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
+import com.germainkevin.library.prototypes.RemoveAnimation
+import com.germainkevin.library.prototypes.RevealAnimation
 import kotlinx.coroutines.*
-
 
 /**
  * Class used to store information that helps set a shadow layer
