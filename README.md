@@ -108,6 +108,38 @@ private fun presentMenuItem() {
 }
 ```
 
+If you want to remove the Presenter on certain specific click events, here are the click events that
+the UIPresenter library can detect:
+
+```kotlin
+// When a click is done on the view you want to present
+Presenter.STATE_VTP_PRESSED
+// When a click is done on the presenter's PresenterShape which is the presenter's visible part
+// with the description text, background & shadow layer
+Presenter.STATE_FOCAL_PRESSED
+// When a click is done outside the presenter's PresenterShape 
+// and outside the view you want to present
+Presenter.STATE_NON_FOCAL_PRESSED
+// When a press on the back button is detected
+Presenter.STATE_BACK_BUTTON_PRESSED
+
+UIPresenter(fragment = this).set(
+    // Now the library won't removes the presenter on any detected click event automatically
+    // You now have to decide which click event will remove the presenter by yourself, like
+    // show inside the presenterStateChangeListener below
+    removePresenterOnAnyClickEvent = false,
+    presenterStateChangeListener = { state, removePresenter ->
+        // Removes the presenter when a click is done on the presenter's PresenterShape 
+        // which is the presenter's visible part with the description text, 
+        // background & shadow layer
+        if (state == Presenter.STATE_FOCAL_PRESSED) {
+            // Removes the presenter
+            removePresenter()
+        }
+    }
+)
+```
+
 You can apply your own animations to the presenter like so:
 
 ```kotlin
@@ -150,38 +182,6 @@ class MyRemoveAnimation : RemoveAnimation {
     }
 }
 ````
-
-If you want to remove the Presenter on certain specific click events, here are the click events that
-the UIPresenter library can detect:
-
-```kotlin
-// When a click is done on the view you want to present
-Presenter.STATE_VTP_PRESSED
-// When a click is done on the presenter's PresenterShape which is the presenter's visible part
-// with the description text, background & shadow layer
-Presenter.STATE_FOCAL_PRESSED
-// When a click is done outside the presenter's PresenterShape 
-// and outside the view you want to present
-Presenter.STATE_NON_FOCAL_PRESSED
-// When a press on the back button is detected
-Presenter.STATE_BACK_BUTTON_PRESSED
-
-UIPresenter(fragment = this).set(
-    // Now the library won't removes the presenter on any detected click event automatically
-    // You now have to decide which click event will remove the presenter by yourself, like
-    // show inside the presenterStateChangeListener below
-    removePresenterOnAnyClickEvent = false,
-    presenterStateChangeListener = { state, removePresenter ->
-        // Removes the presenter when a click is done on the presenter's PresenterShape 
-        // which is the presenter's visible part with the description text, 
-        // background & shadow layer
-        if (state == Presenter.STATE_FOCAL_PRESSED) {
-            // Removes the presenter
-            removePresenter()
-        }
-    }
-)
-```
 
 ## License
 
