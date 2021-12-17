@@ -31,7 +31,7 @@ dependencies {
 
 **That's it!**
 
-## The layer on top of the below app is displayed using this library
+## Presenting items in your RecyclerView (example)
 
 <div>
 <img src="/screenshots/device-2021-12-15-175804.png" alt="UIPresenter example 1 screenshot" width="360" />
