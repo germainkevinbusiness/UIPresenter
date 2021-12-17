@@ -5,6 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.germainkevin.uipresenter.databinding.AnimalRowBinding
 
+/**
+ * The [RecyclerView.Adapter] for the [MainFragment]'s [RecyclerView]
+ * */
 class AnimalRVAdapter : RecyclerView.Adapter<AnimalRVAdapter.AnimalViewHolder>() {
 
     private var animalsList: List<String> = emptyList()

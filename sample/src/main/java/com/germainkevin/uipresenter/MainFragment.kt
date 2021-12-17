@@ -1,0 +1,181 @@
+package com.germainkevin.uipresenter
+
+import android.graphics.Color
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.get
+import androidx.fragment.app.Fragment
+import com.germainkevin.library.Presenter
+import com.germainkevin.library.PresenterShadowLayer
+import com.germainkevin.library.UIPresenter
+import com.germainkevin.library.prototype_impl.NoRevealAnimation
+import com.germainkevin.library.prototype_impl.RotationXByAnimation
+import com.germainkevin.library.prototype_impl.RotationYByAnimation
+import com.germainkevin.uipresenter.databinding.MainFragmentBinding
+
+/**
+ * An example of the [com.germainkevin.library.UIPresenter] when called from a [Fragment]
+ *
+ * To start displaying [UIPresenters][com.germainkevin.library.UIPresenter], click on the + (plus)
+ * button on this fragment's UI
+ * */
+class MainFragment : Fragment() {
+    private val blue500 by lazy { ContextCompat.getColor(requireContext(), R.color.blue_500) }
+    private val teal200 by lazy { ContextCompat.getColor(requireContext(), R.color.teal_200) }
+
+    private var _binding: MainFragmentBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = MainFragmentBinding.inflate(inflater, container, false)
+        initializeRv()
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.fab1.setOnClickListener { presentTextView() }
+    }
+
+    private fun initializeRv() {
+        val animals = mutableListOf<String>()
+        val animalList = listOf("Doggo", "Kitty", "Rabbit")
+        animals.addAll(animalList)
+        val animalRVAdapter = AnimalRVAdapter()
+        animalRVAdapter.submitList(animals)
+        binding.recyclerView.adapter = animalRVAdapter
+    }
+
+    private fun presentTextView() {
+        UIPresenter(this).set(
+            viewToPresentId = R.id.firstTextView,
+            backgroundColor = blue500,
+            descriptionText = getString(R.string.textView_desc),
+            descriptionTextColor = Color.BLACK,
+            presenterHasShadowedWindow = true,
+            removeOnBackPress = true,
+            removePresenterOnAnyClickEvent = false,
+            presenterStateChangeListener = { state, removePresenter ->
+                if (state == Presenter.STATE_FOCAL_PRESSED) {
+                    removePresenter()
+                    presentAnimalImage()
+                }
+            }
+        )
+    }
+
+    private fun presentAnimalImage() {
+        val vHParentView =
+            binding.recyclerView.layoutManager?.findViewByPosition(0) as ConstraintLayout
+        val viewHolder =
+            binding.recyclerView.getChildViewHolder(vHParentView) as AnimalRVAdapter.AnimalViewHolder
+        UIPresenter(this).set(
+            viewToPresent = viewHolder.itemView.findViewById<ImageView>(R.id.animalImage),
+            backgroundColor = blue500,
+            descriptionText = getString(R.string.animal_image_desc),
+            descriptionTextColor = Color.BLACK,
+            presenterHasShadowedWindow = true,
+            removeOnBackPress = true,
+            removePresenterOnAnyClickEvent = false,
+            presenterStateChangeListener = { state, removePresenter ->
+                if (state == Presenter.STATE_FOCAL_PRESSED) {
+                    removePresenter()
+                    presentAnimalName()
+                }
+            }
+        )
+    }
+
+    private fun presentAnimalName() {
+        val vHParentView =
+            binding.recyclerView.layoutManager?.findViewByPosition(0) as ConstraintLayout
+        val viewHolder =
+            binding.recyclerView.getChildViewHolder(vHParentView) as AnimalRVAdapter.AnimalViewHolder
+        UIPresenter(this).set(
+            viewToPresent = viewHolder.itemView.findViewById<TextView>(R.id.animalName),
+            backgroundColor = blue500,
+            descriptionText = getString(R.string.animal_name_desc),
+            descriptionTextColor = Color.BLACK,
+            presenterHasShadowedWindow = true,
+            revealAnimation = RotationYByAnimation(),
+            removeOnBackPress = true,
+            removePresenterOnAnyClickEvent = false,
+            presenterStateChangeListener = { state, removePresenter ->
+                if (state == Presenter.STATE_FOCAL_PRESSED) {
+                    removePresenter()
+                    presentAnimalRow()
+                }
+            }
+        )
+    }
+
+    private fun presentAnimalRow() {
+        UIPresenter(this).set(
+            viewToPresent = binding.recyclerView[2],
+            backgroundColor = blue500,
+            descriptionText = getString(R.string.animal_row_desc),
+            descriptionTextColor = Color.BLACK,
+            revealAnimation = RotationXByAnimation(),
+            presenterHasShadowedWindow = true,
+            removeOnBackPress = true,
+            removePresenterOnAnyClickEvent = false,
+            presenterStateChangeListener = { state, removePresenter ->
+                if (state == Presenter.STATE_FOCAL_PRESSED) {
+                    removePresenter()
+                    presentEditText()
+                }
+            }
+        )
+    }
+
+    private fun presentEditText() {
+        UIPresenter(this).set(
+            viewToPresent = binding.addEditText,
+            backgroundColor = teal200,
+            descriptionTextColor = Color.BLACK,
+            descriptionText = getString(R.string.editText_desc),
+            presenterHasShadowedWindow = true,
+            removeOnBackPress = true,
+            shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f),
+            removePresenterOnAnyClickEvent = false,
+            presenterStateChangeListener = { state, removePresenter ->
+                if (state == Presenter.STATE_FOCAL_PRESSED) {
+                    removePresenter()
+                    presentBtn1()
+                }
+            }
+        )
+    }
+
+    private fun presentBtn1() {
+        UIPresenter(this).set(
+            viewToPresent = binding.fab1,
+            backgroundColor = teal200,
+            descriptionTextColor = Color.BLACK,
+            removeOnBackPress = true,
+            descriptionText = getString(R.string.fab1_desc),
+            presenterHasShadowedWindow = true,
+            shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f),
+            revealAnimation = NoRevealAnimation(),
+            removePresenterOnAnyClickEvent = false,
+            presenterStateChangeListener = { state, removePresenter ->
+                if (state == Presenter.STATE_FOCAL_PRESSED) {
+                    removePresenter()
+                    Toast.makeText(requireContext(), "Done presenting UI!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        )
+    }
+}
