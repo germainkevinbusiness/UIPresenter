@@ -4,10 +4,11 @@ import com.germainkevin.library.Presenter
 import kotlinx.coroutines.CoroutineScope
 
 /**
- * This animation runs in a [Presenter] after its state changes to [Presenter.STATE_CANVAS_DRAWN]
+ * This animation runs on a [Presenter] after its state changes to [Presenter.STATE_CANVAS_DRAWN]
+ *
  * This is the animation that runs when the [Presenter] is being added to your UI's decorView
  *
- * Extend this interface to create your own reveal animation
+ * Implement this interface to create your own reveal animation
  * Here's an example: [RotationXByAnimation][com.germainkevin.library.prototype_impl.RotationXByAnimation]
  * @author Kevin Germain
  * */
@@ -29,8 +30,11 @@ interface RevealAnimation {
 }
 
 /**
- * This animation runs in a [Presenter] after its state changes to [Presenter.STATE_REMOVING]
+ * This animation runs on a [Presenter] after its state changes to [Presenter.STATE_REMOVING]
+ *
  * This is the animation that runs when the [Presenter] is being removed from your UI's decorView
+ *
+ * Implement this interface to create your own remove animation.
  * Here's an example: [FadeOutAnimation][com.germainkevin.library.prototype_impl.FadeOutAnimation]
  * @author Kevin Germain
  * */

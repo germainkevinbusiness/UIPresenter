@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.hypot
 
 /**
- * This is the default [RevealAnimation] to run when the [Presenter] is being added by a
+ * This is the default [RevealAnimation] that runs when the [Presenter] is being added by a
  * [DecorView][android.view.ViewGroup]
  * */
 class CircularRevealAnimation : RevealAnimation {

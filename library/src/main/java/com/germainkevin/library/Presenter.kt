@@ -131,10 +131,10 @@ open class Presenter(context: Context) : View(context) {
     }
 
     /**
-     * Exposed to the [UIPresenter] that will create this [Presenter]
-     * so that it can notify this builder of state changes in this [Presenter]
+     * Will be accessed by the [UIPresenter] that will create this [Presenter]
+     * so that it can be notified of state changes in this [Presenter]
      * */
-    internal lateinit var mPresenterStateChangeNotifier: StateChangeNotifier
+    internal lateinit var stateChangeNotifier: StateChangeNotifier
 
     init {
         id = R.id.android_ui_presenter
@@ -148,7 +148,7 @@ open class Presenter(context: Context) : View(context) {
 
     override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
         if (event!!.keyCode == KeyEvent.KEYCODE_BACK) {
-            mPresenterStateChangeNotifier.onStateChange(STATE_BACK_BUTTON_PRESSED)
+            stateChangeNotifier.onStateChange(STATE_BACK_BUTTON_PRESSED)
         }
         return super.dispatchKeyEventPreIme(event)
     }
@@ -176,13 +176,13 @@ open class Presenter(context: Context) : View(context) {
         // Only propagate click events, when the reveal animation is done running
         if (mUIPresenter.isRevealAnimationDone) {
             if (captureEventVTP) {
-                mPresenterStateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
+                stateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
             }
             if (captureEventFocal) {
-                mPresenterStateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
+                stateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
             }
             if (!captureEventFocal && !captureEventVTP) {
-                mPresenterStateChangeNotifier.onStateChange(STATE_NON_FOCAL_PRESSED)
+                stateChangeNotifier.onStateChange(STATE_NON_FOCAL_PRESSED)
             }
         }
         return true
@@ -190,9 +190,9 @@ open class Presenter(context: Context) : View(context) {
 
     override fun onDraw(canvas: Canvas?) {
         if (mUIPresenter.mIsViewToPresentSet) {
-            mPresenterStateChangeNotifier.onStateChange(STATE_REVEALING)
+            stateChangeNotifier.onStateChange(STATE_REVEALING)
             mUIPresenter.mPresenterShape.onDrawInPresenterWith(canvas)
-            mPresenterStateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
+            stateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
         }
     }
 }
