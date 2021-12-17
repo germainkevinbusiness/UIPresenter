@@ -16,8 +16,8 @@ the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` 
 
 # How to get this library in your android app
 
-**Step 1.** Add the jitpack repository inside your ``project build.gradle`` or
-your ``settings.gradle``  ``repositories { }``  function, like so:
+**Step 1.** Add the jitpack repository to your ``project build.gradle`` or your ``settings.gradle``
+inside your ``repositories { }``  function, like so:
 
 ```groovy
 repositories {
@@ -70,15 +70,13 @@ animation duration, listening to state changes:
 private val teal200 = ContextCompat.getColor(this, R.color.teal200)
 private val purple700 = ContextCompat.getColor(this, R.color.purple700)
 private val whiteColor = ContextCompat.getColor(this, R.color.whiteColor)
-private val descText0 =
-    "This is the EditText. Here you can write Animal names and add them to the RecyclerView"
 
 private fun presentEditText() {
     UIPresenter(this).set(
         viewToPresent = binding.addEditText,
         backgroundColor = teal200,
         descriptionTextColor = Color.BLACK,
-        descriptionText = descText0,
+        descriptionText = getString(R.string.editText_desc),
         revealAnimation = CircularRevealAnimation(),
         presenterHasShadowedWindow = true,
         shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f, shadowColor = Color.DKGRAY),
@@ -96,11 +94,10 @@ private fun presentEditText() {
 
 // Or for a Menu item in your toolbar
 private fun presentMenuItem() {
-    val descText0 = "This is a play button, placed on a Toolbar"
     UIPresenter(this).set(
-        viewToPresentId = R.id.menu_item_play_btn,
+        viewToPresentId = R.id.action_present_view,
         backgroundColor = purple700,
-        descriptionText = descText0,
+        descriptionText = getString(R.string.menu_play_desc),
         descriptionTextColor = whiteColor,
         revealAnimation = RotationYByAnimation(),
         presenterHasShadowedWindow = true,
@@ -109,7 +106,6 @@ private fun presentMenuItem() {
         presenterStateChangeListener = { state, removePresenter ->
             if (state == Presenter.STATE_FOCAL_PRESSED) {
                 removePresenter()
-                Toast.makeText(this, "Done presenting UI!", Toast.LENGTH_SHORT).show()
             }
         }
     )
