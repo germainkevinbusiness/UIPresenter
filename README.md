@@ -176,6 +176,7 @@ UIPresenter(fragment = this).set(
         // which is the presenter's visible part with the description text, 
         // background & shadow layer
         if (state == Presenter.STATE_FOCAL_PRESSED) {
+            // Removes the presenter
             removePresenter()
         }
     }
