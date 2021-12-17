@@ -26,9 +26,9 @@ class SquircleShape : PresenterShape() {
     private var mSquircleRadius = 15f
 
     /**
-     * Will hold the coordinates of the [com.germainkevin.library.UIPresenter.mViewToPresent] on the decorView
-     * through the [android.view.View.getGlobalVisibleRect] method, which gives the accurate
-     * positioning of a View on a screen
+     * Will hold the coordinates of the [com.germainkevin.library.UIPresenter.mViewToPresent]
+     * on the decorView through the [android.view.View.getGlobalVisibleRect] method,
+     * which gives the accurate positioning of a View on a screen
      * */
     private lateinit var vTPCoordinates: Rect
 

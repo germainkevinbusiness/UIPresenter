@@ -10,6 +10,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.hypot
 
+/**
+ * This is the default [RevealAnimation] to run when the [Presenter] is being added by a
+ * [DecorView][android.view.ViewGroup]
+ * */
 class CircularRevealAnimation : RevealAnimation {
     /**
      *  This animation doesn't need to be launched on a coroutine
@@ -31,6 +35,10 @@ class CircularRevealAnimation : RevealAnimation {
     }
 }
 
+/**
+ * This method will cause the [Presenter]'s <code>rotationX</code> property to be animated by 360f,
+ * when it's being added to the [DecorView][android.view.ViewGroup].
+ * */
 class RotationXByAnimation : RevealAnimation {
     override fun runAnimation(
         coroutineScope: CoroutineScope, presenter: Presenter, revealAnimationDuration: Long,
@@ -44,6 +52,10 @@ class RotationXByAnimation : RevealAnimation {
     }
 }
 
+/**
+ * This method will cause the [Presenter]'s <code>rotationY</code> property to be animated by 360f,
+ * when it's being added to the [DecorView][android.view.ViewGroup].
+ * */
 class RotationYByAnimation : RevealAnimation {
     override fun runAnimation(
         coroutineScope: CoroutineScope, presenter: Presenter, revealAnimationDuration: Long,
@@ -61,7 +73,8 @@ class RotationYByAnimation : RevealAnimation {
 }
 
 /**
- * When you don't want no reveal animation to launch
+ * When you don't want no reveal animation to run when your [Presenter] is being
+ * added by the [DecorView][android.view.ViewGroup]
  * */
 class NoRevealAnimation : RevealAnimation {
     override fun runAnimation(
@@ -70,6 +83,10 @@ class NoRevealAnimation : RevealAnimation {
     ) = afterAnim()
 }
 
+/**
+ * A fade out animation when the [Presenter] is being removed from
+ * the [DecorView][android.view.ViewGroup]
+ * */
 class FadeOutAnimation : RemoveAnimation {
     override fun runAnimation(
         coroutineScope: CoroutineScope, presenter: Presenter, removeAnimationDuration: Long,
@@ -86,6 +103,10 @@ class FadeOutAnimation : RemoveAnimation {
     }
 }
 
+/**
+ * When you don't want no remove animation to run when a [Presenter] is being removed
+ * from the [DecorView][android.view.ViewGroup]
+ * */
 class NoRemoveAnimation : RemoveAnimation {
     override fun runAnimation(
         coroutineScope: CoroutineScope,
