@@ -16,8 +16,8 @@ the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` 
 
 # How to get this library in your android app
 
-**Step 1.** Add the jitpack repository to your ``project build.gradle`` or your ``settings.gradle``
-inside your ``repositories { }``  function, like so:
+**Step 1.** Add the jitpack repository to the ``repositories { }``  function, inside
+your ``project build.gradle`` or your ``settings.gradle`` like so:
 
 ```groovy
 repositories {
