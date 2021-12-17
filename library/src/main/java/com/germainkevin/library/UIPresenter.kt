@@ -76,13 +76,13 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         { _: Int, _: () -> Unit -> }
 
     /**
-     * Should the back button press remove the [mPresenter].
+     * Should the back button press cause the removal of the [mPresenter] from the [mDecorView].
      */
     private var mRemoveOnBackPress = true
 
     /**
-     * Should the [mPresenter] be removed automatically when any click event is
-     * detected on the [mDecorView]
+     * Should the [mPresenter] be removed automatically from the [mDecorView],
+     * when any click event is detected on the [mDecorView]
      * */
     private var mRemoveOnAnyClickEvent = true
 
@@ -103,11 +103,6 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * The duration of the animation when removing the [mPresenter]
      * */
     private var mRemovingAnimDuration = 600L
-
-    /**
-     * Created to run animations that want a [CoroutineScope] to run in
-     * */
-    private var coroutineScope: CoroutineScope
 
     /**
      * The [PresenterShape] for this [mPresenter]
@@ -182,6 +177,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * Will be accessed by the [mPresenterShape]
      * */
     internal var mPresenterHasShadowedWindow: Boolean = true
+
+    private var coroutineScope: CoroutineScope
 
     /**
      * Gives default colors to [mBackgroundColor] and [mDescriptionTextColor]

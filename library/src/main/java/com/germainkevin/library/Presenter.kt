@@ -16,18 +16,10 @@ import com.germainkevin.library.prototypes.PresenterShape
  * The [Presenter] is a [View] that presents a [View] in your
  * [Activity][android.app.Activity] or [Fragment][android.app.Fragment]
  *
- * This [View] is created at the creation of the constructor of a [UIPresenter].
+ * This [View] (the [Presenter]) is created at the initialization of the constructor of a [UIPresenter].
  * It is added and made visible inside your [Activity][android.app.Activity]
  * or [Fragment][android.app.Fragment] by your app's "decorView",
  * at the call of [UIPresenter.set]
- *
- * For Example:
- *
- *  UIPresenter(activity = this).set(
- *  viewToPresentId = R.id.the_view_to_present,
- *  descriptionText = "The role of this view is to help you with....",
- *  presenterStateChangeListener = { _, _ -> }
- *  )
  *
  * The internal variables here are to be set by the [UIPresenter][UIPresenter]
  * that will create this [Presenter]
