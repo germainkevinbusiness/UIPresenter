@@ -7,13 +7,6 @@ the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` 
 
 <img src="/screenshots/device-2021-12-15-184659.png" alt="UIPresenter example 2 screenshot"/>
 
-## The layer on top of the below app is displayed using this library
-
-<div>
-<img src="/screenshots/device-2021-12-15-175804.png" alt="UIPresenter example 1 screenshot" width="360" />
-<img src="/screenshots/device-2021-12-15-175858.png" alt="UIPresenter example 2 screenshot" width="360" />
-</div>
-
 # How to get this library in your android app
 
 **Step 1.** Add the jitpack repository to the ``repositories { }``  function, inside
@@ -37,6 +30,13 @@ dependencies {
 ```
 
 **That's it!**
+
+## The layer on top of the below app is displayed using this library
+
+<div>
+<img src="/screenshots/device-2021-12-15-175804.png" alt="UIPresenter example 1 screenshot" width="360" />
+<img src="/screenshots/device-2021-12-15-175858.png" alt="UIPresenter example 2 screenshot" width="360" />
+</div>
 
 ## Usage
 
