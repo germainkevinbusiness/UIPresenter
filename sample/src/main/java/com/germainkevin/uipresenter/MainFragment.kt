@@ -66,6 +66,9 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
             removeOnBackPress = true,
+            // Now the library won't removes the presenter on any detected click event automatically
+            // You now have to decide which click event will remove the presenter by yourself, like
+            // show inside the presenterStateChangeListener below
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is done on the

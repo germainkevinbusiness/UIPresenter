@@ -38,7 +38,7 @@ dependencies {
 <img src="/screenshots/device-2021-12-15-175858.png" alt="UIPresenter example 2 screenshot" width="360" />
 </div>
 
-## Presenting EditText & a menu item in toolbar
+## Presenting EditText & a menu item on a toolbar
 
 <div>
 <img src="/screenshots/device-2021-12-15-175954.png" alt="An EditText being presented by the library" width="360" />
@@ -49,9 +49,9 @@ dependencies {
 
 This library is only functional when called from a class that is either an Activity or a Fragment.
 
-Basic usage is shown below, there's a more elaborate example in
+Basic usage is shown below, there are more elaborate examples in
 the [sample app](https://github.com/germainkevinbusiness/UIPresenter/tree/master/sample). Inside
-your Activity or Fragment, write this, where you see fit & safe to reference the View you want to
+your Activity or Fragment, write this where you see fit & safe, to reference the View you want to
 present:
 
 ```kotlin
@@ -63,7 +63,7 @@ UIPresenter(activity = this).set(
 )
 ```
 
-Only those three parameters in the ```UIPresenter.set()``` method are required, to display
+Only the above three parameters inside the ```UIPresenter.set()``` method are required to display
 a ```Presenter``` on your ```Activity``` or ```Fragment```'s UI. The rest of the parameters in
 the ```UIPresenter.set()``` method are optional, but great for customization!
 
@@ -94,6 +94,7 @@ private fun presentMenuItem() {
         removeAnimation = FadeOutAnimation(),
         revealAnimDuration = 600L,
         removalAnimDuration = 600L,
+        descriptionTextTypeface = Typeface.MONOSPACE,
         presenterHasShadowedWindow = true,
         removePresenterOnAnyClickEvent = false,
         removeOnBackPress = true,
@@ -166,7 +167,9 @@ Presenter.STATE_NON_FOCAL_PRESSED
 Presenter.STATE_BACK_BUTTON_PRESSED
 
 UIPresenter(fragment = this).set(
-    // Now the library won't removes the presenter on any detected click event
+    // Now the library won't removes the presenter on any detected click event automatically
+    // You now have to decide which click event will remove the presenter by yourself, like
+    // show inside the presenterStateChangeListener below
     removePresenterOnAnyClickEvent = false,
     presenterStateChangeListener = { state, removePresenter ->
         // Removes the presenter when a click is done on the presenter's PresenterShape 

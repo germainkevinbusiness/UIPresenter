@@ -39,13 +39,10 @@ class MainActivity : AppCompatActivity() {
             descriptionTextColor = whiteColor,
             revealAnimation = RotationYByAnimation(),
             presenterHasShadowedWindow = true,
-            removePresenterOnAnyClickEvent = false,
             shadowLayer = PresenterShadowLayer(shadowColor = blue500),
-            presenterStateChangeListener = { state, removePresenter ->
-                if (state == Presenter.STATE_FOCAL_PRESSED) {
-                    removePresenter()
-                }
-            }
+            // Any detected click event will remove the presenter now
+            removePresenterOnAnyClickEvent = true,
+            presenterStateChangeListener = { _, _ -> }
         )
     }
 
