@@ -49,10 +49,8 @@ dependencies {
 
 This library is only functional when called from a class that is either an Activity or a Fragment.
 
-Basic usage is shown below, there are more elaborate examples in
-the [sample app](https://github.com/germainkevinbusiness/UIPresenter/tree/master/sample). Inside
-your Activity or Fragment, write this where you see fit & safe, to reference the View you want to
-present:
+Basic usage is shown below, with more examples in the
+[sample app](https://github.com/germainkevinbusiness/UIPresenter/tree/master/sample).
 
 ```kotlin
 
@@ -74,8 +72,7 @@ the ```UIPresenter.set()``` method are optional, but great for customization!
 <img src="/screenshots/device-2021-12-15-181210.png" alt="Dark mode UIPresenter example" width="360" />
 </div>
 
-Or if you just want to specify even more values such as text size, typeface,shadow layer, animation,
-animation duration, listening to state changes:
+Or if you want to specify even more values while listening to state changes:
 
 ```kotlin
 private val teal200 = ContextCompat.getColor(this, R.color.teal200)
