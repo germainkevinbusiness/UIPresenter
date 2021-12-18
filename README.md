@@ -39,9 +39,6 @@ dependencies {
 </div>
 
 ## Usage
-
-This library is only functional when called from a class that is either an Activity or a Fragment.
-
 Basic usage is shown below, with more examples in the
 [sample app](https://github.com/germainkevinbusiness/UIPresenter/tree/master/sample).
 
