@@ -7,11 +7,6 @@ the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` 
 
 <img src="/screenshots/device-2021-12-17-140025.png" alt="UIPresenter example 2 screenshot"/>
 
-<div>
-<img src="/screenshots/device-2021-12-17-135021.png" alt="UIPresenter example 2 screenshot" width="360" />
-<img src="/screenshots/device-2021-12-17-135123.png" alt="A Menu item being presented by the library" width="360" />
-</div>
-
 # How to get this library in your android app
 
 **Step 1.** Add the jitpack repository to the ``repositories { }``  function, inside
@@ -35,6 +30,13 @@ dependencies {
 ```
 
 **That's it!**
+
+## Example with a RecyclerView & a menu item
+
+<div>
+<img src="/screenshots/device-2021-12-17-135021.png" alt="UIPresenter example 2 screenshot" width="360" />
+<img src="/screenshots/device-2021-12-17-135123.png" alt="A Menu item being presented by the library" width="360" />
+</div>
 
 ## Usage
 
