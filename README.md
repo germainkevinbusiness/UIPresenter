@@ -65,38 +65,10 @@ the ```UIPresenter.set()``` method are optional, but great for customization!
 <img src="/screenshots/device-2021-12-15-181210.png" alt="Dark mode UIPresenter example" width="360" />
 </div>
 
-Or if you want to specify even more values while listening to state changes:
+For more in-depth examples, check out
+the [sample app](https://github.com/germainkevinbusiness/UIPresenter/tree/master/sample).
 
-```kotlin
-private val teal200 = ContextCompat.getColor(this, R.color.teal200)
-private val purple700 = ContextCompat.getColor(this, R.color.purple700)
-private val whiteColor = ContextCompat.getColor(this, R.color.whiteColor)
-
-// Or for a Menu item in your toolbar
-private fun presentMenuItem() {
-    UIPresenter(fragment = this).set(
-        viewToPresentId = R.id.action_present_view,
-        backgroundColor = purple700,
-        descriptionText = getString(R.string.menu_play_desc),
-        descriptionTextColor = whiteColor,
-        presenterShape = SquircleShape(),
-        revealAnimation = RotationYByAnimation(),
-        removeAnimation = FadeOutAnimation(),
-        revealAnimDuration = 600L,
-        removalAnimDuration = 600L,
-        descriptionTextTypeface = Typeface.MONOSPACE,
-        presenterHasShadowedWindow = true,
-        removePresenterOnAnyClickEvent = false,
-        removeOnBackPress = true,
-        shadowLayer = PresenterShadowLayer(shadowColor = blue500),
-        presenterStateChangeListener = { state, removePresenter ->
-            if (state == Presenter.STATE_FOCAL_PRESSED) {
-                removePresenter()
-            }
-        }
-    )
-}
-```
+## Note
 
 If you want to remove the Presenter on certain specific click events, here are the click events that
 the UIPresenter library can detect:
