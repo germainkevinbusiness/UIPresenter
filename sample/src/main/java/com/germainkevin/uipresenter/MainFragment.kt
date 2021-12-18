@@ -37,22 +37,16 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = MainFragmentBinding.inflate(inflater, container, false)
-        initializeRv()
+        initialize()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun initialize() {
+        AnimalRVAdapter().apply {
+            submitList(listOf("Doggo", "Kitty", "Rabbit"))
+            binding.recyclerView.adapter = this
+        }
         binding.fab1.setOnClickListener { presentTextView() }
-    }
-
-    private fun initializeRv() {
-        val animals = mutableListOf<String>()
-        val animalList = listOf("Doggo", "Kitty", "Rabbit")
-        animals.addAll(animalList)
-        val animalRVAdapter = AnimalRVAdapter()
-        animalRVAdapter.submitList(animals)
-        binding.recyclerView.adapter = animalRVAdapter
     }
 
     private fun presentTextView() {
@@ -62,7 +56,6 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.textView_desc),
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
-            revealAnimation = FadeInAnimation(),
             removeOnBackPress = true,
             // Now the library won't removes the presenter on any detected click event automatically
             // You now have to decide which click event will remove the presenter by yourself, like
@@ -93,6 +86,7 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
             removeOnBackPress = true,
+            revealAnimation = CircularRevealAnimation(),
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is detected on $mViewToPresent

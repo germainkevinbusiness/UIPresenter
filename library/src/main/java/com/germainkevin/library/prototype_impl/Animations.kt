@@ -15,10 +15,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.hypot
 
-/**
- * This is the default [RevealAnimation] that runs when the [Presenter] is being added by a
- * [DecorView][android.view.ViewGroup]
- * */
 class CircularRevealAnimation : RevealAnimation {
     /**
      *  This animation doesn't need to be launched on a coroutine
@@ -41,8 +37,8 @@ class CircularRevealAnimation : RevealAnimation {
 }
 
 /**
- * This animation will animate the visibility of the [Presenter] from invisible to visible
- * according to the revealAnimationDuration defined
+ * Unless you specify your own [RevealAnimation], this is the default [RevealAnimation] that runs
+ * when the [Presenter] is being added by the [DecorView][android.view.ViewGroup]
  * */
 class FadeInAnimation : RevealAnimation {
     override fun runAnimation(
@@ -124,7 +120,7 @@ class RotationYByAnimation : RevealAnimation {
 }
 
 /**
- * When you don't want no reveal animation to run when your [Presenter] is being
+ * When you don't want an animation to run when your [Presenter] is being
  * added by the [DecorView][android.view.ViewGroup]
  * */
 class NoRevealAnimation : RevealAnimation {

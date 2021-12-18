@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.germainkevin.library.prototype_impl.CircularRevealAnimation
+import com.germainkevin.library.prototype_impl.FadeInAnimation
 import com.germainkevin.library.prototype_impl.FadeOutAnimation
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototype_impl.resource_finders.ActivityResourceFinder
@@ -88,7 +89,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
 
     /** The animation that runs when adding the [mPresenter] to the [mDecorView]
      */
-    private var mPresenterRevealAnimation: RevealAnimation = CircularRevealAnimation()
+    private var mPresenterRevealAnimation: RevealAnimation = FadeInAnimation()
 
     /** The animation that runs when removing the [mPresenter] from the [mDecorView]
      */
