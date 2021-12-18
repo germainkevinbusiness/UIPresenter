@@ -31,17 +31,10 @@ dependencies {
 
 **That's it!**
 
-## Presenting items in your RecyclerView (example)
+## Example with a RecyclerView & a menu item
 
 <div>
-<img src="/screenshots/device-2021-12-17-134910.png" alt="UIPresenter example 1 screenshot" width="360" />
 <img src="/screenshots/device-2021-12-17-135021.png" alt="UIPresenter example 2 screenshot" width="360" />
-</div>
-
-## Presenting EditText & a menu item on a toolbar
-
-<div>
-<img src="/screenshots/device-2021-12-17-135046.png" alt="An EditText being presented by the library" width="360" />
 <img src="/screenshots/device-2021-12-17-135123.png" alt="A Menu item being presented by the library" width="360" />
 </div>
 
