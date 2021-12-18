@@ -1,6 +1,11 @@
 package com.germainkevin.library.prototype_impl
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.view.View
 import android.view.ViewAnimationUtils
+import android.view.animation.OvershootInterpolator
 import androidx.core.view.isVisible
 import com.germainkevin.library.Presenter
 import com.germainkevin.library.prototypes.RemoveAnimation
@@ -36,8 +41,54 @@ class CircularRevealAnimation : RevealAnimation {
 }
 
 /**
- * This method will cause the [Presenter]'s <code>rotationX</code> property to be animated by 360f,
- * when it's being added to the [DecorView][android.view.ViewGroup].
+ * This animation will animate the visibility of the [Presenter] from invisible to visible
+ * according to the revealAnimationDuration defined
+ * */
+class FadeInAnimation : RevealAnimation {
+    override fun runAnimation(
+        coroutineScope: CoroutineScope, presenter: Presenter, revealAnimationDuration: Long,
+        afterAnim: () -> Unit
+    ) {
+        coroutineScope.launch {
+            val alphaAnimation = ObjectAnimator.ofFloat(presenter, View.ALPHA, 0.0f, 1.1f)
+            alphaAnimation.duration = revealAnimationDuration
+            val animatorSet = AnimatorSet()
+            animatorSet.play(alphaAnimation)
+            animatorSet.start()
+            delay(revealAnimationDuration)
+            afterAnim()
+        }
+    }
+}
+
+/**
+ * Fades in and scales [View.SCALE_X] & [View.SCALE_Y] for the revealAnimationDuration delay
+ * */
+class FadeInAndScale : RevealAnimation {
+    override fun runAnimation(
+        coroutineScope: CoroutineScope,
+        presenter: Presenter,
+        revealAnimationDuration: Long,
+        afterAnim: () -> Unit
+    ) {
+        coroutineScope.launch {
+            val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.5f, 1f)
+            val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.5f, 1f)
+            val alpha = PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f)
+            val objectAnimator =
+                ObjectAnimator.ofPropertyValuesHolder(presenter, scaleX, scaleY, alpha)
+            objectAnimator.interpolator = OvershootInterpolator()
+            objectAnimator.duration = revealAnimationDuration
+            objectAnimator.start()
+            delay(revealAnimationDuration)
+            afterAnim()
+        }
+    }
+}
+
+/**
+ * This animation will cause the [Presenter]'s <code>rotationX</code> property to
+ * be animated by 360f, when it's being added to the [DecorView][android.view.ViewGroup].
  * */
 class RotationXByAnimation : RevealAnimation {
     override fun runAnimation(
@@ -53,8 +104,8 @@ class RotationXByAnimation : RevealAnimation {
 }
 
 /**
- * This method will cause the [Presenter]'s <code>rotationY</code> property to be animated by 360f,
- * when it's being added to the [DecorView][android.view.ViewGroup].
+ * This animation will cause the [Presenter]'s <code>rotationY</code> property to
+ * be animated by 360f, when it's being added to the [DecorView][android.view.ViewGroup].
  * */
 class RotationYByAnimation : RevealAnimation {
     override fun runAnimation(

@@ -15,10 +15,7 @@ import androidx.fragment.app.Fragment
 import com.germainkevin.library.Presenter
 import com.germainkevin.library.PresenterShadowLayer
 import com.germainkevin.library.UIPresenter
-import com.germainkevin.library.prototype_impl.FadeOutAnimation
-import com.germainkevin.library.prototype_impl.NoRevealAnimation
-import com.germainkevin.library.prototype_impl.RotationXByAnimation
-import com.germainkevin.library.prototype_impl.RotationYByAnimation
+import com.germainkevin.library.prototype_impl.*
 import com.germainkevin.uipresenter.databinding.MainFragmentBinding
 
 /**
@@ -65,6 +62,7 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.textView_desc),
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
+            revealAnimation = FadeInAnimation(),
             removeOnBackPress = true,
             // Now the library won't removes the presenter on any detected click event automatically
             // You now have to decide which click event will remove the presenter by yourself, like
@@ -158,6 +156,7 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             descriptionText = getString(R.string.editText_desc),
             presenterHasShadowedWindow = true,
+            revealAnimation = FadeInAndScale(),
             shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f),
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->

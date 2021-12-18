@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.germainkevin.library.PresenterShadowLayer
 import com.germainkevin.library.Presenter
 import com.germainkevin.library.UIPresenter
+import com.germainkevin.library.prototype_impl.FadeInAndScale
 import com.germainkevin.library.prototype_impl.RotationYByAnimation
 import com.germainkevin.uipresenter.databinding.ActivityMainBinding
 
