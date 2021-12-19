@@ -20,13 +20,13 @@ import com.germainkevin.library.UIPresenter
  * */
 interface ShapeLifecycle {
     /**
-     * This method is executed asynchronously on a [kotlinx.coroutines.Dispatchers.Main] inside the
+     * This method is executed on a coroutine's [kotlinx.coroutines.Dispatchers.Main] inside the
      * [com.germainkevin.library.UIPresenter.present] method
      * Right after you call the [UIPresenter.set]
      *
      * Builds the [PresenterShape] that will be drawn on the call of [onDrawInPresenterWith]
      * Some information necessary for positioning are available in the [builder][UIPresenter]
-     * Which is why it is put there as a parameter, and will be assigned from the
+     * Which is why it is put in this function as a parameter, and will be assigned from the
      * [builder][UIPresenter] calling this method
      *
      * Should always be called before [onDrawInPresenterWith]
@@ -34,7 +34,7 @@ interface ShapeLifecycle {
      * @param builder The builder that will create this [PresenterShape]
      * by calling its [UIPresenter.present] method
      * @see [com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape.buildSelfWith]
-     * for example
+     * for an implementation example
      */
     fun buildSelfWith(builder: UIPresenter)
 
@@ -47,7 +47,7 @@ interface ShapeLifecycle {
      * @param canvas The canvas coming from the [presenter's][UIPresenter.mPresenter]
      * [com.germainkevin.library.Presenter.onDraw] method
      * @see [com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape.onDrawInPresenterWith]
-     * for example
+     * for an implementation example
      */
     fun onDrawInPresenterWith(canvas: Canvas?)
 }

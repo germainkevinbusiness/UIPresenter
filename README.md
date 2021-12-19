@@ -39,6 +39,7 @@ dependencies {
 </div>
 
 ## Usage
+
 Basic usage is shown below, with more examples in the
 [sample app](https://github.com/germainkevinbusiness/UIPresenter/tree/master/sample).
 
@@ -99,20 +100,12 @@ UIPresenter(fragment = this).set(
 )
 ```
 
-You can apply your own animations to the presenter like so:
-
-```kotlin
-UIPresenter(activity = this).set(
-    revealAnimation = MyRevealAnimation(),
-    removeAnimation = MyRemoveAnimation()
-)
-```
-
-To create your own animation when the presenter is being added to the decor view
-(called reveal animation), you need to implement the ```RevealAnimation``` interface, like so:
+To create your own animation when the presenter is being added to the decorView (called
+revealAnimation), or when the presenter is being removed from the decorView (called removeAnimation)
+, you need to implement the ```PresenterAnimation``` interface, like so:
 
 ````kotlin
-class MyRevealAnimation : RevealAnimation {
+class MyRevealAnimation : PresenterAnimation {
 
     override fun runAnimation(
         coroutineScope: CoroutineScope, // A scope to run your animation in, if you want
@@ -123,24 +116,28 @@ class MyRevealAnimation : RevealAnimation {
         // write your animation logic here
     }
 }
-````
 
-To create your own animation when the presenter is being removed from the decor view
-(called remove animation), you need to implement the ```RemoveAnimation``` interface, like so:
-
-````kotlin
 class MyRemoveAnimation : RemoveAnimation {
 
     override fun runAnimation(
         coroutineScope: CoroutineScope, // A scope to run your animation in, if you want
         presenter: Presenter, // The presenter the remove animation will run on
-        removeAnimationDuration: Long, // The duration of the animation
+        removeAnimationDuration: Long, // The duration of the removeAnimation
         afterAnim: () -> Unit // When called that means we can safely consider this animation to be done
     ) {
         // write your animation logic here
     }
 }
 ````
+
+You can apply your own animations to the UIPresenter like so:
+
+```kotlin
+UIPresenter(activity = this).set(
+    revealAnimation = MyRevealAnimation(),
+    removeAnimation = MyRemoveAnimation()
+)
+```
 
 ## License
 

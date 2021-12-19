@@ -4,11 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
-import com.germainkevin.library.PresenterShadowLayer
-import com.germainkevin.library.Presenter
+import com.germainkevin.library.ShadowLayer
 import com.germainkevin.library.UIPresenter
-import com.germainkevin.library.prototype_impl.FadeInAndScale
-import com.germainkevin.library.prototype_impl.RotationYByAnimation
+import com.germainkevin.library.prototype_impl.HorizontalRotation
 import com.germainkevin.uipresenter.databinding.ActivityMainBinding
 
 
@@ -38,9 +36,9 @@ class MainActivity : AppCompatActivity() {
             backgroundColor = purple700,
             descriptionText = getString(R.string.menu_play_desc),
             descriptionTextColor = whiteColor,
-            revealAnimation = RotationYByAnimation(),
+            revealAnimation = HorizontalRotation(),
             presenterHasShadowedWindow = true,
-            shadowLayer = PresenterShadowLayer(shadowColor = blue500),
+            shadowLayer = ShadowLayer(shadowColor = blue500),
             // Any detected click event will remove the presenter now
             removePresenterOnAnyClickEvent = true,
             presenterStateChangeListener = { _, _ -> }

@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.germainkevin.library.Presenter
-import com.germainkevin.library.PresenterShadowLayer
+import com.germainkevin.library.ShadowLayer
 import com.germainkevin.library.UIPresenter
 import com.germainkevin.library.prototype_impl.*
 import com.germainkevin.uipresenter.databinding.MainFragmentBinding
@@ -86,7 +86,7 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
             removeOnBackPress = true,
-            revealAnimation = CircularRevealAnimation(),
+            revealAnimation = CircularReveal(),
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is detected on $mViewToPresent
@@ -110,7 +110,7 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.animal_name_desc),
             descriptionTextColor = Color.BLACK,
             presenterHasShadowedWindow = true,
-            revealAnimation = RotationYByAnimation(),
+            revealAnimation = HorizontalRotation(),
             removeOnBackPress = true,
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
@@ -130,7 +130,7 @@ class MainFragment : Fragment() {
             backgroundColor = blue500,
             descriptionText = getString(R.string.animal_row_desc),
             descriptionTextColor = Color.BLACK,
-            revealAnimation = RotationXByAnimation(),
+            revealAnimation = VerticalRotation(),
             presenterHasShadowedWindow = true,
             removeOnBackPress = true,
             removePresenterOnAnyClickEvent = false,
@@ -151,7 +151,7 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.editText_desc),
             presenterHasShadowedWindow = true,
             revealAnimation = FadeInAndScale(),
-            shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f),
+            shadowLayer = ShadowLayer(dx = 8f, dy = 8f),
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 if (state == Presenter.STATE_FOCAL_PRESSED) {
@@ -170,8 +170,8 @@ class MainFragment : Fragment() {
             removeOnBackPress = true,
             descriptionText = getString(R.string.fab1_desc),
             presenterHasShadowedWindow = true,
-            shadowLayer = PresenterShadowLayer(dx = 8f, dy = 8f),
-            revealAnimation = NoRevealAnimation(),
+            shadowLayer = ShadowLayer(dx = 8f, dy = 8f),
+            revealAnimation = NoAnimation(),
             removePresenterOnAnyClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 if (state == Presenter.STATE_FOCAL_PRESSED) {

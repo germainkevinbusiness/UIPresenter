@@ -13,16 +13,12 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.germainkevin.library.prototype_impl.CircularRevealAnimation
-import com.germainkevin.library.prototype_impl.FadeInAnimation
-import com.germainkevin.library.prototype_impl.FadeOutAnimation
+import com.germainkevin.library.prototype_impl.FadeIn
+import com.germainkevin.library.prototype_impl.FadeOut
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototype_impl.resource_finders.ActivityResourceFinder
 import com.germainkevin.library.prototype_impl.resource_finders.FragmentResourceFinder
-import com.germainkevin.library.prototypes.PresenterShape
-import com.germainkevin.library.prototypes.RemoveAnimation
-import com.germainkevin.library.prototypes.ResourceFinder
-import com.germainkevin.library.prototypes.RevealAnimation
+import com.germainkevin.library.prototypes.*
 import kotlinx.coroutines.*
 
 /**
@@ -71,7 +67,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     private var pState = Presenter.STATE_NOT_SHOWN
 
     /**
-     * Exposes state changes from the [mPresenter] to the user of this library
+     * Exposes state changes from the [mPresenter] to the user of this library as first parameter
+     * & also passes a [removingPresenter] function as second parameter
      */
     private var mPresenterStateChangeListener: (Int, () -> Unit) -> Unit =
         { _: Int, _: () -> Unit -> }
@@ -89,11 +86,11 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
 
     /** The animation that runs when adding the [mPresenter] to the [mDecorView]
      */
-    private var mPresenterRevealAnimation: RevealAnimation = FadeInAnimation()
+    private var mPresenterRevealAnimation: PresenterAnimation = FadeIn()
 
     /** The animation that runs when removing the [mPresenter] from the [mDecorView]
      */
-    private var mPresenterRemoveAnimation: RemoveAnimation = FadeOutAnimation()
+    private var mPresenterRemoveAnimation: PresenterAnimation = FadeOut()
 
     /**
      * The duration of the animation when revealing the [mPresenter]
@@ -124,7 +121,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     /**
      * The shadow layer to be applied on the [mPresenterShape]
      * */
-    internal var presenterShadowLayer = PresenterShadowLayer()
+    internal var presenterShadowLayer = ShadowLayer()
 
     /**
      * Should the [mPresenterShape] contain a shadowLayer
@@ -255,7 +252,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * @param backgroundColor The background color of the [mPresenter]
      * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
      * @param presenterHasShadowedWindow Should the [mPresenter]'s whole View on screen have a shadowed background
-     * @param shadowLayer Sets a Shadow layer for the [mPresenter]
+     * @param shadowLayer Sets a Shadow layer for the [mPresenter].
+     * The shadowLayer tend to be visible only when hardware acceleration is disabled on a user's device.
      * @param descriptionText The text that describes the view you want to present
      * @param descriptionTextColor The text color of the description text
      * @param descriptionTextSize The desired text size of the description text
@@ -263,9 +261,9 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * texts are usually in the [TypedValue.COMPLEX_UNIT_SP] unit on android
      * @param descriptionTextTypeface The typeface you want your description text to be in
      * @param revealAnimation The animation that runs when adding the [mPresenter] to the [mDecorView]
-     * @param revealAnimDuration The duration of the reveal animation
+     * @param revealAnimDuration The duration of the reveal animation in milliseconds
      * @param removeAnimation The animation that runs when removing the [mPresenter] from the [mDecorView]
-     * @param removalAnimDuration The duration of the remove animation
+     * @param removeAnimDuration The duration of the remove animation in milliseconds
      * @param removeOnBackPress Sets whether the presenter should be removed from the [mDecorView]
      * when [android.app.Activity.onBackPressed] is detected or not
      * @param removePresenterOnAnyClickEvent Sets whether any click event detected anywhere on the screen
@@ -278,16 +276,16 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         @ColorInt backgroundColor: Int = mBackgroundColor!!,
         hasShadowLayer: Boolean = mHasShadowLayer,
         presenterHasShadowedWindow: Boolean = mPresenterHasShadowedWindow,
-        shadowLayer: PresenterShadowLayer = presenterShadowLayer,
+        shadowLayer: ShadowLayer = presenterShadowLayer,
         descriptionText: String,
         @ColorInt descriptionTextColor: Int = mDescriptionTextColor!!,
         descriptionTextSize: Float = mDescriptionTextSize,
         descriptionTextUnit: Int = mDescriptionTextUnit,
         descriptionTextTypeface: Typeface = mTypeface,
-        revealAnimation: RevealAnimation = mPresenterRevealAnimation,
-        removeAnimation: RemoveAnimation = mPresenterRemoveAnimation,
+        revealAnimation: PresenterAnimation = mPresenterRevealAnimation,
+        removeAnimation: PresenterAnimation = mPresenterRemoveAnimation,
         revealAnimDuration: Long = mRevealAnimDuration,
-        removalAnimDuration: Long = mRemovingAnimDuration,
+        removeAnimDuration: Long = mRemovingAnimDuration,
         removeOnBackPress: Boolean = mRemoveOnBackPress,
         removePresenterOnAnyClickEvent: Boolean = mRemoveOnAnyClickEvent,
         presenterStateChangeListener: (Int, () -> Unit) -> Unit
@@ -308,7 +306,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         mPresenterRevealAnimation = revealAnimation
         mPresenterRemoveAnimation = removeAnimation
         mRevealAnimDuration = revealAnimDuration
-        mRemovingAnimDuration = removalAnimDuration
+        mRemovingAnimDuration = removeAnimDuration
         mRemoveOnBackPress = removeOnBackPress
         mRemoveOnAnyClickEvent = removePresenterOnAnyClickEvent
         present()
@@ -321,8 +319,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * @param backgroundColor The background color of the [mPresenter]
      * @param hasShadowLayer Sets whether the presenter should have a shadow layer of not
      * @param presenterHasShadowedWindow Should the [mPresenter]'s whole View on screen have a shadowed background
-     * @param shadowLayer Sets a Shadow layer for the [mPresenter]. The shadowLayer only works if
-     * hardware acceleration is disabled on a device
+     * @param shadowLayer Sets a Shadow layer for the [mPresenter].
+     * The shadowLayer tend to be visible only when hardware acceleration is disabled on a user's device.
      * @param descriptionText The text that describes the view you want to present
      * @param descriptionTextColor The text color of the description text
      * @param descriptionTextSize The desired text size of the description text
@@ -330,9 +328,9 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * texts are usually in the [TypedValue.COMPLEX_UNIT_SP] unit on android
      * @param descriptionTextTypeface The typeface you want your description text to be in
      * @param revealAnimation The animation that runs when adding the [mPresenter] to the [mDecorView]
-     * @param revealAnimDuration The duration of the reveal animation
+     * @param revealAnimDuration The duration of the reveal animation in milliseconds
      * @param removeAnimation The animation that runs when removing the [mPresenter] from the [mDecorView]
-     * @param removalAnimDuration The duration of the remove animation
+     * @param removeAnimDuration The duration of the remove animation in milliseconds
      * @param removeOnBackPress Sets whether the presenter should be removed from the [mDecorView]
      * when [android.app.Activity.onBackPressed] is detected or not
      * @param removePresenterOnAnyClickEvent Sets whether any click event detected anywhere on the screen
@@ -345,16 +343,16 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         @ColorInt backgroundColor: Int = mBackgroundColor!!,
         hasShadowLayer: Boolean = mHasShadowLayer,
         presenterHasShadowedWindow: Boolean = mPresenterHasShadowedWindow,
-        shadowLayer: PresenterShadowLayer = presenterShadowLayer,
+        shadowLayer: ShadowLayer = presenterShadowLayer,
         descriptionText: String,
         @ColorInt descriptionTextColor: Int = mDescriptionTextColor!!,
         descriptionTextSize: Float = mDescriptionTextSize,
         descriptionTextUnit: Int = mDescriptionTextUnit,
         descriptionTextTypeface: Typeface = mTypeface,
-        revealAnimation: RevealAnimation = mPresenterRevealAnimation,
-        removeAnimation: RemoveAnimation = mPresenterRemoveAnimation,
+        revealAnimation: PresenterAnimation = mPresenterRevealAnimation,
+        removeAnimation: PresenterAnimation = mPresenterRemoveAnimation,
         revealAnimDuration: Long = mRevealAnimDuration,
-        removalAnimDuration: Long = mRemovingAnimDuration,
+        removeAnimDuration: Long = mRemovingAnimDuration,
         removeOnBackPress: Boolean = mRemoveOnBackPress,
         removePresenterOnAnyClickEvent: Boolean = mRemoveOnAnyClickEvent,
         presenterStateChangeListener: (Int, () -> Unit) -> Unit
@@ -375,7 +373,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         mPresenterRevealAnimation = revealAnimation
         mPresenterRemoveAnimation = removeAnimation
         mRevealAnimDuration = revealAnimDuration
-        mRemovingAnimDuration = removalAnimDuration
+        mRemovingAnimDuration = removeAnimDuration
         mRemoveOnBackPress = removeOnBackPress
         mRemoveOnAnyClickEvent = removePresenterOnAnyClickEvent
         present()
@@ -433,11 +431,11 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
 
     // nullify all nullables, they are no longer being used
     private fun finish() {
-        mDecorView = null
         mPresenter = null
         mViewToPresent = null
         mBackgroundColor = null
         mDescriptionText = null
         mDescriptionTextColor = null
+        mDecorView = null
     }
 }
