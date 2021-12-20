@@ -26,8 +26,8 @@ class CircularReveal : PresenterAnimation {
     ) {
         val cx: Int = presenter.width / 2
         val cy: Int = presenter.height / 2
-        val finalRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
-        val anim = ViewAnimationUtils.createCircularReveal(presenter, cx, cy, 0f, finalRadius)
+        val endRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
+        val anim = ViewAnimationUtils.createCircularReveal(presenter, cx, cy, 0f, endRadius)
         anim.duration = animationDuration
         presenter.isVisible = true
         anim.start()

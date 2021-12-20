@@ -21,11 +21,6 @@ class SquircleShape : PresenterShape() {
     private lateinit var mSquircleShapeRectF: RectF
 
     /**
-     * The radius applied to the [mSquircleShapeRectF]
-     */
-    private var mSquircleRadius = 15f
-
-    /**
      * Will hold the coordinates of the [com.germainkevin.library.UIPresenter.mViewToPresent]
      * on the decorView through the [android.view.View.getGlobalVisibleRect] method,
      * which gives the accurate positioning of a View on a screen
@@ -41,7 +36,9 @@ class SquircleShape : PresenterShape() {
 
     /**
      * The left,top,right and bottom position, of the
-     * [view to present][com.germainkevin.library.UIPresenter.mViewToPresent] in [Float]
+     * [view to present][com.germainkevin.library.UIPresenter.mViewToPresent] inside
+     * the decorView, in [Float]
+     *
      * This variable will hold the [vTPCoordinates] in [RectF]
      */
     private lateinit var mViewToPresentBounds: RectF
@@ -72,9 +69,9 @@ class SquircleShape : PresenterShape() {
     private fun initFloats() {
         mViewToPresentBounds = RectF()
         mSquircleShapeRectF = RectF()
-        mStaticLayoutPosition = PointF()
         vTPCoordinates = Rect()
         decorViewCoordinates = Rect()
+        mStaticLayoutPosition = PointF()
     }
 
     init {
@@ -86,9 +83,7 @@ class SquircleShape : PresenterShape() {
         mSquircleShapePaint.color = color
     }
 
-    override fun shapeContains(x: Float, y: Float): Boolean {
-        return mSquircleShapeRectF.contains(x, y)
-    }
+    override fun shapeContains(x: Float, y: Float): Boolean = mSquircleShapeRectF.contains(x, y)
 
     override fun viewToPresentContains(x: Float, y: Float): Boolean {
         return mViewToPresentBounds.contains(x, y)
@@ -119,8 +114,9 @@ class SquircleShape : PresenterShape() {
                 builder.mDescriptionTextSize,
                 mDecorView.resources.displayMetrics
             )
-            // Get the exact coordinates of the view to present inside the decorView
-            // So we can relatively place the StaticLayout & mSquircleShapeRectF next to it
+            // Get the exact coordinates of the [view to present] inside the decorView
+            // So we can place the StaticLayout & mSquircleShapeRectF either: on top
+            // of the [view to present], or below the [view to present]
             builder.mViewToPresent!!.getGlobalVisibleRect(vTPCoordinates)
             mViewToPresentBounds.set(vTPCoordinates)
 
@@ -271,7 +267,6 @@ class SquircleShape : PresenterShape() {
 
     override fun onDrawInPresenterWith(canvas: Canvas?) {
         canvas!!.save()
-        // Draws the shadowed window first, if true
         if (hasShadowedWindow) {
             mViewToPresentBounds.inset(-4f, -4f)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -281,13 +276,7 @@ class SquircleShape : PresenterShape() {
             }
             canvas.drawRect(shadowedWindow, shadowedWindowPaint)
         }
-        // then draws the presenter shape
-        canvas.drawRoundRect(
-            mSquircleShapeRectF,
-            mSquircleRadius,
-            mSquircleRadius,
-            mSquircleShapePaint
-        )
+        canvas.drawRoundRect(mSquircleShapeRectF, 15f, 15f, mSquircleShapePaint)
         canvas.translate(mStaticLayoutPosition.x, mStaticLayoutPosition.y)
         staticLayout.draw(canvas)
         canvas.restore()

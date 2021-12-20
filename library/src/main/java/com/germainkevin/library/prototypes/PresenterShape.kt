@@ -13,19 +13,21 @@ import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
  *
  * Extend this class when you want to create your own [PresenterShape]
  *
- * Then if you want your own created [PresenterShape] to be used instead, pass it
+ * Then if you want the [PresenterShape] you created to be used instead, pass it
  * inside the [UIPresenter.set][com.germainkevin.library.UIPresenter.set] method like so:
  *
  * UIPresenter.set(presenterShape = YouPresenterShape())
  *
- * When creating your own [PresenterShape], take example of the [SquircleShape]
+ * When creating your own [PresenterShape],
  *
- * When you're doing positioning around the view you want to present, or you want to
- * set text size, typeface, background color, shadow layer logic,
- * do it inside [PresenterShape.buildSelfWith]
+ * Once you want any object to be drawn inside the [Presenter][com.germainkevin.library.Presenter]
+ * do it inside [YourPresenterShape.onDrawInPresenterWith][PresenterShape.onDrawInPresenterWith]
+ * otherwise if you just want to do positioning, setting text size, color, typeface,
+ * background, shadow layer etc... do it inside
+ * [YouPresenterShape.buildSelfWith][PresenterShape.buildSelfWith]
  *
- * Once you want any object to be draw inside the [Presenter][com.germainkevin.library.Presenter]
- * do it inside [PresenterShape.onDrawInPresenterWith]
+ * Take example of the [SquircleShape]
+ *
  *
  * @see SquircleShape for example
  *
@@ -35,7 +37,7 @@ abstract class PresenterShape : ShapeLifecycle {
 
     /**
      * The shadowed window, is just a [Rect] that's the same size as the decorView and is given
-     * a black shadowed color.
+     * a black shadowed color by default in [SquircleShape].
      *
      * It is drawn on top of a clipped out view to present on the canvas
      * in the [PresenterShape.onDrawInPresenterWith] method in [SquircleShape]
@@ -50,7 +52,7 @@ abstract class PresenterShape : ShapeLifecycle {
     protected var shadowedWindow = Rect()
 
     /**
-     * The color of the [shadowedWindow] which is a [Rect]
+     * Styles the [shadowedWindow], principally it is responsible for setting a color to it
      * */
     protected var shadowedWindowPaint = Paint()
 
