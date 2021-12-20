@@ -4,22 +4,22 @@ plugins {
     id 'maven-publish'
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                // Applies the component for the release build variant.
-                from components.release
-
-                // You can then customize attributes of the publication as shown below.
-                groupId = 'com.germainkevin.uipresenter'
-                artifactId = 'uipresenter'
-                version = '1.0.0-beta17'
-            }
-        }
-    }
-}
+//afterEvaluate {
+//    publishing {
+//        publications {
+//            // Creates a Maven publication called "release".
+//            release(MavenPublication) {
+//                // Applies the component for the release build variant.
+//                from components.release
+//
+//                // You can then customize attributes of the publication as shown below.
+//                groupId = 'com.germainkevin.uipresenter'
+//                artifactId = 'uipresenter'
+//                version = '1.0.0-beta18'
+//            }
+//        }
+//    }
+//}
 
 android {
     compileSdk 31
@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
     // So we can access LifecycleScope (Coroutines)
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
