@@ -105,24 +105,12 @@ revealAnimation), or when the presenter is being removed from the decorView (cal
 , you need to implement the ```PresenterAnimation``` interface, like so:
 
 ````kotlin
-class MyRevealAnimation : PresenterAnimation {
+class MyCustomAnimation : PresenterAnimation {
 
     override fun runAnimation(
         coroutineScope: CoroutineScope, // A scope to run your animation in, if you want
-        presenter: Presenter, // The presenter the reveal animation will run on
-        revealAnimationDuration: Long, // The duration of the animation
-        afterAnim: () -> Unit // When called that means we can safely consider this animation to be done
-    ) {
-        // write your animation logic here
-    }
-}
-
-class MyRemoveAnimation : RemoveAnimation {
-
-    override fun runAnimation(
-        coroutineScope: CoroutineScope, // A scope to run your animation in, if you want
-        presenter: Presenter, // The presenter the remove animation will run on
-        removeAnimationDuration: Long, // The duration of the removeAnimation
+        presenter: Presenter, // The presenter the animation will run on
+        revealAnimationDuration: Long, // The duration of the animation in milliseconds
         afterAnim: () -> Unit // When called that means we can safely consider this animation to be done
     ) {
         // write your animation logic here
@@ -134,8 +122,8 @@ You can apply your own animations to the UIPresenter like so:
 
 ```kotlin
 UIPresenter(activity = this).set(
-    revealAnimation = MyRevealAnimation(),
-    removeAnimation = MyRemoveAnimation()
+    revealAnimation = MyCustomAnimation(), // if it's a reveal animation
+    removeAnimation = MyCustomAnimation() // if it's a remove animation
 )
 ```
 
