@@ -37,10 +37,10 @@ class MainActivity : AppCompatActivity() {
             descriptionText = getString(R.string.menu_play_desc),
             descriptionTextColor = whiteColor,
             revealAnimation = HorizontalRotation(),
-            presenterHasShadowedWindow = true,
+            shadowedWindowEnabled = true,
             shadowLayer = ShadowLayer(shadowColor = blue500),
             // Any detected click event will remove the presenter now
-            removePresenterOnAnyClickEvent = true,
+            removeAfterAnyDetectedClickEvent = true,
             presenterStateChangeListener = { _, _ -> }
         )
     }

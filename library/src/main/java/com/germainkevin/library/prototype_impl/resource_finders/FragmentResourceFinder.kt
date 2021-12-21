@@ -12,7 +12,7 @@ import com.germainkevin.library.prototypes.ResourceFinder
  * */
 internal class FragmentResourceFinder(private val fragment: Fragment) : ResourceFinder {
 
-    override fun getDecorView(): ViewGroup? = fragment.activity?.window?.decorView as ViewGroup?
+    override fun getDecorView(): ViewGroup = fragment.activity?.window?.decorView as ViewGroup
 
     override fun findViewById(id: Int): View? = fragment.activity?.findViewById(id)
 

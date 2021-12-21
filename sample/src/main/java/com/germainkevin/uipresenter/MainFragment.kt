@@ -55,12 +55,12 @@ class MainFragment : Fragment() {
             backgroundColor = blue500,
             descriptionText = getString(R.string.textView_desc),
             descriptionTextColor = Color.BLACK,
-            presenterHasShadowedWindow = true,
+            shadowedWindowEnabled = true,
             removeOnBackPress = true,
             // Now the library won't removes the presenter on any detected click event automatically
             // You now have to decide which click event will remove the presenter by yourself, like
             // show inside the presenterStateChangeListener below
-            removePresenterOnAnyClickEvent = false,
+            removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is done on the
                 // presenter's PresenterShape which is the presenter's visible part
@@ -84,10 +84,10 @@ class MainFragment : Fragment() {
             backgroundColor = blue500,
             descriptionText = getString(R.string.animal_image_desc),
             descriptionTextColor = Color.BLACK,
-            presenterHasShadowedWindow = true,
+            shadowedWindowEnabled = true,
             removeOnBackPress = true,
             revealAnimation = CircularReveal(),
-            removePresenterOnAnyClickEvent = false,
+            removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is detected on $mViewToPresent
                 if (state == Presenter.STATE_VTP_PRESSED) {
@@ -109,10 +109,10 @@ class MainFragment : Fragment() {
             backgroundColor = blue500,
             descriptionText = getString(R.string.animal_name_desc),
             descriptionTextColor = Color.BLACK,
-            presenterHasShadowedWindow = true,
+            shadowedWindowEnabled = true,
             revealAnimation = HorizontalRotation(),
             removeOnBackPress = true,
-            removePresenterOnAnyClickEvent = false,
+            removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is done outside the
                 // $mViewToPresent bounds and outside the visible part of the presenter
@@ -131,9 +131,9 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.animal_row_desc),
             descriptionTextColor = Color.BLACK,
             revealAnimation = VerticalRotation(),
-            presenterHasShadowedWindow = true,
+            shadowedWindowEnabled = true,
             removeOnBackPress = true,
-            removePresenterOnAnyClickEvent = false,
+            removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 if (state == Presenter.STATE_FOCAL_PRESSED) {
                     removePresenter()
@@ -147,12 +147,12 @@ class MainFragment : Fragment() {
         UIPresenter(this).set(
             viewToPresent = binding.addEditText,
             backgroundColor = teal200,
-            descriptionTextColor = Color.BLACK,
             descriptionText = getString(R.string.editText_desc),
-            presenterHasShadowedWindow = true,
+            descriptionTextColor = Color.BLACK,
+            shadowedWindowEnabled = true,
             revealAnimation = FadeInAndScale(),
             shadowLayer = ShadowLayer(dx = 8f, dy = 8f),
-            removePresenterOnAnyClickEvent = false,
+            removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 if (state == Presenter.STATE_FOCAL_PRESSED) {
                     removePresenter()
@@ -169,10 +169,10 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             removeOnBackPress = true,
             descriptionText = getString(R.string.fab1_desc),
-            presenterHasShadowedWindow = true,
+            shadowedWindowEnabled = true,
             shadowLayer = ShadowLayer(dx = 8f, dy = 8f),
             revealAnimation = NoAnimation(),
-            removePresenterOnAnyClickEvent = false,
+            removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 if (state == Presenter.STATE_FOCAL_PRESSED) {
                     removePresenter()

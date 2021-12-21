@@ -29,6 +29,6 @@
     </string>
     <string name="menu_play_desc">
         This is a play button, placed on a Toolbar.\n\n
-        Tap here to finish
+        Tap anywhere to finish
     </string>
 </resources>

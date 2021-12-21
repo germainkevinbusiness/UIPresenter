@@ -8,7 +8,6 @@ import android.view.View
 import androidx.annotation.IntDef
 import com.germainkevin.library.prototypes.PresenterShape
 
-
 /**
  * A [Presenter] is like a tour guide for your app's Views. You use it to explain what is the
  * role of a [View] in your UI.
@@ -32,15 +31,8 @@ open class Presenter(context: Context) : View(context) {
      * A set of states that this [Presenter] can be in
      */
     @IntDef(
-        STATE_NOT_SHOWN,
-        STATE_REVEALING,
-        STATE_CANVAS_DRAWN,
-        STATE_REVEALED,
-        STATE_REMOVING,
-        STATE_REMOVED,
-        STATE_VTP_PRESSED,
-        STATE_FOCAL_PRESSED,
-        STATE_NON_FOCAL_PRESSED,
+        STATE_NOT_SHOWN, STATE_REVEALING, STATE_CANVAS_DRAWN, STATE_REVEALED, STATE_REMOVING,
+        STATE_REMOVED, STATE_VTP_PRESSED, STATE_FOCAL_PRESSED, STATE_NON_FOCAL_PRESSED,
         STATE_BACK_BUTTON_PRESSED
     )
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
@@ -59,7 +51,7 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_REVEALING = 1
 
         /**
-         * The [UIPresenter.mPresenterShape]'s
+         * The [UIPresenter.presenterShape]'s
          * [PresenterShape.onDrawInPresenterWith] method has been executed
          * and the [presenter's][Presenter] reveal animation is running.
          * */
@@ -86,12 +78,12 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_VTP_PRESSED = 6
 
         /**
-         * The [Presenter]'s [UIPresenter.mPresenterShape] has been pressed
+         * The [Presenter]'s [UIPresenter.presenterShape] has been pressed
          */
         const val STATE_FOCAL_PRESSED = 7
 
         /**
-         * The [Presenter] has been pressed outside both the [UIPresenter.mPresenterShape]
+         * The [Presenter] has been pressed outside both the [UIPresenter.presenterShape]
          * and the view to present
          */
         const val STATE_NON_FOCAL_PRESSED = 8
@@ -104,15 +96,14 @@ open class Presenter(context: Context) : View(context) {
 
     /**
      * Will be assigned to the MotionEvent given to us by the [onTouchEvent] function
-     * so we can detect press events on this Presenter
+     * so we can detect press events on this [Presenter]
      **/
     private var motionEvent: MotionEvent? = null
 
     /**
-     * Here to know if the [UIPresenter.mIsViewToPresentSet]
-     * Will be set by the [UIPresenter] that will create this [Presenter]
+     * Here so we can check [UIPresenter.isRevealAnimationDone] & access [UIPresenter.presenterShape]
      * */
-    internal lateinit var mUIPresenter: UIPresenter
+    internal lateinit var uiPresenter: UIPresenter
 
     /**
      * Interface definition for a callback to be invoked when a
@@ -133,7 +124,6 @@ open class Presenter(context: Context) : View(context) {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        // Make this view take its parent's size.
         val parent = this.parent as View
         setMeasuredDimension(parent.measuredWidth, parent.measuredHeight)
     }
@@ -148,32 +138,29 @@ open class Presenter(context: Context) : View(context) {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         super.onTouchEvent(event)
         motionEvent = event
-        // after a press has occurred on this Presenter
         if (event?.action == MotionEvent.ACTION_UP) {
+            // Enables accessibility services to perform the custom click action
+            // for users who are not able to use a touch screen
             performClick()
         }
         return true
     }
 
-    /**
-     * For people with disabilities, an android talkback app will execute this logic for them
-     * */
     override fun performClick(): Boolean {
         super.performClick()
         val x = motionEvent!!.x
         val y = motionEvent!!.y
-        val captureEventVTP = mUIPresenter.mPresenterShape.viewToPresentContains(x, y)
-        val captureEventFocal = mUIPresenter.mPresenterShape.shapeContains(x, y)
-
+        val isContainedOnVTPSurface = uiPresenter.presenterShape.viewToPresentContains(x, y)
+        val isContainedOnShapeSurface = uiPresenter.presenterShape.shapeContains(x, y)
         // Only propagate click events, when the reveal animation is done running
-        if (mUIPresenter.isRevealAnimationDone) {
-            if (captureEventVTP) {
+        if (uiPresenter.isRevealAnimationDone) {
+            if (isContainedOnVTPSurface) {
                 stateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
             }
-            if (captureEventFocal) {
+            if (isContainedOnShapeSurface) {
                 stateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
             }
-            if (!captureEventFocal && !captureEventVTP) {
+            if (!isContainedOnShapeSurface && !isContainedOnVTPSurface) {
                 stateChangeNotifier.onStateChange(STATE_NON_FOCAL_PRESSED)
             }
         }
@@ -181,10 +168,8 @@ open class Presenter(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas?) {
-        if (mUIPresenter.mIsViewToPresentSet) {
-            stateChangeNotifier.onStateChange(STATE_REVEALING)
-            mUIPresenter.mPresenterShape.onDrawInPresenterWith(canvas)
-            stateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
-        }
+        stateChangeNotifier.onStateChange(STATE_REVEALING)
+        uiPresenter.presenterShape.onDrawInPresenterWith(canvas)
+        stateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
     }
 }

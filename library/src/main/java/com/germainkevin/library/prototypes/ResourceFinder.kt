@@ -14,7 +14,7 @@ import androidx.annotation.IdRes
  */
 interface ResourceFinder {
 
-    fun getDecorView(): ViewGroup?
+    fun getDecorView(): ViewGroup
 
     fun findViewById(@IdRes id: Int): View?
 
