@@ -22,14 +22,11 @@ import com.germainkevin.library.prototypes.PresenterShape
  *
  * The internal variables here are to be set by the [UIPresenter][UIPresenter]
  * that will create this [Presenter]
- *
  * @author Kevin Germain
  * */
 open class Presenter(context: Context) : View(context) {
 
-    /**
-     * A set of states that this [Presenter] can be in
-     */
+    /** A set of states that this [Presenter] can be in */
     @IntDef(
         STATE_NOT_SHOWN, STATE_REVEALING, STATE_CANVAS_DRAWN, STATE_REVEALED, STATE_REMOVING,
         STATE_REMOVED, STATE_VTP_PRESSED, STATE_FOCAL_PRESSED, STATE_NON_FOCAL_PRESSED,
@@ -39,9 +36,7 @@ open class Presenter(context: Context) : View(context) {
     annotation class PresenterState
 
     companion object {
-        /**
-         * [Presenter] is yet to be shown.
-         */
+        /** [Presenter] is yet to be shown. */
         const val STATE_NOT_SHOWN = 0
 
         /**
@@ -51,35 +46,24 @@ open class Presenter(context: Context) : View(context) {
         const val STATE_REVEALING = 1
 
         /**
-         * The [UIPresenter.presenterShape]'s
-         * [PresenterShape.onDrawInPresenterWith] method has been executed
-         * and the [presenter's][Presenter] reveal animation is running.
+         * The [UIPresenter.presenterShape]'s [PresenterShape.onDrawInPresenterWith] method
+         * has been executed and the [presenter's][Presenter] reveal animation is running.
          * */
         const val STATE_CANVAS_DRAWN = 2
 
-        /**
-         * [Presenter] reveal animation has finished and its view is displayed.
-         */
+        /** [Presenter] reveal animation has finished and its view is displayed. */
         const val STATE_REVEALED = 3
 
-        /**
-         * The [Presenter] is being removed from the decorView.
-         */
+        /** The [Presenter] is being removed from the decorView. */
         const val STATE_REMOVING = 4
 
-        /**
-         * The [Presenter] has been removed from the decorView.
-         */
+        /** The [Presenter] has been removed from the decorView. */
         const val STATE_REMOVED = 5
 
-        /**
-         * The view to present has been pressed
-         * */
+        /** The view to present has been pressed */
         const val STATE_VTP_PRESSED = 6
 
-        /**
-         * The [Presenter]'s [UIPresenter.presenterShape] has been pressed
-         */
+        /** The [Presenter]'s [UIPresenter.presenterShape] has been pressed */
         const val STATE_FOCAL_PRESSED = 7
 
         /**
@@ -88,9 +72,7 @@ open class Presenter(context: Context) : View(context) {
          */
         const val STATE_NON_FOCAL_PRESSED = 8
 
-        /**
-         * When a press on the back button is detected
-         */
+        /** When a press on the back button is detected */
         const val STATE_BACK_BUTTON_PRESSED = 9
     }
 

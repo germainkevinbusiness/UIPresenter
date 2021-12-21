@@ -63,14 +63,16 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     private var mPresenterStateChangeListener: (Int, () -> Unit) -> Unit =
         { _: Int, _: () -> Unit -> }
 
-    /** Should the back button press cause the removal of the [mPresenter] from the [decorView].*/
-    private var mRemoveOnBackPress = true
+    /** Should the back button press cause the removal of the [mPresenter] from the [decorView].
+     * Even if [removeAfterAnyClickEvent] is set to false
+     * */
+    private var removeOnBackPress = true
 
     /**
      * Should the [mPresenter] be removed automatically from the [decorView],
      * when any click event is detected on the [decorView]
      * */
-    private var mRemoveOnAnyClickEvent = true
+    private var removeAfterAnyClickEvent = true
 
     /** The animation that runs when adding the [mPresenter] to the [decorView] */
     private var revealAnimation: PresenterAnimation = FadeIn()
@@ -153,7 +155,10 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * */
     internal var hasShadowedWindow: Boolean = true
 
-    private var coroutineScope: CoroutineScope
+    /** Will be set to true if the device's orientation is [Configuration.ORIENTATION_LANDSCAPE] */
+    internal var isLandscapeMode = false
+
+    private var lifecycleScope: CoroutineScope
 
     /**
      * Gives default colors to [backgroundColor] and [descriptionTextColor]
@@ -175,35 +180,32 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     init {
         decorView = resourceFinder.getDecorView()
         val context = resourceFinder.getContext()
-        coroutineScope = (context as LifecycleOwner).lifecycleScope
-        if (backgroundColor == null && descriptionTextColor == null) context.provideDefaultColors()
-        mPresenter = Presenter(context)
-        with(mPresenter!!) {
+        context.apply {
+            isLandscapeMode =
+                resources.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE
+            lifecycleScope = (this as LifecycleOwner).lifecycleScope
+            if (backgroundColor == null && descriptionTextColor == null) provideDefaultColors()
+            mPresenter = Presenter(this)
+        }
+        mPresenter!!.apply {
             uiPresenter = this@UIPresenter
             stateChangeNotifier = object : Presenter.StateChangeNotifier {
                 override fun onStateChange(state: Int) {
                     onPresenterStateChanged(state)
                     when (state) {
-                        Presenter.STATE_CANVAS_DRAWN -> {
-                            revealAnimation
-                                .runAnimation(coroutineScope, this@with, revealAnimDuration) {
-                                    isRevealAnimationDone = true
-                                    onPresenterStateChanged(Presenter.STATE_REVEALED)
-                                }
+                        Presenter.STATE_CANVAS_DRAWN -> revealAnimation.runAnimation(
+                            lifecycleScope, this@apply, revealAnimDuration
+                        ) {
+                            isRevealAnimationDone = true
+                            onPresenterStateChanged(Presenter.STATE_REVEALED)
                         }
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
-                            if (mRemoveOnAnyClickEvent && mRemoveOnBackPress) {
-                                removingPresenter()
-                            } else if (!mRemoveOnAnyClickEvent && mRemoveOnBackPress) {
-                                removingPresenter()
-                            }
+                            if (removeAfterAnyClickEvent && removeOnBackPress) removingPresenter()
+                            else if (!removeAfterAnyClickEvent && removeOnBackPress) removingPresenter()
                         }
                         Presenter.STATE_VTP_PRESSED,
-                        Presenter.STATE_FOCAL_PRESSED,
-                        Presenter.STATE_NON_FOCAL_PRESSED -> {
-                            if (mRemoveOnAnyClickEvent) {
-                                removingPresenter()
-                            }
+                        Presenter.STATE_FOCAL_PRESSED, Presenter.STATE_NON_FOCAL_PRESSED -> {
+                            if (removeAfterAnyClickEvent) removingPresenter()
                         }
                     }
                 }
@@ -236,6 +238,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * @param removeAnimation The animation that runs when removing the [mPresenter] from the [decorView]
      * @param removeAnimDuration The duration of the remove animation in milliseconds
      * @param removeOnBackPress Sets whether the presenter should be removed from the [decorView]
+     * even if [removeAfterAnyDetectedClickEvent] is set to false
      * when [android.app.Activity.onBackPressed] is detected or not
      * @param removeAfterAnyDetectedClickEvent Sets whether any click event detected anywhere on the screen
      * or even [android.app.Activity.onBackPressed] should result in the removal of the [mPresenter] or not
@@ -257,8 +260,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         removeAnimation: PresenterAnimation = this.removeAnimation,
         revealAnimDuration: Long = this.revealAnimDuration,
         removeAnimDuration: Long = this.removeAnimDuration,
-        removeOnBackPress: Boolean = mRemoveOnBackPress,
-        removeAfterAnyDetectedClickEvent: Boolean = mRemoveOnAnyClickEvent,
+        removeOnBackPress: Boolean = this.removeOnBackPress,
+        removeAfterAnyDetectedClickEvent: Boolean = removeAfterAnyClickEvent,
         presenterStateChangeListener: (Int, () -> Unit) -> Unit
     ): UIPresenter {
         mPresenterStateChangeListener = presenterStateChangeListener
@@ -277,8 +280,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         this.removeAnimation = removeAnimation
         this.revealAnimDuration = revealAnimDuration
         this.removeAnimDuration = removeAnimDuration
-        mRemoveOnBackPress = removeOnBackPress
-        mRemoveOnAnyClickEvent = removeAfterAnyDetectedClickEvent
+        this.removeOnBackPress = removeOnBackPress
+        removeAfterAnyClickEvent = removeAfterAnyDetectedClickEvent
         present()
         return this
     }
@@ -301,10 +304,11 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * @param revealAnimDuration The duration of the reveal animation in milliseconds
      * @param removeAnimation The animation that runs when removing the [mPresenter] from the [decorView]
      * @param removeAnimDuration The duration of the remove animation in milliseconds
-     * @param removeOnBackPress Sets whether the presenter should be removed from the [decorView]
+     * @param removeOnBackPress Sets whether the [mPresenter] should be removed from the [decorView]
+     * even if [removeAfterAnyDetectedClickEvent] is set to false
      * when [android.app.Activity.onBackPressed] is detected or not
      * @param removeAfterAnyDetectedClickEvent Sets whether any click event detected anywhere on the screen
-     * or even [android.app.Activity.onBackPressed] should result in the removal of the [mPresenter] or not
+     * or even [onBackPressed][android.app.Activity.onBackPressed] should result in the removal of the [mPresenter] or not
      * @param presenterStateChangeListener This listener, listens for state changes inside the [mPresenter]
      * */
     open fun set(
@@ -323,8 +327,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         removeAnimation: PresenterAnimation = this.removeAnimation,
         revealAnimDuration: Long = this.revealAnimDuration,
         removeAnimDuration: Long = this.removeAnimDuration,
-        removeOnBackPress: Boolean = mRemoveOnBackPress,
-        removeAfterAnyDetectedClickEvent: Boolean = mRemoveOnAnyClickEvent,
+        removeOnBackPress: Boolean = this.removeOnBackPress,
+        removeAfterAnyDetectedClickEvent: Boolean = removeAfterAnyClickEvent,
         presenterStateChangeListener: (Int, () -> Unit) -> Unit
     ): UIPresenter {
         mPresenterStateChangeListener = presenterStateChangeListener
@@ -343,8 +347,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         this.removeAnimation = removeAnimation
         this.revealAnimDuration = revealAnimDuration
         this.removeAnimDuration = removeAnimDuration
-        mRemoveOnBackPress = removeOnBackPress
-        mRemoveOnAnyClickEvent = removeAfterAnyDetectedClickEvent
+        this.removeOnBackPress = removeOnBackPress
+        removeAfterAnyClickEvent = removeAfterAnyDetectedClickEvent
         present()
         return this
     }
@@ -353,24 +357,21 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * This method is called only after you've finished propagating data for this [UIPresenter]
      * through the [UIPresenter.set] method
      *
-     * It displays the [mPresenter] inside the [resourceFinder]'s
-     * [decorView][ResourceFinder.getDecorView]
+     * It mainly builds the [presenterShape] then displays the [mPresenter] inside the
+     * [resourceFinder]'s [decorView][ResourceFinder.getDecorView]
      */
-    private fun present() = coroutineScope.launch {
+    private fun present() = lifecycleScope.launch {
         viewToPresent?.let { _ ->
             val removeAndBuildJob = async {
                 removePresenterIfPresent()
-                val buildJob = async {
-                    // This is when the presenter shape builds itself
-                    presenterShape.buildSelfWith(this@UIPresenter)
-                }
+                val buildJob = async { presenterShape.buildSelfWith(this@UIPresenter) }
                 buildJob.await()
                 buildJob.join()
             }
             removeAndBuildJob.await()
             removeAndBuildJob.join()
             if (removeAndBuildJob.isCompleted) {
-                mPresenter?.let { decorView?.addView(it) }
+                mPresenter?.apply { decorView?.addView(this) }
             }
         }
     }
@@ -382,12 +383,12 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     }
 
     /** Removes the [mPresenter] if present, from the [decorView] */
-    private fun removePresenterIfPresent() = coroutineScope.launch {
-        mPresenter?.let {
+    private fun removePresenterIfPresent() = lifecycleScope.launch {
+        mPresenter?.apply {
             if (pState == Presenter.STATE_REMOVING && pState != Presenter.STATE_REMOVED) {
                 removeAnimation
-                    .runAnimation(this, it, removeAnimDuration) {
-                        decorView?.removeView(it)
+                    .runAnimation(this@launch, this, removeAnimDuration) {
+                        decorView?.removeView(this)
                         onPresenterStateChanged(Presenter.STATE_REMOVED)
                         finish()
                     }

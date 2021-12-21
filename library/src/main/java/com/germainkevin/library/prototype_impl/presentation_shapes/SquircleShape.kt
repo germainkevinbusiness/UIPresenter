@@ -56,16 +56,27 @@ class SquircleShape : PresenterShape() {
             }
         }
 
+        val decorViewWidth: Int
+        val decorViewHeight: Int
+
+        if (builder.isLandscapeMode) {
+            decorViewWidth = decorView.height
+            decorViewHeight = decorView.width
+        } else {
+            decorViewWidth = decorView.width
+            decorViewHeight = decorView.height
+        }
+
         val descTextWidth = descriptionTextPaint.measureText(builder.descriptionText).toInt()
 
         // How much space is left when you place the description text from end to start
         val textWidthRemainingSpace1 = viewToPresentBounds.left - descTextWidth
 
-        val percentageFromStart = viewToPresentBounds.left * 100 / decorView.width
+        val percentageFromStart = viewToPresentBounds.left * 100 / decorViewWidth
 
         // Remaining Space between View to present's left position and the end of the
-        // decorView's width
-        val vtpStartToDecorEnd = decorView.width - viewToPresentBounds.left
+        // decorViewWidth
+        val vtpStartToDecorEnd = decorViewWidth - viewToPresentBounds.left
 
         val textWidthRemainingSpace2 = vtpStartToDecorEnd - descTextWidth
 
@@ -79,21 +90,21 @@ class SquircleShape : PresenterShape() {
                 when {
                     textWidthRemainingSpace2 <= 0 -> {
                         if (percentageFromStart <= 45
-                            && staticLayoutWidth <= decorView.width - horizontalMargin
+                            && staticLayoutWidth <= decorViewWidth - horizontalMargin
                         ) {
                             staticLayoutWidth -= horizontalMargin
                             shouldLayoutFromStartToEnd = true
                         } else if (percentageFromStart <= 45
-                            && staticLayoutWidth > decorView.width - horizontalMargin
+                            && staticLayoutWidth > decorViewWidth - horizontalMargin
                         ) {
                             shouldLayoutFromStartToEnd = true
                         } else {
                             // The percentage of the decor view's width occupied by
                             // the staticLayoutWidth
-                            val c = staticLayoutWidth * 100 / decorView.width
+                            val c = staticLayoutWidth * 100 / decorViewWidth
                             if (c <= 45) {
                                 // let's make staticLayoutWidth 65% of decor view's width
-                                staticLayoutWidth = (65 * decorView.width / 100)
+                                staticLayoutWidth = (65 * decorViewWidth / 100)
                                 shouldLayoutFromStartToEnd = false
                             } else {
                                 staticLayoutWidth -= horizontalMargin
@@ -130,14 +141,14 @@ class SquircleShape : PresenterShape() {
         // Distance left between the end of the screen and the StaticLayout's final
         // bottom position or final Height position
         val e = decorView.height - slHeightVertically
-        // How much percentage of the decorView 's height's still available if
+        // How much percentage of the decorViewHeight's still available if
         // we lay out the StaticLayout vertically from up to down
-        val ePercentage = e * 100 / decorView.height
+        val ePercentage = e * 100 / decorViewHeight
 
         if (shouldLayoutFromStartToEnd) {
             // StaticLayout goes: up to down, start to end
 
-            // If the decorView's Height still has a remaining of 15% space available
+            // If the decorViewHeight still has a remaining of 15% space available
             // at its bottom, even after the StaticLayout gets laid out vertically from up to down,
             // then execute the condition inside this if statement
             if (ePercentage >= 15) {

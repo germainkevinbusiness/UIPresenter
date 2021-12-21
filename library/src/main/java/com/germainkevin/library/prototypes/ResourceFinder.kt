@@ -22,6 +22,4 @@ interface ResourceFinder {
      * LifecycleOwners
      * */
     fun getContext(): Context
-
-    fun getResources(): Resources?
 }

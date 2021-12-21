@@ -1,8 +1,6 @@
 package com.germainkevin.library
 
 import android.graphics.Color
-import android.graphics.Rect
-import android.graphics.RectF
 import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
@@ -30,19 +28,10 @@ class ShadowLayer(
  * @param textPaint The [TextPaint] of the [text]
  * @param sLWidth The desired with you want for your [StaticLayout]
  * */
-fun buildStaticLayout(text: String, textPaint: TextPaint, sLWidth: Int): StaticLayout {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        StaticLayout.Builder.obtain(
-            text,
-            0,
-            text.length,
-            textPaint,
-            sLWidth
-        ).build()
-    } else {
-        StaticLayout(
-            text, textPaint, sLWidth,
-            Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false
-        )
-    }
-}
+fun buildStaticLayout(text: String, textPaint: TextPaint, sLWidth: Int): StaticLayout =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        StaticLayout.Builder.obtain(text, 0, text.length, textPaint, sLWidth).build()
+    else StaticLayout(
+        text, textPaint, sLWidth, Layout.Alignment.ALIGN_NORMAL,
+        1f, 0f, false
+    )

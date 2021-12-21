@@ -22,7 +22,7 @@ import kotlinx.coroutines.CoroutineScope
  * */
 interface PresenterAnimation {
     /**
-     * @param coroutineScope A scope to run your animation in, if you want
+     * @param coroutineScope A lifecycle-aware coroutineScope to run your animation in, if you want
      * @param animationDuration The duration of the animation in milliseconds
      * @param presenter The Presenter is the [View][android.view.View] which presents your UI.
      * @param afterAnim When called that means we can safely consider this animation to be done
