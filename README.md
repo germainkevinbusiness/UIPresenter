@@ -78,7 +78,7 @@ class MyCustomAnimation : PresenterAnimation {
     override fun runAnimation(
         coroutineScope: CoroutineScope, // A scope to run your animation in, if you want
         presenter: Presenter, // The presenter the animation will run on
-        revealAnimationDuration: Long, // The duration of the animation in milliseconds
+        animationDuration: Long, // The duration of the animation in milliseconds
         afterAnim: () -> Unit // When called that means we can safely consider this animation to be done
     ) {
         // write your animation logic here
