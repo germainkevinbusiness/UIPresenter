@@ -1,6 +1,5 @@
 package com.germainkevin.library.prototype_impl
 
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.view.View
@@ -47,9 +46,7 @@ class FadeIn : PresenterAnimation {
         coroutineScope.launch {
             val alphaAnimation = ObjectAnimator.ofFloat(presenter, View.ALPHA, 0.0f, 1.1f)
             alphaAnimation.duration = animationDuration
-            val animatorSet = AnimatorSet()
-            animatorSet.play(alphaAnimation)
-            animatorSet.start()
+            alphaAnimation.start()
             delay(animationDuration)
             afterAnim()
         }
@@ -78,8 +75,8 @@ class FadeInAndScale : PresenterAnimation {
 }
 
 /**
- * A fade out animation when the [Presenter] is being removed from
- * the [DecorView][android.view.ViewGroup]
+ * Unless you specify your own [PresenterAnimation], this is the default [PresenterAnimation]
+ * that runs when the [Presenter] is being removed from the [decorView][android.view.ViewGroup]
  * */
 class FadeOut : PresenterAnimation {
     override fun runAnimation(
