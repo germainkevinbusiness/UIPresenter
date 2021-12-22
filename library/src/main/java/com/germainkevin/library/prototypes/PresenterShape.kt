@@ -44,7 +44,7 @@ abstract class PresenterShape : ShapeLifecycle {
      *
      * @see SquircleShape.buildSelfWith
      * */
-    protected var decorViewCoordinates: Rect = Rect()
+    protected var decorViewCoordinates = Rect()
 
     /**
      * The shadowed window, is just a [Rect] that's the same size as the decorView and is given
@@ -74,7 +74,7 @@ abstract class PresenterShape : ShapeLifecycle {
     protected var hasShadowedWindow = true
 
     /** Paints the description text of the [PresenterShape] */
-    protected var descriptionTextPaint: TextPaint = TextPaint()
+    protected var descriptionTextPaint = TextPaint()
 
     /**
      * Will hold the coordinates of the [com.germainkevin.library.UIPresenter.viewToPresent]
@@ -100,7 +100,7 @@ abstract class PresenterShape : ShapeLifecycle {
      *  of the [view to present], below the [view to present] or anywhere we want to draw it
      *  relatively to the [view to present]
      */
-    protected var viewToPresentBounds: RectF = RectF()
+    protected var viewToPresentBounds = RectF()
 
     init {
         shapeBackgroundPaint.isAntiAlias = true
@@ -154,7 +154,5 @@ abstract class PresenterShape : ShapeLifecycle {
      * @param y y coordinate.
      * @return True if the [view to present][android.view.View] contains the point, false otherwise.
      */
-    open fun viewToPresentContains(x: Float, y: Float): Boolean {
-        return viewToPresentBounds.contains(x, y)
-    }
+    open fun viewToPresentContains(x: Float, y: Float): Boolean = viewToPresentBounds.contains(x, y)
 }

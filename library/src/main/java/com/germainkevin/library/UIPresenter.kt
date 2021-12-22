@@ -33,8 +33,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     constructor(fragment: Fragment) : this(resourceFinder = FragmentResourceFinder(fragment))
 
     /**
-     * The view that the [mPresenter] will present.
-     * Made public to be accessed by the [presenterShape] to build itself around it
+     * The view that the [mPresenter] will present. Made public to be accessed by the
+     * [presenterShape] to build itself around it
      */
     internal var viewToPresent: View? = null
 
@@ -182,7 +182,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         }
     }
 
-    /** This method propagates state changes from the [mPresenter] */
+    /** Propagates [mPresenter] state changes */
     private fun onPresenterStateChanged(@Presenter.PresenterState state: Int) {
         pState = state
         presenterStateChangeListener(state) { removingPresenter() }
@@ -338,8 +338,8 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
             }
             removeAndBuildJob.await()
             removeAndBuildJob.join()
-            if (removeAndBuildJob.isCompleted) {
-                mPresenter?.apply { resourceFinder.getDecorView().addView(this) }
+            if (removeAndBuildJob.isCompleted) mPresenter?.apply {
+                resourceFinder.getDecorView().addView(this)
             }
         }
     }

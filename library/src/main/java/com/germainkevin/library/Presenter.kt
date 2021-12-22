@@ -33,15 +33,15 @@ open class Presenter(context: Context) : View(context) {
         STATE_BACK_BUTTON_PRESSED
     )
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
-    annotation class PresenterState
+    internal annotation class PresenterState
 
     companion object {
         /** [Presenter] is yet to be shown. */
         const val STATE_NOT_SHOWN = 0
 
         /**
-         * The [PresenterShape] inside [Presenter.onDraw], has a method
-         * called [PresenterShape.onDrawInPresenterWith] that is about to be executed
+         * The [PresenterShape] inside [Presenter.onDraw], has a method called
+         * [PresenterShape.onDrawInPresenterWith] that is about to be executed
          */
         const val STATE_REVEALING = 1
 
@@ -77,8 +77,8 @@ open class Presenter(context: Context) : View(context) {
     }
 
     /**
-     * Will be assigned to the MotionEvent given to us by the [onTouchEvent] function
-     * so we can detect press events on this [Presenter]
+     * Will be assigned to the MotionEvent given to us by the [onTouchEvent] function so we can
+     * detect press events on this [Presenter]
      **/
     private var motionEvent: MotionEvent? = null
 
@@ -88,16 +88,16 @@ open class Presenter(context: Context) : View(context) {
     internal lateinit var uiPresenter: UIPresenter
 
     /**
-     * Interface definition for a callback to be invoked when a
-     * [presenter's][Presenter] [state][PresenterState] has changed.
+     * Interface definition for a callback to be invoked when a [presenter's][Presenter]
+     * [state][PresenterState] has changed.
      */
     interface StateChangeNotifier {
         fun onStateChange(@PresenterState state: Int)
     }
 
     /**
-     * Will be accessed by the [UIPresenter] that will create this [Presenter]
-     * so that it can be notified of state changes in this [Presenter]
+     * Will be accessed by the [UIPresenter] that will create this [Presenter] so that it can be
+     * notified of state changes in this [Presenter]
      * */
     internal lateinit var stateChangeNotifier: StateChangeNotifier
 

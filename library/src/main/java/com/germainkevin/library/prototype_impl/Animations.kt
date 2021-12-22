@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
 import kotlin.math.hypot
 
 /**
- *  This animation doesn't need to be launched on a coroutine
- *  and delayed for "animationDuration". Because it's visible before
- *  the animation even starts and doing so would make the animation glitch
+ *  This animation doesn't need to be launched on a coroutine and delayed for "animationDuration".
+ *  Because it's visible before the animation even starts and doing so would make the animation
+ *  glitch
  */
 class CircularReveal : PresenterAnimation {
     override fun runAnimation(
@@ -123,8 +123,8 @@ class HorizontalRotation : PresenterAnimation {
 }
 
 /**
- * This animation will cause the [Presenter]'s <code>rotationX</code> property to
- * be animated by 360f, when it's being added to the [DecorView][android.view.ViewGroup].
+ * This animation will cause the [Presenter]'s <code>rotationX</code> property to be animated by
+ * 360f, when it's being added to the [DecorView][android.view.ViewGroup].
  * */
 class VerticalRotation : PresenterAnimation {
     override fun runAnimation(

@@ -1,7 +1,6 @@
 package com.germainkevin.library.prototypes
 
 import android.content.Context
-import android.content.res.Resources
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
