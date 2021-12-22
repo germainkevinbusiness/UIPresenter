@@ -151,7 +151,7 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             shadowedWindowEnabled = true,
             revealAnimation = FadeInAndScale(),
-            shadowLayer = ShadowLayer(dx = 8f, dy = 8f),
+            shadowLayer = ShadowLayer(shadowColor = blue500),
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 if (state == Presenter.STATE_FOCAL_PRESSED) {
@@ -170,7 +170,6 @@ class MainFragment : Fragment() {
             removeOnBackPress = true,
             descriptionText = getString(R.string.fab1_desc),
             shadowedWindowEnabled = true,
-            shadowLayer = ShadowLayer(dx = 8f, dy = 8f),
             revealAnimation = NoAnimation(),
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->

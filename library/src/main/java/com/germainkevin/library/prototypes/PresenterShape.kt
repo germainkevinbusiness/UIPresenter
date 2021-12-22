@@ -27,16 +27,12 @@ import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
  *
  * Take example of the [SquircleShape]
  *
- *
  * @see SquircleShape for example
- *
  * @author Kevin Germain
  */
 abstract class PresenterShape : ShapeLifecycle {
 
-    /**
-     * Paints the background of the implemented [PresenterShape]
-     * */
+    /** Paints the background of the implemented [PresenterShape] */
     protected var shapeBackgroundPaint = Paint()
 
     /**
@@ -65,9 +61,7 @@ abstract class PresenterShape : ShapeLifecycle {
      * */
     protected var shadowedWindow = Rect()
 
-    /**
-     * Paints the [shadowedWindow]
-     * */
+    /** Paints the [shadowedWindow] */
     protected var shadowedWindowPaint = Paint()
 
     /**
@@ -79,9 +73,7 @@ abstract class PresenterShape : ShapeLifecycle {
      * */
     protected var hasShadowedWindow = true
 
-    /**
-     * Paints the description text of the [PresenterShape]
-     */
+    /** Paints the description text of the [PresenterShape] */
     protected var descriptionTextPaint: TextPaint = TextPaint()
 
     /**

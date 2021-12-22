@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 /**
  * Implement this interface when you want to create your own animation to run on a [Presenter]
  *
- * By default, there are two animations that runs inside a [Presenter]
+ * By default, there are two animations that run inside a [Presenter]
  * (but you can change that, by implementing your own, when you implement this interface):
  *
  * One runs when it's being added by the [DecorView][android.view.ViewGroup], which is the
@@ -17,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
  *
  * They both implement this interface and are set
  * inside the [UIPresenter.set][com.germainkevin.library.UIPresenter.set] method, by default.
- *
  *@author Kevin Germain
  * */
 interface PresenterAnimation {

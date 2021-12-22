@@ -26,7 +26,6 @@ import kotlinx.coroutines.*
  * with a [Presenter].
  *
  * Provides data for [mPresenter] and [presenterShape] that are marked as internal variables.
- *
  * @param resourceFinder is an interface implemented in the next two constructors.
  * @author Kevin Germain
  */

@@ -12,9 +12,7 @@ import com.germainkevin.library.prototypes.PresenterShape
  * @author Kevin Germain
  * */
 class SquircleShape : PresenterShape() {
-    /**
-     * The background or first visible non-transparent layer of the [SquircleShape]
-     */
+    /** The background or first visible non-transparent layer of the [SquircleShape] */
     private var squircleBackground = RectF()
 
     /**
@@ -24,9 +22,7 @@ class SquircleShape : PresenterShape() {
      */
     private lateinit var staticLayout: StaticLayout
 
-    /**
-     * Position of the [staticLayout] inside this [squircleBackground]
-     */
+    /** Position of the [staticLayout] inside this [squircleBackground] */
     private var staticLayoutPosition = PointF()
 
     override fun shapeContains(x: Float, y: Float): Boolean = squircleBackground.contains(x, y)
@@ -205,18 +201,17 @@ class SquircleShape : PresenterShape() {
     }
 
     override fun onDrawInPresenterWith(canvas: Canvas?) {
-        canvas!!.save()
-        if (hasShadowedWindow) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                canvas.clipOutRect(viewToPresentBounds)
-            } else {
-                canvas.clipRect(viewToPresentBounds, Region.Op.DIFFERENCE)
+        canvas?.apply {
+            save()
+            if (hasShadowedWindow) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) clipOutRect(viewToPresentBounds)
+                else clipRect(viewToPresentBounds, Region.Op.DIFFERENCE)
+                drawRect(shadowedWindow, shadowedWindowPaint)
             }
-            canvas.drawRect(shadowedWindow, shadowedWindowPaint)
+            drawRoundRect(squircleBackground, 15f, 15f, shapeBackgroundPaint)
+            translate(staticLayoutPosition.x, staticLayoutPosition.y)
+            staticLayout.draw(canvas)
+            restore()
         }
-        canvas.drawRoundRect(squircleBackground, 15f, 15f, shapeBackgroundPaint)
-        canvas.translate(staticLayoutPosition.x, staticLayoutPosition.y)
-        staticLayout.draw(canvas)
-        canvas.restore()
     }
 }

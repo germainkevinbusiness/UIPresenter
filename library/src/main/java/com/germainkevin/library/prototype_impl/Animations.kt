@@ -36,8 +36,8 @@ class CircularReveal : PresenterAnimation {
 }
 
 /**
- * Unless you specify your own [PresenterAnimation], this is the default [PresenterAnimation] that runs
- * when the [Presenter] is being added by the [DecorView][android.view.ViewGroup]
+ * Unless you specify your own [PresenterAnimation], this is the default [PresenterAnimation]
+ * that runs when the [Presenter] is being added by the [DecorView][android.view.ViewGroup]
  * */
 class FadeIn : PresenterAnimation {
     override fun runAnimation(
@@ -56,9 +56,7 @@ class FadeIn : PresenterAnimation {
     }
 }
 
-/**
- * Fades in and scales [View.SCALE_X] & [View.SCALE_Y] for the animationDuration delay
- * */
+/** Fades in and scales [View.SCALE_X] & [View.SCALE_Y] for the animationDuration delay */
 class FadeInAndScale : PresenterAnimation {
     override fun runAnimation(
         coroutineScope: CoroutineScope, presenter: Presenter, animationDuration: Long,
@@ -99,9 +97,7 @@ class FadeOut : PresenterAnimation {
     }
 }
 
-/**
- * When you don't want an animation to run on the [Presenter]
- * */
+/** When you don't want an animation to run on the [Presenter] */
 class NoAnimation : PresenterAnimation {
     override fun runAnimation(
         coroutineScope: CoroutineScope, presenter: Presenter, animationDuration: Long,

@@ -18,8 +18,5 @@ interface ResourceFinder {
 
     fun findViewById(@IdRes id: Int): View?
 
-    /** The context will always be of a LifecycleOwner as both an Activity and a Fragment are
-     * LifecycleOwners
-     * */
     fun getContext(): Context
 }

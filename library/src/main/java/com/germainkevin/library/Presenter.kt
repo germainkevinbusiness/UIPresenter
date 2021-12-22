@@ -136,15 +136,10 @@ open class Presenter(context: Context) : View(context) {
         val isContainedOnShapeSurface = uiPresenter.presenterShape.shapeContains(x, y)
         // Only propagate click events, when the reveal animation is done running
         if (uiPresenter.isRevealAnimationDone) {
-            if (isContainedOnVTPSurface) {
-                stateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
-            }
-            if (isContainedOnShapeSurface) {
-                stateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
-            }
-            if (!isContainedOnShapeSurface && !isContainedOnVTPSurface) {
-                stateChangeNotifier.onStateChange(STATE_NON_FOCAL_PRESSED)
-            }
+            if (isContainedOnVTPSurface) stateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
+            if (isContainedOnShapeSurface) stateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
+            if (!isContainedOnShapeSurface && !isContainedOnVTPSurface) stateChangeNotifier
+                .onStateChange(STATE_NON_FOCAL_PRESSED)
         }
         return true
     }
