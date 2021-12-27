@@ -160,13 +160,13 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
             uiPresenter = this@UIPresenter
             stateChangeNotifier = object : Presenter.StateChangeNotifier {
                 override fun onStateChange(state: Int) {
-                    onPresenterStateChanged(state)
+                    onPresenterStateChange(state)
                     when (state) {
                         Presenter.STATE_CANVAS_DRAWN -> revealAnimation.runAnimation(
                             lifecycleScope, this@apply, revealAnimDuration
                         ) {
                             isRevealAnimationDone = true
-                            onPresenterStateChanged(Presenter.STATE_REVEALED)
+                            onPresenterStateChange(Presenter.STATE_REVEALED)
                         }
                         Presenter.STATE_BACK_BUTTON_PRESSED -> {
                             if (removeAfterAnyClickEvent && removeOnBackPress) removingPresenter()
@@ -183,7 +183,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     }
 
     /** Propagates [mPresenter] state changes */
-    private fun onPresenterStateChanged(@Presenter.PresenterState state: Int) {
+    private fun onPresenterStateChange(@Presenter.PresenterState state: Int) {
         pState = state
         presenterStateChangeListener(state) { removingPresenter() }
     }
@@ -328,8 +328,9 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
      * then displays the [mPresenter] inside the [resourceFinder]'s
      * [decorView][ResourceFinder.getDecorView]
      */
-    private fun present() = lifecycleScope.launch {
-        viewToPresent?.let { _ ->
+    private fun present() {
+        if (viewToPresent == null) throw NullPointerException("The view to present should not be null")
+        lifecycleScope.launch {
             val removeAndBuildJob = async {
                 removePresenterIfPresent()
                 val buildJob = async { presenterShape.buildSelfWith(this@UIPresenter) }
@@ -338,27 +339,28 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
             }
             removeAndBuildJob.await()
             removeAndBuildJob.join()
-            if (removeAndBuildJob.isCompleted) mPresenter?.apply {
-                resourceFinder.getDecorView().addView(this)
-            }
+            if (removeAndBuildJob.isCompleted)
+                mPresenter?.apply { resourceFinder.getDecorView().addView(this) }
         }
     }
 
     /** Called when removing the [mPresenter] */
     private fun removingPresenter() {
-        onPresenterStateChanged(Presenter.STATE_REMOVING)
+        onPresenterStateChange(Presenter.STATE_REMOVING)
         removePresenterIfPresent()
     }
 
     /** Removes the [mPresenter] if present, from the [ResourceFinder.getDecorView] */
-    private fun removePresenterIfPresent() = lifecycleScope.launch {
+    private fun removePresenterIfPresent() {
         mPresenter?.apply {
-            if (pState == Presenter.STATE_REMOVING && pState != Presenter.STATE_REMOVED)
-                removeAnimation.runAnimation(this@launch, this, removeAnimDuration) {
-                    resourceFinder.getDecorView().removeView(this)
-                    onPresenterStateChanged(Presenter.STATE_REMOVED)
-                    finish()
-                }
+            lifecycleScope.launch {
+                if (pState == Presenter.STATE_REMOVING && pState != Presenter.STATE_REMOVED)
+                    removeAnimation.runAnimation(this, this@apply, removeAnimDuration) {
+                        resourceFinder.getDecorView().removeView(this@apply)
+                        onPresenterStateChange(Presenter.STATE_REMOVED)
+                        finish()
+                    }
+            }
         }
     }
 

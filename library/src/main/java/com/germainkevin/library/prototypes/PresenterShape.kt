@@ -114,19 +114,13 @@ abstract class PresenterShape : ShapeLifecycle {
 
     /**
      * Sets the text size of the description text
-     *
      * @param textSize       The desired text size wanted for the description text
      * @param typedValueUnit the unit in which the description text should be displayed,
      * e.g. [android.util.TypedValue.COMPLEX_UNIT_SP]
-     * @param displayMetrics Necessary information to calculate the accurate TextSize
+     * @param dm Necessary information to calculate the accurate TextSize
      */
-    protected fun setDescriptionTextSize(
-        typedValueUnit: Int,
-        textSize: Float,
-        displayMetrics: DisplayMetrics
-    ) {
-        descriptionTextPaint.textSize =
-            TypedValue.applyDimension(typedValueUnit, textSize, displayMetrics)
+    protected fun setDescriptionTextSize(typedValueUnit: Int, textSize: Float, dm: DisplayMetrics) {
+        descriptionTextPaint.textSize = TypedValue.applyDimension(typedValueUnit, textSize, dm)
     }
 
     /**
