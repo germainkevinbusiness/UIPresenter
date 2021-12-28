@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 
 /**
- * Created to be implemented by a class with an [android.app.Activity] or a [android.app.Fragment]
- * as parameter such as with
- * [ActivityResourceFinder][com.germainkevin.library.prototype_impl.resource_finders.ActivityResourceFinder]
- * and [FragmentResourceFinder][com.germainkevin.library.prototype_impl.resource_finders.FragmentResourceFinder]
+ * Accesses a [androidx.lifecycle.LifecycleOwner]'s environment when implemented
+ * @see [com.germainkevin.library.prototype_impl.resource_finders.ActivityResourceFinder]
+ * @see [com.germainkevin.library.prototype_impl.resource_finders.FragmentResourceFinder]
  */
 interface ResourceFinder {
 

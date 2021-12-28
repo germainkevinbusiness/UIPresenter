@@ -25,10 +25,9 @@ import kotlinx.coroutines.*
  * Contains all the methods for presenting a [View] inside your [Activity] or [Fragment]
  * with a [Presenter]. Provides data for [mPresenter] and [presenterShape] that are marked as
  * internal variables.
- * @param resourceFinder is an interface implemented in the next two constructors.
  * @author Kevin Germain
  */
-open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
+open class UIPresenter private constructor(internal val resourceFinder: ResourceFinder) {
     constructor(activity: Activity) : this(resourceFinder = ActivityResourceFinder(activity))
     constructor(fragment: Fragment) : this(resourceFinder = FragmentResourceFinder(fragment))
 
@@ -72,10 +71,10 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     /** The animation that runs when removing the [mPresenter] from the [ResourceFinder.getDecorView] */
     private var removeAnimation: PresenterAnimation = FadeOut()
 
-    /**The duration of the animation when revealing the [mPresenter] */
+    /**The duration of the animation when revealing the [mPresenter] in milliseconds */
     private var revealAnimDuration = 1000L
 
-    /** The duration of the animation when removing the [mPresenter] */
+    /** The duration of the animation when removing the [mPresenter] in milliseconds */
     private var removeAnimDuration = 600L
 
     /**
@@ -130,6 +129,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     /** Will be set to true if the device's orientation is [Configuration.ORIENTATION_LANDSCAPE] */
     internal var isLandscapeMode = false
 
+    /**A Lifecycle-Aware [CoroutineScope]*/
     private var lifecycleScope: CoroutineScope
 
     /**
