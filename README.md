@@ -25,7 +25,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation 'com.github.germainkevinbusiness:UIPresenter:1.0.0-rc5'
+    implementation 'com.github.germainkevinbusiness:UIPresenter:1.0.0-rc6'
 }
 ```
 
