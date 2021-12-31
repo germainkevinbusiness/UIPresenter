@@ -56,7 +56,6 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.textView_desc),
             descriptionTextColor = Color.BLACK,
             shadowedWindowEnabled = true,
-            removeOnBackPress = true,
             // Now the library won't removes the presenter on any detected click event automatically
             // You now have to decide which click event will remove the presenter by yourself, like
             // show inside the presenterStateChangeListener below
@@ -85,7 +84,6 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.animal_image_desc),
             descriptionTextColor = Color.BLACK,
             shadowedWindowEnabled = true,
-            removeOnBackPress = true,
             revealAnimation = CircularReveal(),
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
@@ -111,7 +109,6 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             shadowedWindowEnabled = true,
             revealAnimation = HorizontalRotation(),
-            removeOnBackPress = true,
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is done outside the
@@ -132,7 +129,6 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             revealAnimation = VerticalRotation(),
             shadowedWindowEnabled = true,
-            removeOnBackPress = true,
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 if (state == Presenter.STATE_FOCAL_PRESSED) {
@@ -167,7 +163,6 @@ class MainFragment : Fragment() {
             viewToPresent = binding.fab1,
             backgroundColor = teal200,
             descriptionTextColor = Color.BLACK,
-            removeOnBackPress = true,
             descriptionText = getString(R.string.fab1_desc),
             shadowedWindowEnabled = true,
             revealAnimation = NoAnimation(),

@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
      * */
     private fun presentMenuItem() {
         UIPresenter(this).set(
+//            presenterShape = ExampleShadowedShape(),
             viewToPresentId = R.id.action_present_view,
             backgroundColor = purple700,
             descriptionText = getString(R.string.menu_play_desc),

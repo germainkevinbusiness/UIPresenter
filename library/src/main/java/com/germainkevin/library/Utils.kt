@@ -31,7 +31,4 @@ class ShadowLayer(
 fun buildStaticLayout(text: String, textPaint: TextPaint, sLWidth: Int): StaticLayout =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         StaticLayout.Builder.obtain(text, 0, text.length, textPaint, sLWidth).build()
-    else StaticLayout(
-        text, textPaint, sLWidth, Layout.Alignment.ALIGN_NORMAL,
-        1f, 0f, false
-    )
+    else StaticLayout(text, textPaint, sLWidth, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false)

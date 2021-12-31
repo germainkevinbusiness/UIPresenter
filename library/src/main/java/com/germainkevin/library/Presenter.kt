@@ -2,7 +2,6 @@ package com.germainkevin.library
 
 import android.content.Context
 import android.graphics.Canvas
-import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.IntDef
@@ -29,8 +28,7 @@ open class Presenter(context: Context) : View(context) {
     /** A set of states that this [Presenter] can be in */
     @IntDef(
         STATE_NOT_SHOWN, STATE_REVEALING, STATE_CANVAS_DRAWN, STATE_REVEALED, STATE_REMOVING,
-        STATE_REMOVED, STATE_VTP_PRESSED, STATE_FOCAL_PRESSED, STATE_NON_FOCAL_PRESSED,
-        STATE_BACK_BUTTON_PRESSED
+        STATE_REMOVED, STATE_VTP_PRESSED, STATE_FOCAL_PRESSED, STATE_NON_FOCAL_PRESSED
     )
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     internal annotation class PresenterState
@@ -71,9 +69,6 @@ open class Presenter(context: Context) : View(context) {
          * and the view to present
          */
         const val STATE_NON_FOCAL_PRESSED = 8
-
-        /** When a press on the back button is detected */
-        const val STATE_BACK_BUTTON_PRESSED = 9
     }
 
     /**
@@ -88,18 +83,10 @@ open class Presenter(context: Context) : View(context) {
     internal lateinit var uiPresenter: UIPresenter
 
     /**
-     * Interface definition for a callback to be invoked when a [presenter's][Presenter]
-     * [state][PresenterState] has changed.
-     */
-    interface StateChangeNotifier {
-        fun onStateChange(@PresenterState state: Int)
-    }
-
-    /**
      * Will be accessed by the [UIPresenter] that will create this [Presenter] so that it can be
-     * notified of state changes in this [Presenter]
+     * notified of [state][PresenterState] changes in this [Presenter]
      * */
-    internal lateinit var stateChangeNotifier: StateChangeNotifier
+    internal var stateChangeNotifier: (state: Int) -> Unit = {}
 
     init {
         id = R.id.android_ui_presenter
@@ -108,13 +95,6 @@ open class Presenter(context: Context) : View(context) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val parent = this.parent as View
         setMeasuredDimension(parent.measuredWidth, parent.measuredHeight)
-    }
-
-    override fun dispatchKeyEventPreIme(event: KeyEvent?): Boolean {
-        if (event!!.keyCode == KeyEvent.KEYCODE_BACK) {
-            stateChangeNotifier.onStateChange(STATE_BACK_BUTTON_PRESSED)
-        }
-        return super.dispatchKeyEventPreIme(event)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -132,21 +112,20 @@ open class Presenter(context: Context) : View(context) {
         super.performClick()
         val x = motionEvent!!.x
         val y = motionEvent!!.y
-        val isContainedOnVTPSurface = uiPresenter.presenterShape.viewToPresentContains(x, y)
-        val isContainedOnShapeSurface = uiPresenter.presenterShape.shapeContains(x, y)
+        val pressedOnVTP = uiPresenter.presenterShape.viewToPresentContains(x, y)
+        val pressedOnShape = uiPresenter.presenterShape.shapeContains(x, y)
         // Only propagate click events, when the reveal animation is done running
         if (uiPresenter.isRevealAnimationDone) {
-            if (isContainedOnVTPSurface) stateChangeNotifier.onStateChange(STATE_VTP_PRESSED)
-            if (isContainedOnShapeSurface) stateChangeNotifier.onStateChange(STATE_FOCAL_PRESSED)
-            if (!isContainedOnShapeSurface && !isContainedOnVTPSurface) stateChangeNotifier
-                .onStateChange(STATE_NON_FOCAL_PRESSED)
+            if (pressedOnVTP) stateChangeNotifier(STATE_VTP_PRESSED)
+            if (pressedOnShape) stateChangeNotifier(STATE_FOCAL_PRESSED)
+            if (!pressedOnShape && !pressedOnVTP) stateChangeNotifier(STATE_NON_FOCAL_PRESSED)
         }
         return true
     }
 
     override fun onDraw(canvas: Canvas?) {
-        stateChangeNotifier.onStateChange(STATE_REVEALING)
+        stateChangeNotifier(STATE_REVEALING)
         uiPresenter.presenterShape.onDrawInPresenterWith(canvas)
-        stateChangeNotifier.onStateChange(STATE_CANVAS_DRAWN)
+        stateChangeNotifier(STATE_CANVAS_DRAWN)
     }
 }

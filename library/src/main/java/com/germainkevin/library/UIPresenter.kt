@@ -22,12 +22,10 @@ import com.germainkevin.library.prototypes.*
 import kotlinx.coroutines.*
 
 /**
- * Contains all the methods for presenting a [View] inside your [Activity] or [Fragment]
- * with a [Presenter]. Provides data for [mPresenter] and [presenterShape] that are marked as
- * internal variables.
+ * Builder class for presenting a [View] inside your [Activity] or [Fragment] with a [Presenter].
  * @author Kevin Germain
  */
-open class UIPresenter private constructor(internal val resourceFinder: ResourceFinder) {
+open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     constructor(activity: Activity) : this(resourceFinder = ActivityResourceFinder(activity))
     constructor(fragment: Fragment) : this(resourceFinder = FragmentResourceFinder(fragment))
 
@@ -35,7 +33,49 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
      * The view that the [mPresenter] will present. Made public to be accessed by the
      * [presenterShape] to build itself around it
      */
-    internal var viewToPresent: View? = null
+    var viewToPresent: View? = null
+
+    /** The background color of the [presenterShape] */
+    var backgroundColor: Int? = null
+
+    /** The shadow layer to be applied on the [presenterShape] */
+    var shadowLayer = ShadowLayer()
+
+    /** Should the [presenterShape] contain a shadowLayer */
+    var hasShadowLayer = true
+
+    /** Will be accessed by the [presenterShape]. The description text shown in your [mPresenter] */
+    var descriptionText: String = ""
+
+    /**
+     * [TypedValue] unit in which the [descriptionText] should be displayed.
+     * Usually a text on android is displayed in the [TypedValue.COMPLEX_UNIT_SP] unit.
+     * Will be accessed by the [presenterShape]
+     */
+    var descriptionTextUnit: Int = TypedValue.COMPLEX_UNIT_SP
+
+    /** Desired text size calculated with the [descriptionTextUnit]. Will be accessed by the
+     * [presenterShape]
+     * */
+    var descriptionTextSize: Float = 18f
+
+    /** The text color of [descriptionText]. Will be accessed by the [presenterShape] */
+    var descriptionTextColor: Int? = null
+
+    /** The [Typeface] to use for this [descriptionText]. Will be accessed by the [presenterShape] */
+    var typeface: Typeface = Typeface.DEFAULT
+
+    /**
+     * Should the [mPresenter]'s whole View have a shadowed Rect() the same size as the
+     * [ResourceFinder.getDecorView]. Will be accessed by the [presenterShape]
+     * */
+    var hasShadowedWindow: Boolean = true
+
+    /**
+     * Will be set to true if the device's orientation is [Configuration.ORIENTATION_LANDSCAPE].
+     * Will be accessed by the [presenterShape]
+     * */
+    var isLandscapeMode = false
 
     /** The [Presenter] that will be created and added by the [ResourceFinder.getDecorView] */
     private var mPresenter: Presenter? = null
@@ -48,20 +88,29 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
     private var pState = Presenter.STATE_NOT_SHOWN
 
     /**
+     * Will be accessed by the [mPresenter] to call the [presenterShape]'s
+     * [onDrawInPresenterWith][PresenterShape.onDrawInPresenterWith] method on
+     * its [onDraw(canvas: Canvas)][Presenter.onDraw] function. You can create your own by
+     * extending this class: [PresenterShape]
+     * */
+    internal var presenterShape: PresenterShape = SquircleShape()
+
+    /** Created so that click events inside the [mPresenter] only get propagated when the reveal
+     * animation is done running. This variable will be accessed by the [mPresenter]
+     */
+    internal var isRevealAnimationDone = false
+
+    /**
      * Exposes state changes from the [mPresenter] to the user of this library as first parameter
      * & also passes a [removingPresenter] function as second parameter
      */
     private var presenterStateChangeListener: (Int, () -> Unit) -> Unit =
         { _: Int, _: () -> Unit -> }
 
-    /** Should the back button press cause the removal of the [mPresenter] from
-     * the [ResourceFinder.getDecorView]. Even if [removeAfterAnyClickEvent] is set to false
-     * */
-    private var removeOnBackPress = true
-
     /**
-     * Should the [mPresenter] be removed automatically from the [ResourceFinder.getDecorView],
-     * when any click event is detected on the [ResourceFinder.getDecorView]
+     * Should the [mPresenter] be removed automatically from the
+     * [decorView][ResourceFinder.getDecorView], when any click event is detected on the
+     * [decorView][ResourceFinder.getDecorView]
      * */
     private var removeAfterAnyClickEvent = true
 
@@ -76,58 +125,6 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
 
     /** The duration of the animation when removing the [mPresenter] in milliseconds */
     private var removeAnimDuration = 600L
-
-    /**
-     * Will be accessed by the [mPresenter] to call the [presenterShape]'s
-     * [onDrawInPresenterWith][PresenterShape.onDrawInPresenterWith] method on
-     * its [onDraw(canvas: Canvas)][Presenter.onDraw] function. You can create your own by
-     * extending this class: [PresenterShape]
-     * */
-    internal var presenterShape: PresenterShape = SquircleShape()
-
-    /** The background color of the [presenterShape] */
-    internal var backgroundColor: Int? = null
-
-    /** The shadow layer to be applied on the [presenterShape] */
-    internal var shadowLayer = ShadowLayer()
-
-    /** Should the [presenterShape] contain a shadowLayer */
-    internal var hasShadowLayer = true
-
-    /** Will be accessed by the [presenterShape]. The description text shown in your [mPresenter] */
-    internal var descriptionText: String = ""
-
-    /**
-     * [TypedValue] unit in which the [descriptionText] should be displayed.
-     * Usually a text on android is displayed in the [TypedValue.COMPLEX_UNIT_SP] unit.
-     * Will be accessed by the [presenterShape]
-     */
-    internal var descriptionTextUnit: Int = TypedValue.COMPLEX_UNIT_SP
-
-    /** Desired text size calculated with the [descriptionTextUnit]. Will be accessed by the
-     * [presenterShape]
-     * */
-    internal var descriptionTextSize: Float = 18f
-
-    /** The text color of [descriptionText]. Will be accessed by the [presenterShape] */
-    internal var descriptionTextColor: Int? = null
-
-    /** The [Typeface] to use for this [descriptionText]. Will be accessed by the [presenterShape] */
-    internal var typeface = Typeface.DEFAULT
-
-    /** Created so that click events inside the [mPresenter] only get propagated when the reveal
-     * animation is done running. This variable will be accessed by the [mPresenter]
-     */
-    internal var isRevealAnimationDone = false
-
-    /**
-     * Should the [mPresenter]'s whole View have a shadowed Rect() the same size as the
-     * [ResourceFinder.getDecorView]. Will be accessed by the [presenterShape]
-     * */
-    internal var hasShadowedWindow: Boolean = true
-
-    /** Will be set to true if the device's orientation is [Configuration.ORIENTATION_LANDSCAPE] */
-    internal var isLandscapeMode = false
 
     /**A Lifecycle-Aware [CoroutineScope]*/
     private var lifecycleScope: CoroutineScope
@@ -158,24 +155,18 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
         }
         mPresenter!!.apply {
             uiPresenter = this@UIPresenter
-            stateChangeNotifier = object : Presenter.StateChangeNotifier {
-                override fun onStateChange(state: Int) {
-                    onPresenterStateChange(state)
-                    when (state) {
-                        Presenter.STATE_CANVAS_DRAWN -> revealAnimation.runAnimation(
-                            lifecycleScope, this@apply, revealAnimDuration
-                        ) {
-                            isRevealAnimationDone = true
-                            onPresenterStateChange(Presenter.STATE_REVEALED)
-                        }
-                        Presenter.STATE_BACK_BUTTON_PRESSED -> {
-                            if (removeAfterAnyClickEvent && removeOnBackPress) removingPresenter()
-                            else if (!removeAfterAnyClickEvent && removeOnBackPress) removingPresenter()
-                        }
-                        Presenter.STATE_VTP_PRESSED,
-                        Presenter.STATE_FOCAL_PRESSED, Presenter.STATE_NON_FOCAL_PRESSED -> {
-                            if (removeAfterAnyClickEvent) removingPresenter()
-                        }
+            stateChangeNotifier = { state ->
+                onPresenterStateChange(state)
+                when (state) {
+                    Presenter.STATE_CANVAS_DRAWN -> revealAnimation.runAnimation(
+                        lifecycleScope, this@apply, revealAnimDuration
+                    ) {
+                        isRevealAnimationDone = true
+                        onPresenterStateChange(Presenter.STATE_REVEALED)
+                    }
+                    Presenter.STATE_VTP_PRESSED,
+                    Presenter.STATE_FOCAL_PRESSED, Presenter.STATE_NON_FOCAL_PRESSED -> {
+                        if (removeAfterAnyClickEvent) removingPresenter()
                     }
                 }
             }
@@ -206,9 +197,6 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
      * @param revealAnimDuration The duration of the reveal animation in milliseconds
      * @param removeAnimation The animation that runs when removing the [mPresenter] from the [ResourceFinder.getDecorView]
      * @param removeAnimDuration The duration of the remove animation in milliseconds
-     * @param removeOnBackPress Sets whether the presenter should be removed from the [ResourceFinder.getDecorView]
-     * even if [removeAfterAnyDetectedClickEvent] is set to false
-     * when [android.app.Activity.onBackPressed] is detected or not
      * @param removeAfterAnyDetectedClickEvent Sets whether any click event detected anywhere on the screen
      * or even [android.app.Activity.onBackPressed] should result in the removal of the [mPresenter] or not
      * @param presenterStateChangeListener This listener, listens for state changes inside the [mPresenter]
@@ -229,7 +217,6 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
         removeAnimation: PresenterAnimation = this.removeAnimation,
         revealAnimDuration: Long = this.revealAnimDuration,
         removeAnimDuration: Long = this.removeAnimDuration,
-        removeOnBackPress: Boolean = this.removeOnBackPress,
         removeAfterAnyDetectedClickEvent: Boolean = removeAfterAnyClickEvent,
         presenterStateChangeListener: (Int, () -> Unit) -> Unit
     ): UIPresenter {
@@ -249,7 +236,6 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
         this.removeAnimation = removeAnimation
         this.revealAnimDuration = revealAnimDuration
         this.removeAnimDuration = removeAnimDuration
-        this.removeOnBackPress = removeOnBackPress
         removeAfterAnyClickEvent = removeAfterAnyDetectedClickEvent
         present()
         return this
@@ -273,9 +259,6 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
      * @param revealAnimDuration The duration of the reveal animation in milliseconds
      * @param removeAnimation The animation that runs when removing the [mPresenter] from the [ResourceFinder.getDecorView]
      * @param removeAnimDuration The duration of the remove animation in milliseconds
-     * @param removeOnBackPress Sets whether the [mPresenter] should be removed from the [ResourceFinder.getDecorView]
-     * even if [removeAfterAnyDetectedClickEvent] is set to false
-     * when [android.app.Activity.onBackPressed] is detected or not
      * @param removeAfterAnyDetectedClickEvent Sets whether any click event detected anywhere on the screen
      * or even [onBackPressed][android.app.Activity.onBackPressed] should result in the removal of the [mPresenter] or not
      * @param presenterStateChangeListener This listener, listens for state changes inside the [mPresenter]
@@ -296,7 +279,6 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
         removeAnimation: PresenterAnimation = this.removeAnimation,
         revealAnimDuration: Long = this.revealAnimDuration,
         removeAnimDuration: Long = this.removeAnimDuration,
-        removeOnBackPress: Boolean = this.removeOnBackPress,
         removeAfterAnyDetectedClickEvent: Boolean = removeAfterAnyClickEvent,
         presenterStateChangeListener: (Int, () -> Unit) -> Unit
     ): UIPresenter {
@@ -316,7 +298,6 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
         this.removeAnimation = removeAnimation
         this.revealAnimDuration = revealAnimDuration
         this.removeAnimDuration = removeAnimDuration
-        this.removeOnBackPress = removeOnBackPress
         removeAfterAnyClickEvent = removeAfterAnyDetectedClickEvent
         present()
         return this
@@ -351,16 +332,14 @@ open class UIPresenter private constructor(internal val resourceFinder: Resource
     }
 
     /** Removes the [mPresenter] if present, from the [ResourceFinder.getDecorView] */
-    private fun removePresenterIfPresent() {
-        mPresenter?.apply {
-            lifecycleScope.launch {
-                if (pState == Presenter.STATE_REMOVING && pState != Presenter.STATE_REMOVED)
-                    removeAnimation.runAnimation(this, this@apply, removeAnimDuration) {
-                        resourceFinder.getDecorView().removeView(this@apply)
-                        onPresenterStateChange(Presenter.STATE_REMOVED)
-                        finish()
-                    }
-            }
+    private fun removePresenterIfPresent() = mPresenter?.apply {
+        lifecycleScope.launch {
+            if (pState == Presenter.STATE_REMOVING && pState != Presenter.STATE_REMOVED)
+                removeAnimation.runAnimation(this, this@apply, removeAnimDuration) {
+                    resourceFinder.getDecorView().removeView(this@apply)
+                    onPresenterStateChange(Presenter.STATE_REMOVED)
+                    finish()
+                }
         }
     }
 

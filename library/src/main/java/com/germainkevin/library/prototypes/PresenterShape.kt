@@ -27,7 +27,7 @@ import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
  *
  * Take example of the [SquircleShape]
  *
- * @see SquircleShape for example
+ * @see SquircleShape
  * @author Kevin Germain
  */
 abstract class PresenterShape : ShapeLifecycle {
@@ -70,6 +70,8 @@ abstract class PresenterShape : ShapeLifecycle {
      * [PresenterShape.onDrawInPresenterWith] method
      *
      * It is true by default in the [com.germainkevin.library.UIPresenter]
+     *
+     * WILL HELP US TO CHECK THAT STATE IN THE [onDrawInPresenterWith]
      * */
     protected var hasShadowedWindow = true
 
@@ -128,7 +130,10 @@ abstract class PresenterShape : ShapeLifecycle {
      * by capturing the coordinates where the click event fired, and comparing it to
      * coordinates present in this [shape][PresenterShape]'s drawn bounds.
      *
-     * Does the [shape][PresenterShape] contain the point.
+     * Does the [shape][PresenterShape] contain the point. e.g [SquircleShape.shapeContains]
+     *
+     * When this returns true, it is considered as
+     * [Presenter.STATE_FOCAL_PRESSED][com.germainkevin.library.Presenter.STATE_FOCAL_PRESSED]
      *
      * @param x x coordinate.
      * @param y y coordinate.
@@ -143,6 +148,9 @@ abstract class PresenterShape : ShapeLifecycle {
      * coordinates present in this [view to present][android.view.View]'s drawn bounds.
      *
      * Does the [view to present][android.view.View] contain the point.
+     *
+     * When this returns true, it is considered as
+     * [Presenter.STATE_VTP_PRESSED][com.germainkevin.library.Presenter.STATE_VTP_PRESSED]
      *
      * @param x x coordinate.
      * @param y y coordinate.
