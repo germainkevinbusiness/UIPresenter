@@ -70,15 +70,13 @@ class SquircleShape : PresenterShape() {
 
         val percentageFromStart = viewToPresentBounds.left * 100 / decorViewWidth
 
-        // Remaining Space between View to present's left position and the end of the
-        // decorViewWidth
+        // Remaining Space between View to present's left position and the end of the decorViewWidth
         val vtpStartToDecorEnd = decorViewWidth - viewToPresentBounds.left
 
         val textWidthRemainingSpace2 = vtpStartToDecorEnd - descTextWidth
 
         val horizontalMargin = 56
         val shouldLayoutFromStartToEnd: Boolean
-        // set to that for now
         var staticLayoutWidth: Int = (vtpStartToDecorEnd - horizontalMargin).toInt()
 
         when {
@@ -95,8 +93,7 @@ class SquircleShape : PresenterShape() {
                         ) {
                             shouldLayoutFromStartToEnd = true
                         } else {
-                            // The percentage of the decor view's width occupied by
-                            // the staticLayoutWidth
+                            // The % of the decorViewWidth occupied by the staticLayoutWidth
                             val c = staticLayoutWidth * 100 / decorViewWidth
                             if (c <= 45) {
                                 // let's make staticLayoutWidth 65% of decor view's width
@@ -127,27 +124,23 @@ class SquircleShape : PresenterShape() {
         staticLayout =
             buildStaticLayout(builder.descriptionText, descriptionTextPaint, staticLayoutWidth)
 
-        // Registers the position the text inside the StaticLayout should be placed
-        // inside the canvas
+        // Registers the position of the text inside the StaticLayout, so that it can later be
+        // drawn and positioned by the canvas
         val sLTextPosition = PointF()
 
-        // The amount of space in px that the StaticLayout needs to lay itself out vertically
-        val slHeightVertically = viewToPresentBounds.bottom + staticLayout.height
+        // Will give us the exact final vertical position of the StaticLayout when laid out
+        val slHeightFinalPosition = viewToPresentBounds.bottom + staticLayout.height
 
-        // Distance left between the end of the screen and the StaticLayout's final
+        // Remaining distance between the end of the screen and the StaticLayout's final
         // bottom position or final Height position
-        val e = decorView.height - slHeightVertically
-        // How much percentage of the decorViewHeight's still available if
-        // we lay out the StaticLayout vertically from up to down
-        val ePercentage = e * 100 / decorViewHeight
+        val v = decorView.height - slHeightFinalPosition
+        // How much percentage of the decorViewHeight is still available when the StaticLayout is
+        // laid out vertically from up to down
+        val vPercentage = v * 100 / decorViewHeight
 
         if (shouldLayoutFromStartToEnd) {
-            // StaticLayout goes: up to down, start to end
-
-            // If the decorViewHeight still has a remaining of 15% space available
-            // at its bottom, even after the StaticLayout gets laid out vertically from up to down,
-            // then execute the condition inside this if statement
-            if (ePercentage >= 15) {
+            // HERE STATIC LAYOUT IS LAID OUT: UP TO DOWN, START TO END
+            if (vPercentage >= 15) {
                 sLTextPosition.x = viewToPresentBounds.left + 16
                 sLTextPosition.y = viewToPresentBounds.bottom + 32
                 squircleBackground.set(
@@ -158,7 +151,7 @@ class SquircleShape : PresenterShape() {
                 )
                 staticLayoutPosition = PointF(sLTextPosition.x, sLTextPosition.y)
             } else {
-                // StaticLayout goes: down to up, start to end
+                // HERE STATIC LAYOUT IS LAID OUT: DOWN TO UP, START TO END
                 sLTextPosition.x = viewToPresentBounds.left + 16
                 sLTextPosition.y = viewToPresentBounds.top - (staticLayout.height + 32)
 
@@ -171,8 +164,8 @@ class SquircleShape : PresenterShape() {
                 staticLayoutPosition = PointF(squircleBackground.left + 16, sLTextPosition.y)
             }
         } else {
-            // StaticLayout goes: up to down, end to start
-            if (ePercentage >= 15) {
+            // HERE STATIC LAYOUT IS LAID OUT: UP TO DOWN, END TO START
+            if (vPercentage >= 15) {
                 // the position of the text based on those conditions
                 sLTextPosition.x = viewToPresentBounds.right - 16
                 sLTextPosition.y = viewToPresentBounds.bottom + 32
@@ -185,7 +178,7 @@ class SquircleShape : PresenterShape() {
                 )
                 staticLayoutPosition = PointF(squircleBackground.left + 16, sLTextPosition.y)
             } else {
-                // StaticLayout goes: down to up, end to start
+                // HERE STATIC LAYOUT IS LAID OUT: DOWN TO UP, END TO START
                 sLTextPosition.x = viewToPresentBounds.right
                 sLTextPosition.y = viewToPresentBounds.top - (staticLayout.height + 32)
 

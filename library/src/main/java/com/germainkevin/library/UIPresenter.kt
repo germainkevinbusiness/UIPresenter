@@ -331,7 +331,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
         removePresenterIfPresent()
     }
 
-    /** Removes the [mPresenter] if present, from the [ResourceFinder.getDecorView] */
+    /** Removes the [mPresenter] if present, from the [decorView][ResourceFinder.getDecorView] */
     private fun removePresenterIfPresent() = mPresenter?.apply {
         lifecycleScope.launch {
             if (pState == Presenter.STATE_REMOVING && pState != Presenter.STATE_REMOVED)

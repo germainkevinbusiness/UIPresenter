@@ -7,8 +7,8 @@ import android.text.StaticLayout
 import android.text.TextPaint
 
 /**
- * Class used to store information that helps set a shadow layer
- * inside a [com.germainkevin.library.prototypes.PresenterShape]
+ * Class used to store information that helps set a shadow layer in a
+ * [PresenterShape][com.germainkevin.library.prototypes.PresenterShape]
  * @param radius The radius of the shadow layer (If radius is 0, then the shadow layer is removed).
  * @param dx The shadow layer dx position
  * @param dy The shadow layer dy position
