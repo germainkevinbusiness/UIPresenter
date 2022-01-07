@@ -15,7 +15,7 @@ import com.germainkevin.library.prototypes.PresenterShape
 class ExampleShadowedShape : PresenterShape() {
 
     override fun shapeContains(x: Float, y: Float): Boolean {
-        // Made to return true in this case, so that any click event on the [Presenter] be
+        // Made to return true in this case, so that any click events on the [Presenter] be
         // considered as : Presenter.STATE_FOCAL_PRESSED
         return true
     }
