@@ -16,7 +16,7 @@ class AnimalRVAdapter : RecyclerView.Adapter<AnimalRVAdapter.AnimalViewHolder>()
         animalsList = list
     }
 
-    inner class AnimalViewHolder(private val itemBinding: AnimalRowBinding) :
+    class AnimalViewHolder(private val itemBinding: AnimalRowBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(animalName: String) {
             itemBinding.animalName.text = animalName
@@ -35,6 +35,5 @@ class AnimalRVAdapter : RecyclerView.Adapter<AnimalRVAdapter.AnimalViewHolder>()
     }
 
     override fun getItemCount(): Int = animalsList.size
-
 
 }
