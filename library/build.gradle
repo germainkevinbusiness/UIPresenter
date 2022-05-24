@@ -15,7 +15,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.germainkevin.uipresenter'
                 artifactId = 'uipresenter'
-                version = '1.0.1'
+                version = '1.0.2'
             }
         }
     }
@@ -42,6 +42,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.germainkevin.library'
 }
 
 dependencies {
