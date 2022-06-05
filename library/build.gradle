@@ -15,19 +15,19 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.germainkevin.uipresenter'
                 artifactId = 'uipresenter'
-                version = '1.0.2'
+                version = '1.0.3'
             }
         }
     }
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdk 21
-        targetSdk 31
+        targetSdk 32
     }
 
     buildTypes {

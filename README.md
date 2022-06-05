@@ -7,6 +7,19 @@ the role of the Views in your Activity or Fragment. It supports ```minSdk 21``` 
 
 <img src="/screenshots/device-2021-12-17-140025.png" alt="UIPresenter example 2 screenshot"/>
 
+<table>
+  <tr>
+    <td>UIPresenter in action</td>
+    <td>UIPresenter in action</td>
+    <td>UIPresenter in action</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="https://user-images.githubusercontent.com/67168053/170114205-f57cb4a1-9637-4c46-b40e-656865cd8799.gif" alt="UIPresenter gif" width="100%" height="auto"/></td>
+    <td valign="top"><img src="https://user-images.githubusercontent.com/67168053/170114205-f57cb4a1-9637-4c46-b40e-656865cd8799.gif" alt="UIPresenter gif" width="100%" height="auto"/></td>
+    <td valign="top"><img src="https://user-images.githubusercontent.com/67168053/170114205-f57cb4a1-9637-4c46-b40e-656865cd8799.gif" alt="UIPresenter gif" width="100%" height="auto"/></td>
+  </tr>
+ </table>
+
 # How to get this library in your android app
 
 **Step 1.** Add the jitpack repository to the ``repositories { }``  function, inside
@@ -25,7 +38,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation 'com.github.germainkevinbusiness:UIPresenter:1.0.2'
+    implementation 'com.github.germainkevinbusiness:UIPresenter:1.0.3'
 }
 ```
 
