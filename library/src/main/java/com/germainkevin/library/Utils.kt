@@ -6,6 +6,9 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 
+
+val TRANSPARENT_BLACK_COLOR = "#80000000"
+
 /**
  * Class used to store information that helps set a shadow layer in a
  * [PresenterShape][com.germainkevin.library.prototypes.PresenterShape]

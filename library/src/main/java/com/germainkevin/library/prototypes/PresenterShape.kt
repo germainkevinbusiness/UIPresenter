@@ -1,9 +1,13 @@
 package com.germainkevin.library.prototypes
 
-import android.graphics.*
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
 import android.text.TextPaint
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import com.germainkevin.library.TRANSPARENT_BLACK_COLOR
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 
 /**
@@ -110,8 +114,7 @@ abstract class PresenterShape : ShapeLifecycle {
         descriptionTextPaint.isAntiAlias = true
         shadowedWindowPaint.isAntiAlias = true
         shadowedWindowPaint.style = Paint.Style.FILL
-        // Let's set the default color of the shadowedWindow to a transparent black color
-        shadowedWindowPaint.color = Color.parseColor("#80000000")
+        shadowedWindowPaint.color = Color.parseColor(TRANSPARENT_BLACK_COLOR)
     }
 
     /**
