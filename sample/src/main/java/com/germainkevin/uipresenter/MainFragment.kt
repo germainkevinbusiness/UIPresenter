@@ -56,6 +56,7 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.textView_desc),
             descriptionTextColor = Color.BLACK,
             shadowedWindowEnabled = true,
+            revealAnimDuration = 1000L,
             // Now the library won't removes the presenter on any detected click event automatically
             // You now have to decide which click event will remove the presenter by yourself, like
             // show inside the presenterStateChangeListener below
@@ -85,6 +86,7 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             shadowedWindowEnabled = true,
             revealAnimation = CircularReveal(),
+            revealAnimDuration = 1000L,
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is detected on $mViewToPresent
@@ -109,6 +111,7 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             shadowedWindowEnabled = true,
             revealAnimation = HorizontalRotation(),
+            revealAnimDuration = 1000L,
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is done outside the
@@ -128,6 +131,7 @@ class MainFragment : Fragment() {
             descriptionText = getString(R.string.animal_row_desc),
             descriptionTextColor = Color.BLACK,
             revealAnimation = VerticalRotation(),
+            revealAnimDuration = 1000L,
             shadowedWindowEnabled = true,
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
@@ -147,6 +151,7 @@ class MainFragment : Fragment() {
             descriptionTextColor = Color.BLACK,
             shadowedWindowEnabled = true,
             revealAnimation = FadeInAndScale(),
+            revealAnimDuration = 1000L,
             shadowLayer = ShadowLayer(shadowColor = blue500),
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->

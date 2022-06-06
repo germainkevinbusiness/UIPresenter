@@ -44,7 +44,7 @@ class FadeIn : PresenterAnimation {
         afterAnim: () -> Unit
     ) {
         coroutineScope.launch {
-            val alphaAnimation = ObjectAnimator.ofFloat(presenter, View.ALPHA, 0.0f, 1.1f)
+            val alphaAnimation = ObjectAnimator.ofFloat(presenter, View.ALPHA, 0.0f, 1f)
             alphaAnimation.duration = animationDuration
             alphaAnimation.start()
             delay(animationDuration)
