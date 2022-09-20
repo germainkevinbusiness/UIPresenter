@@ -30,7 +30,7 @@ open class Presenter(context: Context) : View(context) {
         STATE_NOT_SHOWN, STATE_REVEALING, STATE_CANVAS_DRAWN, STATE_REVEALED, STATE_REMOVING,
         STATE_REMOVED, STATE_VTP_PRESSED, STATE_FOCAL_PRESSED, STATE_NON_FOCAL_PRESSED
     )
-    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.SOURCE)
     internal annotation class PresenterState
 
     companion object {

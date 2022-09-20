@@ -2,6 +2,7 @@ package com.germainkevin.library.prototypes
 
 import android.graphics.Canvas
 import com.germainkevin.library.UIPresenter
+import com.germainkevin.library.Presenter
 
 /**
  * The lifecycle of a [PresenterShape].
@@ -11,9 +12,7 @@ import com.germainkevin.library.UIPresenter
  * [buildSelfWith] will be populated from a [UIPresenter]'s [UIPresenter.present]
  * method
  *
- * [onDrawInPresenterWith] will be called from the
- * [Presenter][com.germainkevin.library.Presenter]'s
- * [onDraw][com.germainkevin.library.Presenter.onDraw] method
+ * [onDrawInPresenterWith] will be called from the [Presenter]'s [Presenter.onDraw] method
  *
  * @see [com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape] for example
  * @author Kevin Germain

@@ -18,7 +18,9 @@ import com.germainkevin.library.prototype_impl.FadeOut
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
 import com.germainkevin.library.prototype_impl.resource_finders.ActivityResourceFinder
 import com.germainkevin.library.prototype_impl.resource_finders.FragmentResourceFinder
-import com.germainkevin.library.prototypes.*
+import com.germainkevin.library.prototypes.PresenterAnimation
+import com.germainkevin.library.prototypes.PresenterShape
+import com.germainkevin.library.prototypes.ResourceFinder
 import kotlinx.coroutines.*
 
 /**
@@ -121,13 +123,21 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     private var removeAnimation: PresenterAnimation = FadeOut()
 
     /**The duration of the animation when revealing the [mPresenter] in milliseconds */
-    private var revealAnimDuration = 1000L
+    private var revealAnimDuration = DEFAULT_REVEAL_ANIMATION_DURATION
 
     /** The duration of the animation when removing the [mPresenter] in milliseconds */
-    private var removeAnimDuration = 600L
+    private var removeAnimDuration = DEFAULT_REMOVE_ANIMATION_DURATION
 
     /**A Lifecycle-Aware [CoroutineScope]*/
     private var lifecycleScope: CoroutineScope
+
+    /**
+     * A failure or cancellation of a child does not cause the supervisor job to fail and
+     * does not affect its other children,
+     * so a supervisor can implement a custom policy for handling failures of its children
+     * @since version 1.0.5 of this library
+     * */
+    private val supervisorJob: CompletableJob by lazy { SupervisorJob() }
 
     /**
      * Gives default colors to [backgroundColor] and [descriptionTextColor] if they are not set
@@ -148,7 +158,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
 
     init {
         resourceFinder.getContext().apply {
-            lifecycleScope = (this as LifecycleOwner).lifecycleScope
+            lifecycleScope = (this as LifecycleOwner).lifecycleScope + supervisorJob
             isLandscapeMode = resources.configuration?.orientation == ORIENTATION_LANDSCAPE
             if (backgroundColor == null && descriptionTextColor == null) provideDefaultColors()
             mPresenter = Presenter(this)

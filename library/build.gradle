@@ -15,19 +15,19 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.germainkevin.uipresenter'
                 artifactId = 'uipresenter'
-                version = '1.0.4'
+                version = library_version
             }
         }
     }
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdk 21
-        targetSdk 32
+        targetSdk 33
     }
 
     buildTypes {
@@ -46,10 +46,10 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation "androidx.core:core-ktx:$coreKtx_version"
+    implementation "androidx.appcompat:appcompat:$appCompat_version"
     // So we can access LifecycleScope (Coroutines)
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
     // Timber Logging library
 //    implementation 'com.jakewharton.timber:timber:5.0.1'
 }

@@ -9,24 +9,25 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import com.germainkevin.library.TRANSPARENT_BLACK_COLOR
 import com.germainkevin.library.prototype_impl.presentation_shapes.SquircleShape
+import android.view.View
+import com.germainkevin.library.Presenter
+import com.germainkevin.library.UIPresenter
 
 /**
- * A [PresenterShape] represents the shape in which a
- * [Presenter][com.germainkevin.library.Presenter] is drawn
+ * A [PresenterShape] represents the shape in which a [Presenter] is drawn
  *
  * Extend this class when you want to create your own [PresenterShape]
  *
- * Then if you want the [PresenterShape] you created to be used instead, pass it
- * inside the [UIPresenter.set][com.germainkevin.library.UIPresenter.set] method like so:
+ * Then if you want the [PresenterShape] you created to be used instead, pass it inside the
+ * [UIPresenter.set] method like so:
  *
  * UIPresenter.set(presenterShape = YouPresenterShape())
  *
  * When creating your own [PresenterShape],
  *
- * Once you want any object to be drawn inside the [Presenter][com.germainkevin.library.Presenter]
- * do it inside the implemented [PresenterShape.onDrawInPresenterWith]
- * otherwise if you just want to do positioning, setting text size, color, typeface,
- * background, shadow layer etc... do it inside
+ * Once you want any object to be drawn inside the [Presenter] do it inside the implemented
+ * [PresenterShape.onDrawInPresenterWith] otherwise if you just want to do positioning,
+ * setting text size, color, typeface, background, shadow layer etc... do it inside
  * [YouPresenterShape.buildSelfWith][PresenterShape.buildSelfWith]
  *
  * Take example of the [SquircleShape]
@@ -40,9 +41,8 @@ abstract class PresenterShape : ShapeLifecycle {
     protected var shapeBackgroundPaint = Paint()
 
     /**
-     * Will hold the coordinates of the decorView through
-     * the [View.getGlobalVisibleRect][android.view.View.getGlobalVisibleRect] method,
-     * which gives the accurate positioning of a [android.view.View] on a screen's decorView
+     * Will hold the coordinates of the decorView through the [View.getGlobalVisibleRect] method,
+     * which gives the accurate positioning of a [View] on a screen's decorView
      *
      * Will be assigned this value through the implemented [PresenterShape.buildSelfWith]
      *
@@ -69,11 +69,11 @@ abstract class PresenterShape : ShapeLifecycle {
     protected var shadowedWindowPaint = Paint()
 
     /**
-     * Checks [com.germainkevin.library.UIPresenter.hasShadowedWindow] to know whether the
+     * Checks [UIPresenter.hasShadowedWindow] to know whether the
      * developer wants a [shadowedWindow] drawn on the canvas through the
      * [PresenterShape.onDrawInPresenterWith] method
      *
-     * It is true by default in the [com.germainkevin.library.UIPresenter]
+     * It is true by default in the [UIPresenter]
      *
      * WILL HELP US TO CHECK THAT STATE IN THE [onDrawInPresenterWith]
      * */
@@ -83,9 +83,9 @@ abstract class PresenterShape : ShapeLifecycle {
     protected var descriptionTextPaint = TextPaint()
 
     /**
-     * Will hold the coordinates of the [com.germainkevin.library.UIPresenter.viewToPresent]
-     * on the decorView through the [View.getGlobalVisibleRect][android.view.View.getGlobalVisibleRect]
-     * method, which gives the accurate positioning of a [android.view.View], on a screen's decorView
+     * Will hold the coordinates of the [UIPresenter.viewToPresent]
+     * on the decorView through the [View.getGlobalVisibleRect][View.getGlobalVisibleRect]
+     * method, which gives the accurate positioning of a [View], on a screen's decorView
      *
      * Will be assigned this value through the implemented [PresenterShape.buildSelfWith]
      *
@@ -121,7 +121,7 @@ abstract class PresenterShape : ShapeLifecycle {
      * Sets the text size of the description text
      * @param textSize       The desired text size wanted for the description text
      * @param typedValueUnit the unit in which the description text should be displayed,
-     * e.g. [android.util.TypedValue.COMPLEX_UNIT_SP]
+     * e.g. [TypedValue.COMPLEX_UNIT_SP]
      * @param dm Necessary information to calculate the accurate TextSize
      */
     protected fun setDescriptionTextSize(typedValueUnit: Int, textSize: Float, dm: DisplayMetrics) {
@@ -135,8 +135,7 @@ abstract class PresenterShape : ShapeLifecycle {
      *
      * Does the [shape][PresenterShape] contain the point. e.g [SquircleShape.shapeContains]
      *
-     * When this returns true, it is considered as
-     * [Presenter.STATE_FOCAL_PRESSED][com.germainkevin.library.Presenter.STATE_FOCAL_PRESSED]
+     * When this returns true, it is considered as [Presenter.STATE_FOCAL_PRESSED]
      *
      * @param x x coordinate.
      * @param y y coordinate.
@@ -145,19 +144,17 @@ abstract class PresenterShape : ShapeLifecycle {
     open fun shapeContains(x: Float, y: Float): Boolean = false
 
     /**
-     * Helps to know if a click occurred on the
-     * [view to present][android.view.View] by capturing the
+     * Helps to know if a click occurred on the [view to present][View] by capturing the
      * coordinates where the click event fired, and comparing it to
-     * coordinates present in this [view to present][android.view.View]'s drawn bounds.
+     * coordinates present in this [view to present][View]'s drawn bounds.
      *
-     * Does the [view to present][android.view.View] contain the point.
+     * Does the [view to present][View] contain the point.
      *
-     * When this returns true, it is considered as
-     * [Presenter.STATE_VTP_PRESSED][com.germainkevin.library.Presenter.STATE_VTP_PRESSED]
+     * When this returns true, it is considered as [Presenter.STATE_VTP_PRESSED]
      *
      * @param x x coordinate.
      * @param y y coordinate.
-     * @return True if the [view to present][android.view.View] contains the point, false otherwise.
+     * @return True if the [view to present][View] contains the point, false otherwise.
      */
     open fun viewToPresentContains(x: Float, y: Float): Boolean = viewToPresentBounds.contains(x, y)
 }

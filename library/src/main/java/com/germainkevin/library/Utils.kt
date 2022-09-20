@@ -7,7 +7,9 @@ import android.text.StaticLayout
 import android.text.TextPaint
 
 
-val TRANSPARENT_BLACK_COLOR = "#80000000"
+const val TRANSPARENT_BLACK_COLOR = "#80000000"
+const val DEFAULT_REVEAL_ANIMATION_DURATION = 1000L
+const val DEFAULT_REMOVE_ANIMATION_DURATION = 600L
 
 /**
  * Class used to store information that helps set a shadow layer in a
