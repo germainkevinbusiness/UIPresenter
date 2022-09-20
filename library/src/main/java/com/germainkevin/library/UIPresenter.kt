@@ -163,7 +163,7 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
             if (backgroundColor == null && descriptionTextColor == null) provideDefaultColors()
             mPresenter = Presenter(this)
         }
-        mPresenter!!.apply {
+        mPresenter?.apply {
             uiPresenter = this@UIPresenter
             stateChangeNotifier = { state ->
                 onPresenterStateChange(state)
@@ -322,16 +322,12 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
     private fun present() {
         if (viewToPresent == null) throw NullPointerException("The view to present should not be null")
         lifecycleScope.launch {
-            val removeAndBuildJob = async {
-                removePresenterIfPresent()
-                val buildJob = async { presenterShape.buildSelfWith(this@UIPresenter) }
-                buildJob.await()
-                buildJob.join()
-            }
-            removeAndBuildJob.await()
-            removeAndBuildJob.join()
-            if (removeAndBuildJob.isCompleted)
+            val buildJob = async { presenterShape.buildSelfWith(this@UIPresenter) }
+            buildJob.await()
+            buildJob.join()
+            if (buildJob.isCompleted) {
                 mPresenter?.apply { resourceFinder.getDecorView().addView(this) }
+            }
         }
     }
 
@@ -343,13 +339,12 @@ open class UIPresenter private constructor(val resourceFinder: ResourceFinder) {
 
     /** Removes the [mPresenter] if present, from the [decorView][ResourceFinder.getDecorView] */
     private fun removePresenterIfPresent() = mPresenter?.apply {
-        lifecycleScope.launch {
-            if (pState == Presenter.STATE_REMOVING && pState != Presenter.STATE_REMOVED)
-                removeAnimation.runAnimation(this, this@apply, removeAnimDuration) {
-                    resourceFinder.getDecorView().removeView(this@apply)
-                    onPresenterStateChange(Presenter.STATE_REMOVED)
-                    finish()
-                }
+        if (pState == Presenter.STATE_REMOVING && pState != Presenter.STATE_REMOVED) {
+            removeAnimation.runAnimation(lifecycleScope, this@apply, removeAnimDuration) {
+                resourceFinder.getDecorView().removeView(mPresenter)
+                finish()
+                onPresenterStateChange(Presenter.STATE_REMOVED)
+            }
         }
     }
 

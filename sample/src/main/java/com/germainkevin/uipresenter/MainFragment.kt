@@ -43,7 +43,7 @@ class MainFragment : Fragment() {
 
     private fun initialize() {
         AnimalRVAdapter().apply {
-            submitList(listOf("Doggo", "Kitty", "Rabbit"))
+            submitList(listOf("Doggo", "Kitty", "Squirrel"))
             binding.recyclerView.adapter = this
         }
         binding.fab1.setOnClickListener { presentTextView() }
@@ -59,7 +59,7 @@ class MainFragment : Fragment() {
             revealAnimDuration = 1000L,
             // Now the library won't removes the presenter on any detected click event automatically
             // You now have to decide which click event will remove the presenter by yourself, like
-            // show inside the presenterStateChangeListener below
+            // shown inside the presenterStateChangeListener below
             removeAfterAnyDetectedClickEvent = false,
             presenterStateChangeListener = { state, removePresenter ->
                 // Removes the presenter when a click is done on the

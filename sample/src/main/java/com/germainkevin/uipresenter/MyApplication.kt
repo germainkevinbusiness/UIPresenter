@@ -7,7 +7,8 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // Needed to observe some logs going on inside the UIPresenter, not necessary for a real app
-        Timber.plant(Timber.DebugTree())
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
     }
 }

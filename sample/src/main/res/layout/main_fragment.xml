@@ -50,7 +50,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:contentDescription="Fab2"
+            android:contentDescription="FloatingActionButton"
+            android:backgroundTint="@color/blue_500"
             android:src="@drawable/ic_baseline_add_24"
             app:layout_constraintStart_toEndOf="@+id/addEditText"
             app:layout_constraintTop_toTopOf="@id/addEditText" />
