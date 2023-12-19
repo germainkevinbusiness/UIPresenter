@@ -38,7 +38,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation "com.github.germainkevinbusiness:UIPresenter:1.0.8"
+    implementation "com.github.germainkevinbusiness:UIPresenter:2.0.0"
 }
 ```
 
