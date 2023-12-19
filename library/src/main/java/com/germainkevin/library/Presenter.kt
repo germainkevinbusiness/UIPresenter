@@ -123,7 +123,7 @@ open class Presenter(context: Context) : View(context) {
         return true
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         stateChangeNotifier(STATE_REVEALING)
         uiPresenter.presenterShape.onDrawInPresenterWith(canvas)
         stateChangeNotifier(STATE_CANVAS_DRAWN)
