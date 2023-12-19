@@ -3,7 +3,6 @@ buildscript {
     ext {
         appCompat_version = "1.5.1"
         coreKtx_version = "1.9.0"
-        library_version = "1.0.7"
         material_version = "1.6.1"
         timber_version = "5.0.1"
     }

@@ -38,7 +38,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation "com.github.germainkevinbusiness:UIPresenter:1.0.6"
+    implementation "com.github.germainkevinbusiness:UIPresenter:1.0.8"
 }
 ```
 
@@ -119,7 +119,7 @@ like to change.
 Licenced under the MIT Licence
 
 ```
-Copyright (c) 2021 Kevin Germain
+Copyright (c) 2023 Kevin Germain
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

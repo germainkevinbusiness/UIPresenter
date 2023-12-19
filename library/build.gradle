@@ -1,7 +1,17 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
     id 'maven-publish'
+    id 'kotlin-android'
+}
+
+android {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 afterEvaluate {
@@ -15,10 +25,14 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.germainkevin.uipresenter'
                 artifactId = 'uipresenter'
-                version = library_version
+                version = '1.0.8'
             }
         }
     }
+}
+
+repositories {
+    mavenCentral()
 }
 
 android {
